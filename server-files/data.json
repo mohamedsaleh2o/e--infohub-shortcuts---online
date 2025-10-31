@@ -1,0 +1,85 @@
+{
+  "bundles": [
+    {
+      "id": 1730000001,
+      "name": "Freedom Plans",
+      "keywords": "postpaid, freedom, unlimited, 5G",
+      "link": "https://www.etisalat.ae/b2c/plans/postpaid"
+    },
+    {
+      "id": 1730000002,
+      "name": "Prepaid Plans",
+      "keywords": "prepaid, wasel, recharge, top-up",
+      "link": "https://www.etisalat.ae/b2c/plans/prepaid"
+    },
+    {
+      "id": 1730000003,
+      "name": "Home Internet",
+      "keywords": "home, broadband, fiber, wifi, elife",
+      "link": "https://www.etisalat.ae/b2c/elife"
+    },
+    {
+      "id": 1730000004,
+      "name": "Business Plans",
+      "keywords": "business, corporate, enterprise, b2b",
+      "link": "https://www.etisalat.ae/b2b"
+    },
+    {
+      "id": 1730000005,
+      "name": "Roaming Services",
+      "keywords": "roaming, international, travel, abroad",
+      "link": "https://www.etisalat.ae/b2c/roaming"
+    },
+    {
+      "id": 1730000006,
+      "name": "e& Store",
+      "keywords": "shop, devices, phones, smartphones, mobiles",
+      "link": "https://www.etisalat.ae/b2c/store"
+    }
+  ],
+  "addons": [
+    {
+      "id": 1730100001,
+      "name": "Data Pass",
+      "keywords": "data, internet, extra data, GB",
+      "link": "https://www.etisalat.ae/b2c/addons/data"
+    },
+    {
+      "id": 1730100002,
+      "name": "International Calling",
+      "keywords": "IDD, international, calls, minutes",
+      "link": "https://www.etisalat.ae/b2c/addons/international-calling"
+    },
+    {
+      "id": 1730100003,
+      "name": "Entertainment Add-ons",
+      "keywords": "streaming, netflix, shahid, osn, starzplay",
+      "link": "https://www.etisalat.ae/b2c/addons/entertainment"
+    },
+    {
+      "id": 1730100004,
+      "name": "SMS Packs",
+      "keywords": "sms, messages, text",
+      "link": "https://www.etisalat.ae/b2c/addons/sms"
+    },
+    {
+      "id": 1730100005,
+      "name": "Social Media Packs",
+      "keywords": "social, whatsapp, instagram, facebook, snapchat",
+      "link": "https://www.etisalat.ae/b2c/addons/social-media"
+    },
+    {
+      "id": 1730100006,
+      "name": "Gaming Add-ons",
+      "keywords": "gaming, games, low latency, esports",
+      "link": "https://www.etisalat.ae/b2c/addons/gaming"
+    },
+    {
+      "id": 1730100007,
+      "name": "Cloud Storage",
+      "keywords": "cloud, storage, backup, photos",
+      "link": "https://www.etisalat.ae/b2c/addons/cloud-storage"
+    }
+  ],
+  "devicec": []
+}

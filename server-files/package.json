@@ -1,0 +1,12 @@
+{
+  "name": "link-shortcuts-hub",
+  "version": "1.0.0",
+  "description": "Simple web app for managing link shortcuts in bundles",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["shortcuts", "links", "bundles"],
+  "author": "",
+  "license": "MIT"
+}

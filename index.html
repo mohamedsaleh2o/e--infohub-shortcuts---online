@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Shortcuts Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: #e30613;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-actions {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-header {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-header:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: none;
+            box-shadow: none;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            color: #e30613;
+            border-bottom: 3px solid #e30613;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-add {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e30613;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #e30613;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #c40510;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .bundle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .bundle-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .bundle-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: #e30613;
+        }
+
+        .bundle-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        .bundle-keywords {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+        }
+
+        .bundle-link {
+            color: #e30613;
+            text-decoration: none;
+            font-size: 0.9em;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .bundle-link:hover {
+            text-decoration: underline;
+        }
+
+        .bundle-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-delete {
+            background: #6c757d;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #5a6268;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-open {
+            background: #e30613;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-open:hover {
+            background: #c40510;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #212529;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <img width="70px" height="50" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png" style="filter: brightness(0) invert(1);"/>
+            <h1>Link Shortcuts Hub</h1>
+            </div>
+            <div class="header-actions">
+            <button class="btn-header" onclick="exportData()">📥 Export</button>
+            <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Import</button>
+            <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(event)">
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('bundles')">Bundles</button>
+            <button class="tab" onclick="switchTab('addons')">Addons</button>
+            <button class="tab" onclick="switchTab('devicec')">Device Care</button>
+        </div>
+
+        <div id="bundles" class="tab-content active">
+            <div class="search-add">
+                <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
+                <button onclick="openAddModal('bundle')">+ Add Bundle</button>
+            </div>
+            <div id="bundlesList" class="bundle-grid"></div>
+        </div>
+
+        <div id="addons" class="tab-content">
+            <div class="search-add">
+                <input type="text" id="searchAddons" placeholder="Search addons by name or keywords..." onkeyup="filterAddons()">
+                <button onclick="openAddModal('addon')">+ Add Addon</button>
+            </div>
+            <div id="addonsList" class="bundle-grid"></div>
+        </div>
+
+        <div id="devicec" class="tab-content">
+            <div class="search-add">
+                <input type="text" id="searchDeviceC" placeholder="Search Device Care by name or keywords..." onkeyup="filterDeviceC()">
+                <button onclick="openAddModal('devicec')">+ Add DeviceC</button>
+            </div>
+            <div id="devicecList" class="bundle-grid"></div>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Add New Item</div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="itemName" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label>Keywords</label>
+                <input type="text" id="itemKeywords" placeholder="e.g., docs, api, reference">
+            </div>
+            <div class="form-group">
+                <label>Link</label>
+                <input type="text" id="itemLink" placeholder="https://example.com">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                <button onclick="saveItem()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = {
+            bundles: [],
+            addons: [],
+            devicec: []
+        };
+        let currentType = 'bundle';
+        const STORAGE_KEY = 'linkShortcutsData';
+
+        // Load data from localStorage
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    data = JSON.parse(saved);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+            renderAll();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (error) {
+                console.error('Error saving data:', error);
+                alert('Failed to save data to browser storage.');
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function openAddModal(type) {
+            currentType = type;
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemKeywords').value = '';
+            document.getElementById('itemLink').value = '';
+            document.getElementById('itemName').focus();
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        async function saveItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const keywords = document.getElementById('itemKeywords').value.trim();
+            const link = document.getElementById('itemLink').value.trim();
+
+            if (!name || !link) {
+                alert('Please fill in name and link');
+                return;
+            }
+
+            const item = {
+                id: Date.now(),
+                name,
+                keywords,
+                link
+            };
+
+            if (currentType === 'bundle') {
+                data.bundles.push(item);
+            } else if (currentType === 'addon') {
+                data.addons.push(item);
+            } else if (currentType === 'devicec') {
+                data.devicec.push(item);
+            }
+
+            saveData();
+            renderAll();
+            closeAddModal();
+        }
+
+        function deleteItem(type, id) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+
+            if (type === 'bundle') {
+                data.bundles = data.bundles.filter(item => item.id !== id);
+            } else if (type === 'addon') {
+                data.addons = data.addons.filter(item => item.id !== id);
+            } else if (type === 'devicec') {
+                data.devicec = data.devicec.filter(item => item.id !== id);
+            }
+
+            saveData();
+            renderAll();
+        }
+
+        function openLink(url) {
+            window.open(url, '_blank');
+        }
+
+        function renderItems(items, containerId, type) {
+            const container = document.getElementById(containerId);
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+                        </svg>
+                        <p>No items yet. Click the + button to add one!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="bundle-card">
+                    <div class="bundle-name">${escapeHtml(item.name)}</div>
+                    <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                    <a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>
+                    <div class="bundle-actions">
+                        <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open</button>
+                        <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function filterBundles() {
+            const search = document.getElementById('searchBundles').value.toLowerCase();
+            const filtered = data.bundles.filter(item => 
+                item.name.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'bundlesList', 'bundle');
+        }
+
+        function filterAddons() {
+            const search = document.getElementById('searchAddons').value.toLowerCase();
+            const filtered = data.addons.filter(item => 
+                item.name.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'addonsList', 'addon');
+        }
+
+        function filterDeviceC() {
+            const search = document.getElementById('searchDeviceC').value.toLowerCase();
+            const filtered = data.devicec.filter(item => 
+                item.name.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'devicecList', 'devicec');
+        }
+
+        function renderAll() {
+            renderItems(data.bundles, 'bundlesList', 'bundle');
+            renderItems(data.addons, 'addonsList', 'addon');
+            renderItems(data.devicec, 'devicecList', 'devicec');
+        }
+
+        // Export data to JSON file
+        function exportData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'link-shortcuts-data.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Import data from JSON file
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate structure
+                    if (!importedData.bundles || !importedData.addons || !importedData.devicec) {
+                        alert('Invalid file format. File must contain bundles, addons, and devicec arrays.');
+                        return;
+                    }
+
+                    // Confirm before overwriting
+                    if (confirm('This will replace all current data. Continue?')) {
+                        data = importedData;
+                        saveData();
+                        renderAll();
+                        alert('Data imported successfully!');
+                    }
+                } catch (error) {
+                    alert('Error reading file. Please make sure it\'s a valid JSON file.');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Close modal on outside click
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addModal') {
+                closeAddModal();
+            }
+        });
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
