@@ -15,83 +15,124 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            height: 100vh;
             overflow: hidden;
         }
 
-        header {
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
             background: #e30613;
             color: white;
-            padding: 30px;
+            padding: 25px 20px;
             text-align: center;
-            position: relative;
+        }
+
+        .sidebar-header img {
+            filter: brightness(0) invert(1);
+            margin-bottom: 10px;
         }
         
-        .header-actions {
-            position: absolute;
-            top: 30px;
-            right: 30px;
+        h1 {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            color: #ecf0f1;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(227, 6, 19, 0.2);
+            border-left-color: #e30613;
+            color: #fff;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .btn-header {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 16px;
             font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            margin-bottom: 8px;
         }
         
         .btn-header:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             transform: none;
             box-shadow: none;
         }
 
-        h1 {
-            font-size: 2em;
-            font-weight: 600;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .tab {
+        .main-content {
             flex: 1;
-            padding: 15px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            color: #6c757d;
-            transition: all 0.3s;
-        }
-
-        .tab:hover {
-            background: #e9ecef;
-        }
-
-        .tab.active {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             background: white;
-            color: #e30613;
-            border-bottom: 3px solid #e30613;
+        }
+
+        .content-header {
+            background: white;
+            padding: 25px 30px;
+            border-bottom: 2px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-header h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin: 0;
+            font-weight: 600;
         }
 
         .tab-content {
             display: none;
             padding: 30px;
+            flex: 1;
+            overflow-y: auto;
         }
 
         .tab-content.active {
@@ -284,56 +325,570 @@
             margin-bottom: 20px;
             opacity: 0.3;
         }
+
+        .details-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .details-modal.active {
+            display: flex;
+        }
+
+        .details-content {
+            background: white;
+            border-radius: 16px;
+            width: 95%;
+            height: 90vh;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .details-header {
+            background: #e30613;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details-title {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .btn-close-details {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-close-details:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: none;
+        }
+
+        .details-iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+        }
+
+        .iframe-error {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .iframe-error h3 {
+            color: #e30613;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .iframe-error p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .iframe-error button {
+            margin-top: 10px;
+        }
+
+        .btn-view {
+            background: #e30613;
+            padding: 8px 16px;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .btn-view:hover {
+            background: #c40510;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.4);
+        }
+
+        .sla-time {
+            background: linear-gradient(135deg, #e30613 0%, #c40510 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.4em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
+        }
+
+        .sla-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .sla-card:hover {
+            border-color: #e30613;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        }
+
+        .nav-path {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 500;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+            line-height: 1.8;
+            word-wrap: break-word;
+        }
+
+        .nav-path .nav-step {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            margin: 2px;
+        }
+
+        .nav-path .nav-arrow {
+            color: #e30613;
+            font-weight: bold;
+            margin: 0 8px;
+        }
+
+        .navigator-card {
+            background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+        }
+
+        .navigator-card:hover {
+            border-color: #2c3e50;
+            background: linear-gradient(135deg, #fff 0%, #ecf0f1 100%);
+        }
+
+        .cpr-section {
+            background: #f8f9fa;
+            border-left: 4px solid #e30613;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .cpr-title {
+            font-weight: 600;
+            color: #e30613;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cpr-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .cpr-item {
+            display: flex;
+            gap: 8px;
+            font-size: 0.85em;
+        }
+
+        .cpr-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .cpr-value {
+            color: #212529;
+            flex: 1;
+        }
+
+        .cpr-toggle {
+            background: #e30613;
+            color: white;
+            padding: 6px 12px;
+            font-size: 11px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .cpr-toggle:hover {
+            background: #c40510;
+        }
+
+        .cpr-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .cpr-content.expanded {
+            max-height: 500px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar-header {
+                padding: 20px 15px;
+            }
+
+            .sidebar-header img {
+                width: 50px;
+                height: 35px;
+            }
+
+            h1 {
+                font-size: 1.1em;
+            }
+
+            .nav-menu {
+                padding: 10px 0;
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                max-height: none;
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                padding: 12px 15px;
+                flex: 0 0 auto;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+                font-size: 14px;
+            }
+
+            .nav-item.active {
+                border-left: none;
+                border-bottom-color: #e30613;
+            }
+
+            .sidebar-footer {
+                padding: 15px;
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn-header {
+                margin-bottom: 0;
+            }
+
+            .main-content {
+                height: calc(100vh - 300px);
+            }
+
+            .content-header {
+                padding: 20px 15px;
+            }
+
+            .content-header h2 {
+                font-size: 1.4em;
+            }
+
+            .tab-content {
+                padding: 15px;
+            }
+
+            .search-add {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            input[type="text"] {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .bundle-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .bundle-card {
+                padding: 15px;
+            }
+
+            .bundle-actions {
+                flex-direction: column;
+            }
+
+            .bundle-actions button {
+                width: 100%;
+            }
+
+            .cpr-label {
+                min-width: 100px;
+                font-size: 0.8em;
+            }
+
+            .cpr-value {
+                font-size: 0.8em;
+            }
+
+            .nav-path {
+                font-size: 0.85em;
+                padding: 12px 15px;
+            }
+
+            .nav-path .nav-step {
+                font-size: 0.85em;
+            }
+
+            .nav-path .nav-arrow {
+                margin: 0 4px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                font-size: 1.2em;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .details-content {
+                width: 100%;
+                height: 95vh;
+            }
+
+            .details-header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .details-title {
+                font-size: 1.1em;
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .btn-close-details {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+
+        /* Tablet Responsiveness */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .bundle-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .content-header h2 {
+                font-size: 1.6em;
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .sidebar-header img {
+                width: 45px;
+                height: 30px;
+            }
+
+            h1 {
+                font-size: 1em;
+            }
+
+            .nav-item {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .nav-icon {
+                font-size: 16px;
+            }
+
+            .content-header h2 {
+                font-size: 1.2em;
+            }
+
+            .bundle-name {
+                font-size: 1.1em;
+            }
+
+            .bundle-keywords {
+                font-size: 0.85em;
+            }
+
+            .bundle-link {
+                font-size: 0.85em;
+            }
+
+            .btn-header {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            button {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+
+            .cpr-section {
+                padding: 12px;
+            }
+
+            .cpr-item {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .cpr-label {
+                min-width: auto;
+                font-weight: 700;
+            }
+
+            .sla-time {
+                font-size: 1.2em;
+                padding: 10px 15px;
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-            <img width="70px" height="50" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png" style="filter: brightness(0) invert(1);"/>
-            <h1>Link Shortcuts Hub</h1>
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img width="60px" height="40" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png"/>
+                <h1>Link Shortcuts Hub</h1>
             </div>
-            <div class="header-actions">
-            <button class="btn-header" onclick="exportData()">📥 Export</button>
-            <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Import</button>
-            <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(event)">
+            
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="switchTab('bundles')">
+                    <span class="nav-icon">📦</span>
+                    <span>Bundles</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('addons')">
+                    <span class="nav-icon">🔌</span>
+                    <span>Addons</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('devicec')">
+                    <span class="nav-icon">📱</span>
+                    <span>Device Care</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('sla')">
+                    <span class="nav-icon">⏱️</span>
+                    <span>SLA</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('navigator')">
+                    <span class="nav-icon">🧭</span>
+                    <span>Navigator</span>
+                </div>
             </div>
-        </header>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('bundles')">Bundles</button>
-            <button class="tab" onclick="switchTab('addons')">Addons</button>
-            <button class="tab" onclick="switchTab('devicec')">Device Care</button>
+            <div class="sidebar-footer">
+                <button class="btn-header" onclick="exportData()">📥 Export Data</button>
+                <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+                <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(event)">
+            </div>
         </div>
 
-        <div id="bundles" class="tab-content active">
-            <div class="search-add">
-                <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
-                <button onclick="openAddModal('bundle')">+ Add Bundle</button>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2 id="contentTitle">Bundles</h2>
             </div>
-            <div id="bundlesList" class="bundle-grid"></div>
-        </div>
 
-        <div id="addons" class="tab-content">
-            <div class="search-add">
-                <input type="text" id="searchAddons" placeholder="Search addons by name or keywords..." onkeyup="filterAddons()">
-                <button onclick="openAddModal('addon')">+ Add Addon</button>
+            <div id="bundles" class="tab-content active">
+                <div class="search-add">
+                    <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
+                    <button onclick="openAddModal('bundle')">+ Add Bundle</button>
+                </div>
+                <div id="bundlesList" class="bundle-grid"></div>
             </div>
-            <div id="addonsList" class="bundle-grid"></div>
-        </div>
 
-        <div id="devicec" class="tab-content">
-            <div class="search-add">
-                <input type="text" id="searchDeviceC" placeholder="Search Device Care by name or keywords..." onkeyup="filterDeviceC()">
-                <button onclick="openAddModal('devicec')">+ Add DeviceC</button>
+            <div id="addons" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchAddons" placeholder="Search addons by name or keywords..." onkeyup="filterAddons()">
+                    <button onclick="openAddModal('addon')">+ Add Addon</button>
+                </div>
+                <div id="addonsList" class="bundle-grid"></div>
             </div>
-            <div id="devicecList" class="bundle-grid"></div>
+
+            <div id="devicec" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchDeviceC" placeholder="Search Device Care by name or keywords..." onkeyup="filterDeviceC()">
+                    <button onclick="openAddModal('devicec')">+ Add DeviceC</button>
+                </div>
+                <div id="devicecList" class="bundle-grid"></div>
+            </div>
+
+            <div id="sla" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchSLA" placeholder="Search SLA by name or keywords..." onkeyup="filterSLA()">
+                    <button onclick="openAddModal('sla')">+ Add SLA</button>
+                </div>
+                <div id="slaList" class="bundle-grid"></div>
+            </div>
+
+            <div id="navigator" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchNavigator" placeholder="Search Navigator by name or keywords..." onkeyup="filterNavigator()">
+                    <button onclick="openAddModal('navigator')">+ Add Navigator</button>
+                </div>
+                <div id="navigatorList" class="bundle-grid"></div>
+            </div>
         </div>
     </div>
 
     <div id="addModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Add New Item</div>
+            <div class="modal-header" id="modalTitle">Add New Item</div>
             <div class="form-group">
                 <label>Name</label>
                 <input type="text" id="itemName" placeholder="Enter name">
@@ -342,10 +897,52 @@
                 <label>Keywords</label>
                 <input type="text" id="itemKeywords" placeholder="e.g., docs, api, reference">
             </div>
-            <div class="form-group">
+            <div class="form-group" id="linkGroup">
                 <label>Link</label>
                 <input type="text" id="itemLink" placeholder="https://example.com">
             </div>
+            <div class="form-group" id="timeGroup" style="display: none;">
+                <label>Time Duration</label>
+                <input type="text" id="itemTime" placeholder="e.g., 10 hours, 2 days, 48 hours">
+            </div>
+            <div class="form-group" id="pathGroup" style="display: none;">
+                <label>Navigation Path</label>
+                <input type="text" id="itemPath" placeholder="e.g., Home -> Profile -> Balance Details">
+                <small style="color: #6c757d; font-size: 0.85em; display: block; margin-top: 5px;">Use " -> " (space-arrow-space) to separate steps</small>
+            </div>
+            
+            <!-- CPR Fields for Bundles -->
+            <div id="cprFields" style="display: none;">
+                <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #e30613;">
+                    <div style="font-weight: 600; color: #e30613; margin-bottom: 12px;">📋 CPR Information</div>
+                    
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input type="text" id="cprDuration" placeholder="e.g., 28 days, 30 days, 12 months">
+                    </div>
+                    <div class="form-group">
+                        <label>Fees</label>
+                        <input type="text" id="cprFees" placeholder="e.g., AED 50, AED 199/month">
+                    </div>
+                    <div class="form-group">
+                        <label>Discounts</label>
+                        <input type="text" id="cprDiscounts" placeholder="e.g., 20% off for first 3 months">
+                    </div>
+                    <div class="form-group">
+                        <label>Bundle Allowance</label>
+                        <input type="text" id="cprAllowance" placeholder="e.g., Unlimited calls, 100GB data">
+                    </div>
+                    <div class="form-group">
+                        <label>Restrictions and Limitations</label>
+                        <input type="text" id="cprRestrictions" placeholder="e.g., Fair usage policy applies">
+                    </div>
+                    <div class="form-group">
+                        <label>Exit Charge</label>
+                        <input type="text" id="cprExitCharge" placeholder="e.g., AED 100 early termination fee">
+                    </div>
+                </div>
+            </div>
+            
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
                 <button onclick="saveItem()">Save</button>
@@ -353,32 +950,77 @@
         </div>
     </div>
 
+    <div id="detailsModal" class="details-modal">
+        <div class="details-content">
+            <div class="details-header">
+                <div class="details-title" id="detailsTitle">Loading...</div>
+                <button class="btn-close-details" onclick="closeDetails()">✕ Close</button>
+            </div>
+            <iframe id="detailsIframe" class="details-iframe" src="about:blank"></iframe>
+            <div id="iframeError" class="iframe-error" style="display: none;">
+                <h3>⚠️ Cannot Display in Preview</h3>
+                <p>This website doesn't allow embedding in an iframe for security reasons.</p>
+                <p><strong id="errorLinkText"></strong></p>
+                <button onclick="openLinkFromError()">🔗 Open in New Tab</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Configuration
+        const JSON_FILE_PATH = 'server-files/data.json'; // Path to your JSON data file
+        const STORAGE_KEY = 'linkShortcutsData';
+        
         let data = {
             bundles: [],
             addons: [],
-            devicec: []
+            devicec: [],
+            sla: [],
+            navigator: []
         };
         let currentType = 'bundle';
-        const STORAGE_KEY = 'linkShortcutsData';
 
-        // Load data from localStorage
-        function loadData() {
+        // Load data from GitHub JSON file, fallback to localStorage
+        async function loadData() {
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    data = JSON.parse(saved);
+                console.log('📥 Loading data from JSON file...');
+                const response = await fetch(JSON_FILE_PATH);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load JSON file');
                 }
+                
+                const jsonData = await response.json();
+                data = jsonData;
+                
+                // Also save to localStorage as cache
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                
+                console.log('✅ Data loaded from JSON file');
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error loading JSON file:', error);
+                console.log('ℹ️ Falling back to localStorage');
+                
+                // Fallback to localStorage
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) {
+                        data = JSON.parse(saved);
+                        console.log('✅ Data loaded from localStorage');
+                    }
+                } catch (error) {
+                    console.error('Error loading from localStorage:', error);
+                }
             }
+            
             renderAll();
         }
 
-        // Save data to localStorage
+        // Save data to localStorage only
         function saveData() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                console.log('💾 Changes saved locally');
             } catch (error) {
                 console.error('Error saving data:', error);
                 alert('Failed to save data to browser storage.');
@@ -386,11 +1028,21 @@
         }
 
         function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            event.target.classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
             document.getElementById(tab).classList.add('active');
+            
+            // Update content header title
+            const titles = {
+                'bundles': 'Bundles',
+                'addons': 'Addons',
+                'devicec': 'Device Care',
+                'sla': 'SLA',
+                'navigator': 'Navigator'
+            };
+            document.getElementById('contentTitle').textContent = titles[tab] || tab;
         }
 
         function openAddModal(type) {
@@ -399,6 +1051,59 @@
             document.getElementById('itemName').value = '';
             document.getElementById('itemKeywords').value = '';
             document.getElementById('itemLink').value = '';
+            document.getElementById('itemTime').value = '';
+            document.getElementById('itemPath').value = '';
+            
+            // Clear CPR fields
+            document.getElementById('cprDuration').value = '';
+            document.getElementById('cprFees').value = '';
+            document.getElementById('cprDiscounts').value = '';
+            document.getElementById('cprAllowance').value = '';
+            document.getElementById('cprRestrictions').value = '';
+            document.getElementById('cprExitCharge').value = '';
+            
+            // Update modal title and show appropriate fields
+            const modalTitle = document.getElementById('modalTitle');
+            const linkGroup = document.getElementById('linkGroup');
+            const timeGroup = document.getElementById('timeGroup');
+            const pathGroup = document.getElementById('pathGroup');
+            const cprFields = document.getElementById('cprFields');
+            
+            if (type === 'sla') {
+                modalTitle.textContent = 'Add New SLA';
+                linkGroup.style.display = 'none';
+                timeGroup.style.display = 'block';
+                pathGroup.style.display = 'none';
+                cprFields.style.display = 'none';
+            } else if (type === 'navigator') {
+                modalTitle.textContent = 'Add New Navigation Guide';
+                linkGroup.style.display = 'none';
+                timeGroup.style.display = 'none';
+                pathGroup.style.display = 'block';
+                cprFields.style.display = 'none';
+            } else if (type === 'bundle') {
+                modalTitle.textContent = 'Add New Bundle';
+                linkGroup.style.display = 'block';
+                timeGroup.style.display = 'none';
+                pathGroup.style.display = 'none';
+                cprFields.style.display = 'block';
+            } else if (type === 'addon') {
+                modalTitle.textContent = 'Add New Addon';
+                linkGroup.style.display = 'block';
+                timeGroup.style.display = 'none';
+                pathGroup.style.display = 'none';
+                cprFields.style.display = 'block';
+            } else {
+                const typeNames = {
+                    'devicec': 'Device Care'
+                };
+                modalTitle.textContent = 'Add New ' + (typeNames[type] || 'Item');
+                linkGroup.style.display = 'block';
+                timeGroup.style.display = 'none';
+                pathGroup.style.display = 'none';
+                cprFields.style.display = 'none';
+            }
+            
             document.getElementById('itemName').focus();
         }
 
@@ -406,29 +1111,89 @@
             document.getElementById('addModal').classList.remove('active');
         }
 
-        async function saveItem() {
+        function saveItem() {
             const name = document.getElementById('itemName').value.trim();
             const keywords = document.getElementById('itemKeywords').value.trim();
-            const link = document.getElementById('itemLink').value.trim();
-
-            if (!name || !link) {
-                alert('Please fill in name and link');
-                return;
+            
+            let item;
+            
+            if (currentType === 'sla') {
+                const time = document.getElementById('itemTime').value.trim();
+                
+                if (!name || !time) {
+                    alert('Please fill in name and time duration');
+                    return;
+                }
+                
+                item = {
+                    id: Date.now(),
+                    name,
+                    keywords,
+                    time
+                };
+            } else if (currentType === 'navigator') {
+                const path = document.getElementById('itemPath').value.trim();
+                
+                if (!name || !path) {
+                    alert('Please fill in name and navigation path');
+                    return;
+                }
+                
+                item = {
+                    id: Date.now(),
+                    name,
+                    keywords,
+                    path
+                };
+            } else {
+                const link = document.getElementById('itemLink').value.trim();
+                
+                if (!name || !link) {
+                    alert('Please fill in name and link');
+                    return;
+                }
+                
+                item = {
+                    id: Date.now(),
+                    name,
+                    keywords,
+                    link
+                };
+                
+                // Add CPR data for bundles and addons
+                if (currentType === 'bundle' || currentType === 'addon') {
+                    const cprDuration = document.getElementById('cprDuration').value.trim();
+                    const cprFees = document.getElementById('cprFees').value.trim();
+                    const cprDiscounts = document.getElementById('cprDiscounts').value.trim();
+                    const cprAllowance = document.getElementById('cprAllowance').value.trim();
+                    const cprRestrictions = document.getElementById('cprRestrictions').value.trim();
+                    const cprExitCharge = document.getElementById('cprExitCharge').value.trim();
+                    
+                    // Only add CPR if at least one field is filled
+                    if (cprDuration || cprFees || cprDiscounts || cprAllowance || cprRestrictions || cprExitCharge) {
+                        item.cpr = {
+                            duration: cprDuration,
+                            fees: cprFees,
+                            discounts: cprDiscounts,
+                            allowance: cprAllowance,
+                            restrictions: cprRestrictions,
+                            exitCharge: cprExitCharge
+                        };
+                    }
+                }
             }
 
-            const item = {
-                id: Date.now(),
-                name,
-                keywords,
-                link
-            };
-
+            // Add to local data array
             if (currentType === 'bundle') {
                 data.bundles.push(item);
             } else if (currentType === 'addon') {
                 data.addons.push(item);
             } else if (currentType === 'devicec') {
                 data.devicec.push(item);
+            } else if (currentType === 'sla') {
+                data.sla.push(item);
+            } else if (currentType === 'navigator') {
+                data.navigator.push(item);
             }
 
             saveData();
@@ -439,12 +1204,17 @@
         function deleteItem(type, id) {
             if (!confirm('Are you sure you want to delete this item?')) return;
 
+            // Delete from local data array
             if (type === 'bundle') {
                 data.bundles = data.bundles.filter(item => item.id !== id);
             } else if (type === 'addon') {
                 data.addons = data.addons.filter(item => item.id !== id);
             } else if (type === 'devicec') {
                 data.devicec = data.devicec.filter(item => item.id !== id);
+            } else if (type === 'sla') {
+                data.sla = data.sla.filter(item => item.id !== id);
+            } else if (type === 'navigator') {
+                data.navigator = data.navigator.filter(item => item.id !== id);
             }
 
             saveData();
@@ -453,6 +1223,72 @@
 
         function openLink(url) {
             window.open(url, '_blank');
+        }
+
+        let currentViewLink = '';
+
+        function viewDetails(item) {
+            currentViewLink = item.link;
+            document.getElementById('detailsTitle').textContent = item.name;
+            document.getElementById('errorLinkText').textContent = item.link;
+            
+            const iframe = document.getElementById('detailsIframe');
+            const errorDiv = document.getElementById('iframeError');
+            
+            // Reset states
+            iframe.style.display = 'block';
+            errorDiv.style.display = 'none';
+            iframe.src = item.link;
+            
+            document.getElementById('detailsModal').classList.add('active');
+            
+            // Check if iframe failed to load after 2 seconds
+            setTimeout(() => {
+                try {
+                    // Try to access iframe content
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (!iframeDoc || iframeDoc.body.innerHTML === '') {
+                        showIframeError();
+                    }
+                } catch (e) {
+                    // Cross-origin error - the site loaded but blocks iframe access
+                    // This is actually fine, the iframe is working
+                    // Only show error if we get a refused connection
+                    iframe.onerror = showIframeError;
+                }
+            }, 2000);
+        }
+
+        function showIframeError() {
+            document.getElementById('detailsIframe').style.display = 'none';
+            document.getElementById('iframeError').style.display = 'flex';
+        }
+
+        function openLinkFromError() {
+            window.open(currentViewLink, '_blank');
+            closeDetails();
+        }
+
+        function closeDetails() {
+            document.getElementById('detailsModal').classList.remove('active');
+            const iframe = document.getElementById('detailsIframe');
+            iframe.src = 'about:blank';
+            iframe.style.display = 'block';
+            document.getElementById('iframeError').style.display = 'none';
+            currentViewLink = '';
+        }
+
+        function toggleCPR(itemId) {
+            const cprContent = document.getElementById('cpr-' + itemId);
+            const button = event.target;
+            
+            if (cprContent.classList.contains('expanded')) {
+                cprContent.classList.remove('expanded');
+                button.textContent = 'Show CPR Details';
+            } else {
+                cprContent.classList.add('expanded');
+                button.textContent = 'Hide CPR Details';
+            }
         }
 
         function renderItems(items, containerId, type) {
@@ -470,17 +1306,95 @@
                 return;
             }
 
-            container.innerHTML = items.map(item => `
-                <div class="bundle-card">
-                    <div class="bundle-name">${escapeHtml(item.name)}</div>
-                    <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
-                    <a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>
-                    <div class="bundle-actions">
-                        <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open</button>
-                        <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
+            // SLA items have different structure (time instead of link)
+            if (type === 'sla') {
+                container.innerHTML = items.map(item => `
+                    <div class="bundle-card sla-card">
+                        <div class="bundle-name">${escapeHtml(item.name)}</div>
+                        <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                        <div class="sla-time">⏱️ ${escapeHtml(item.time || 'No time set')}</div>
+                        <div class="bundle-actions">
+                            <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else if (type === 'navigator') {
+                // Navigator items have navigation paths
+                container.innerHTML = items.map(item => {
+                    const pathSteps = item.path ? item.path.split('->').map(step => step.trim()) : [];
+                    const pathHTML = pathSteps.map((step, index) => {
+                        return `<span class="nav-step">${escapeHtml(step)}</span>${index < pathSteps.length - 1 ? '<span class="nav-arrow">→</span>' : ''}`;
+                    }).join('');
+                    
+                    return `
+                        <div class="bundle-card navigator-card">
+                            <div class="bundle-name">🧭 ${escapeHtml(item.name)}</div>
+                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                            <div class="nav-path">${pathHTML || 'No path set'}</div>
+                            <div class="bundle-actions">
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                // Regular items with links
+                container.innerHTML = items.map(item => {
+                    let cprHTML = '';
+                    
+                    // Add CPR section for bundles and addons
+                    if ((type === 'bundle' || type === 'addon') && item.cpr) {
+                        cprHTML = `
+                            <div class="cpr-section">
+                                <div class="cpr-title">📋 CPR Information</div>
+                                <div class="cpr-content" id="cpr-${item.id}">
+                                    <div class="cpr-grid">
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Duration:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.duration || 'N/A')}</span>
+                                        </div>
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Fees:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.fees || 'N/A')}</span>
+                                        </div>
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Discounts:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.discounts || 'None')}</span>
+                                        </div>
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Allowance:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.allowance || 'N/A')}</span>
+                                        </div>
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Restrictions:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.restrictions || 'None')}</span>
+                                        </div>
+                                        <div class="cpr-item">
+                                            <span class="cpr-label">Exit Charge:</span>
+                                            <span class="cpr-value">${escapeHtml(item.cpr.exitCharge || 'N/A')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="cpr-toggle" onclick="toggleCPR(${item.id})">Show CPR Details</button>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="bundle-card">
+                            <div class="bundle-name">${escapeHtml(item.name)}</div>
+                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                            <a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>
+                            ${cprHTML}
+                            <div class="bundle-actions">
+                                <button class="btn-view" onclick='viewDetails(${JSON.stringify(item)})'>View</button>
+                                <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open</button>
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
         }
 
         function escapeHtml(text) {
@@ -516,10 +1430,30 @@
             renderItems(filtered, 'devicecList', 'devicec');
         }
 
+        function filterSLA() {
+            const search = document.getElementById('searchSLA').value.toLowerCase();
+            const filtered = data.sla.filter(item => 
+                item.name.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'slaList', 'sla');
+        }
+
+        function filterNavigator() {
+            const search = document.getElementById('searchNavigator').value.toLowerCase();
+            const filtered = data.navigator.filter(item => 
+                item.name.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'navigatorList', 'navigator');
+        }
+
         function renderAll() {
             renderItems(data.bundles, 'bundlesList', 'bundle');
             renderItems(data.addons, 'addonsList', 'addon');
             renderItems(data.devicec, 'devicecList', 'devicec');
+            renderItems(data.sla, 'slaList', 'sla');
+            renderItems(data.navigator, 'navigatorList', 'navigator');
         }
 
         // Export data to JSON file
@@ -551,6 +1485,10 @@
                         alert('Invalid file format. File must contain bundles, addons, and devicec arrays.');
                         return;
                     }
+                    
+                    // Add new arrays if they don't exist
+                    if (!importedData.sla) importedData.sla = [];
+                    if (!importedData.navigator) importedData.navigator = [];
 
                     // Confirm before overwriting
                     if (confirm('This will replace all current data. Continue?')) {
@@ -581,4 +1519,4 @@
         loadData();
     </script>
 </body>
-</html>
+</html> 
