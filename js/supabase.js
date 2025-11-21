@@ -26,14 +26,22 @@ class SupabaseManager {
             return;
         }
 
+        // Check if CONFIG is defined (check both global and window scope)
+        const config = (typeof CONFIG !== 'undefined') ? CONFIG : window.CONFIG;
+        
+        if (!config) {
+            console.error('❌ CONFIG not defined. Make sure js/config.js is loaded before js/supabase.js');
+            return;
+        }
+
         // Check if credentials are configured
-        if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) {
+        if (!config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {
             console.error('❌ Supabase credentials not configured in js/config.js');
             return;
         }
 
         // Validate credentials format
-        if (CONFIG.SUPABASE_URL.includes('your-project') || CONFIG.SUPABASE_ANON_KEY.includes('your-anon-key')) {
+        if (config.SUPABASE_URL.includes('your-project') || config.SUPABASE_ANON_KEY.includes('your-anon-key')) {
             console.error('❌ Supabase credentials are placeholder values. Please update js/config.js with real credentials.');
             return;
         }
@@ -41,13 +49,13 @@ class SupabaseManager {
         try {
             // Create Supabase client
             this.supabase = window.supabase.createClient(
-                CONFIG.SUPABASE_URL,
-                CONFIG.SUPABASE_ANON_KEY
+                config.SUPABASE_URL,
+                config.SUPABASE_ANON_KEY
             );
             
             console.log('✅ Supabase initialized successfully');
-            console.log('   URL:', CONFIG.SUPABASE_URL);
-            console.log('   Key:', CONFIG.SUPABASE_ANON_KEY.substring(0, 20) + '...');
+            console.log('   URL:', config.SUPABASE_URL);
+            console.log('   Key:', config.SUPABASE_ANON_KEY.substring(0, 20) + '...');
         } catch (error) {
             console.error('❌ Failed to initialize Supabase:', error);
             console.error('   Error details:', error.message);
@@ -69,9 +77,10 @@ class SupabaseManager {
 
     // Check if cache is valid
     isCacheValid(type) {
-        if (!CONFIG.ENABLE_CACHE) return false;
+        const config = (typeof CONFIG !== 'undefined') ? CONFIG : window.CONFIG;
+        if (!config || !config.ENABLE_CACHE) return false;
         const cache = this.cache[type];
-        return cache.data && (Date.now() - cache.timestamp < CONFIG.CACHE_DURATION);
+        return cache.data && (Date.now() - cache.timestamp < config.CACHE_DURATION);
     }
 
     // Update cache
@@ -99,10 +108,12 @@ class SupabaseManager {
     // Load from localStorage
     loadFromLocalStorage(type) {
         try {
+            const config = (typeof CONFIG !== 'undefined') ? CONFIG : window.CONFIG;
             const cached = localStorage.getItem(`cache_${type}`);
             if (cached) {
                 const parsed = JSON.parse(cached);
-                if (Date.now() - parsed.timestamp < CONFIG.CACHE_DURATION) {
+                const cacheDuration = (config && config.CACHE_DURATION) ? config.CACHE_DURATION : 300000; // 5 min default
+                if (Date.now() - parsed.timestamp < cacheDuration) {
                     return parsed.data;
                 }
             }
@@ -414,4 +425,20 @@ class SupabaseManager {
 }
 
 // Initialize global instance
-const db = new SupabaseManager();
+// Only initialize if CONFIG is defined (loaded from config.js)
+let db = null;
+
+try {
+    const config = (typeof CONFIG !== 'undefined') ? CONFIG : window.CONFIG;
+    if (config) {
+        db = new SupabaseManager();
+        console.log('✅ Database manager initialized');
+    } else {
+        console.warn('⚠️ CONFIG not found yet. Database manager will initialize when CONFIG loads.');
+    }
+} catch (error) {
+    console.error('❌ Failed to initialize database manager:', error);
+}
+
+// Make db globally accessible
+window.db = db;
