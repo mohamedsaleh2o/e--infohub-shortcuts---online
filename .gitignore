@@ -1,6 +1,9 @@
-# Configuration files with API keys
+# Configuration files with API keys (local development only)
 js/config.js
 config.js
+
+# Production config is safe to commit (uses public anon key)
+!js/config.prod.js
 
 # Cache files
 cache/
