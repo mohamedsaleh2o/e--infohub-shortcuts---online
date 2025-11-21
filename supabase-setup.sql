@@ -19,6 +19,8 @@ CREATE TABLE bundles (
     source TEXT DEFAULT 'manual',
     cpr JSONB,
     description TEXT,
+    fullData JSONB,
+    unique_id TEXT UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -26,6 +28,7 @@ CREATE TABLE bundles (
 CREATE INDEX idx_bundles_name ON bundles(name);
 CREATE INDEX idx_bundles_category ON bundles(category);
 CREATE INDEX idx_bundles_source ON bundles(source);
+CREATE INDEX idx_bundles_unique_id ON bundles(unique_id);
 
 -- ============================
 -- ADDONS TABLE

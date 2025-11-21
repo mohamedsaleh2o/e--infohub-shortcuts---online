@@ -421,17 +421,47 @@
         .modal-content {
             background: white;
             border-radius: 16px;
-            padding: 30px;
             width: 90%;
             max-width: 500px;
+            max-height: 85vh;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .modal-header {
             font-size: 1.5em;
             font-weight: 600;
-            margin-bottom: 20px;
+            padding: 25px 30px 20px;
             color: #212529;
+            border-bottom: 2px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .modal-body {
+            padding: 20px 30px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
 
         .form-group {
@@ -449,7 +479,9 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-            margin-top: 25px;
+            padding: 20px 30px;
+            border-top: 2px solid #f0f0f0;
+            flex-shrink: 0;
         }
 
         .btn-cancel {
@@ -1347,21 +1379,18 @@
                 height: 100%;
                 max-height: 100vh;
                 border-radius: 0;
-                padding: 0;
-                overflow-y: auto;
             }
 
             .modal-header {
                 font-size: 1.2em;
-                padding: 16px;
-                position: sticky;
-                top: 0;
-                background: white;
-                z-index: 10;
-                border-bottom: 1px solid #eee;
+                padding: 18px 16px 16px;
             }
 
             .modal-body {
+                padding: 16px;
+            }
+
+            .modal-actions {
                 padding: 16px;
             }
 
@@ -1719,10 +1748,6 @@
                 font-size: 1.2em;
                 padding: 10px 15px;
             }
-
-            .modal-content {
-                padding: 15px;
-            }
         }
     </style>
 </head>
@@ -1848,72 +1873,75 @@
     <div id="addModal" class="modal">
         <div class="modal-content">
             <div class="modal-header" id="modalTitle">Add New Item</div>
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" id="itemName" placeholder="Enter name">
-            </div>
-            <div class="form-group">
-                <label>Keywords</label>
-                <input type="text" id="itemKeywords" placeholder="e.g., docs, api, reference">
-            </div>
-            <div class="form-group" id="linkGroup">
-                <label>Link</label>
-                <input type="text" id="itemLink" placeholder="https://example.com">
-            </div>
-            <div class="form-group" id="timeGroup" style="display: none;">
-                <label>Time Duration</label>
-                <input type="text" id="itemTime" placeholder="e.g., 10 hours, 2 days, 48 hours">
-            </div>
-            <div class="form-group" id="pathGroup" style="display: none;">
-                <label>Navigation Path</label>
-                <input type="text" id="itemPath" placeholder="e.g., Home -> Profile -> Balance Details">
-                <small style="color: #6c757d; font-size: 0.85em; display: block; margin-top: 5px;">Use " -> " (space-arrow-space) to separate steps</small>
-            </div>
-
-            <!-- Scenario Description Field -->
-            <div class="form-group" id="descriptionGroup" style="display: none;">
-                <label>Description</label>
-                <textarea id="itemDescription" rows="8" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Describe the scenario...&#10;&#10;Include:&#10;- Issue/Request details&#10;- SLA requirements&#10;- Notes to consider"></textarea>
-            </div>
-
-            <!-- Scenario Tag Field -->
-            <div class="form-group" id="tagGroup" style="display: none;">
-                <label>Tag</label>
-                <select id="itemTag" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit;">
-                    <option value="inquiry">Inquiry</option>
-                    <option value="request">Request</option>
-                    <option value="complaint">Complaint</option>
-                </select>
-            </div>
             
-            <!-- CPR Fields for Bundles -->
-            <div id="cprFields" style="display: none;">
-                <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #e30613;">
-                    <div style="font-weight: 600; color: #e30613; margin-bottom: 12px;">📋 CPR Information</div>
-                    
-                    <div class="form-group">
-                        <label>Duration</label>
-                        <input type="text" id="cprDuration" placeholder="e.g., 28 days, 30 days, 12 months">
-                    </div>
-                    <div class="form-group">
-                        <label>Fees</label>
-                        <input type="text" id="cprFees" placeholder="e.g., AED 50, AED 199/month">
-                    </div>
-                    <div class="form-group">
-                        <label>Discounts</label>
-                        <input type="text" id="cprDiscounts" placeholder="e.g., 20% off for first 3 months">
-                    </div>
-                    <div class="form-group">
-                        <label>Bundle Allowance</label>
-                        <input type="text" id="cprAllowance" placeholder="e.g., Unlimited calls, 100GB data">
-                    </div>
-                    <div class="form-group">
-                        <label>Restrictions and Limitations</label>
-                        <input type="text" id="cprRestrictions" placeholder="e.g., Fair usage policy applies">
-                    </div>
-                    <div class="form-group">
-                        <label>Exit Charge</label>
-                        <input type="text" id="cprExitCharge" placeholder="e.g., AED 100 early termination fee">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="itemName" placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label>Keywords</label>
+                    <input type="text" id="itemKeywords" placeholder="e.g., docs, api, reference">
+                </div>
+                <div class="form-group" id="linkGroup">
+                    <label>Link</label>
+                    <input type="text" id="itemLink" placeholder="https://example.com">
+                </div>
+                <div class="form-group" id="timeGroup" style="display: none;">
+                    <label>Time Duration</label>
+                    <input type="text" id="itemTime" placeholder="e.g., 10 hours, 2 days, 48 hours">
+                </div>
+                <div class="form-group" id="pathGroup" style="display: none;">
+                    <label>Navigation Path</label>
+                    <input type="text" id="itemPath" placeholder="e.g., Home -> Profile -> Balance Details">
+                    <small style="color: #6c757d; font-size: 0.85em; display: block; margin-top: 5px;">Use " -> " (space-arrow-space) to separate steps</small>
+                </div>
+
+                <!-- Scenario Description Field -->
+                <div class="form-group" id="descriptionGroup" style="display: none;">
+                    <label>Description</label>
+                    <textarea id="itemDescription" rows="8" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Describe the scenario...&#10;&#10;Include:&#10;- Issue/Request details&#10;- SLA requirements&#10;- Notes to consider"></textarea>
+                </div>
+
+                <!-- Scenario Tag Field -->
+                <div class="form-group" id="tagGroup" style="display: none;">
+                    <label>Tag</label>
+                    <select id="itemTag" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                        <option value="inquiry">Inquiry</option>
+                        <option value="request">Request</option>
+                        <option value="complaint">Complaint</option>
+                    </select>
+                </div>
+                
+                <!-- CPR Fields for Bundles -->
+                <div id="cprFields" style="display: none;">
+                    <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #e30613;">
+                        <div style="font-weight: 600; color: #e30613; margin-bottom: 12px;">📋 CPR Information</div>
+                        
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" id="cprDuration" placeholder="e.g., 28 days, 30 days, 12 months">
+                        </div>
+                        <div class="form-group">
+                            <label>Fees</label>
+                            <input type="text" id="cprFees" placeholder="e.g., AED 50, AED 199/month">
+                        </div>
+                        <div class="form-group">
+                            <label>Discounts</label>
+                            <input type="text" id="cprDiscounts" placeholder="e.g., 20% off for first 3 months">
+                        </div>
+                        <div class="form-group">
+                            <label>Bundle Allowance</label>
+                            <input type="text" id="cprAllowance" placeholder="e.g., Unlimited calls, 100GB data">
+                        </div>
+                        <div class="form-group">
+                            <label>Restrictions and Limitations</label>
+                            <input type="text" id="cprRestrictions" placeholder="e.g., Fair usage policy applies">
+                        </div>
+                        <div class="form-group">
+                            <label>Exit Charge</label>
+                            <input type="text" id="cprExitCharge" placeholder="e.g., AED 100 early termination fee">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2296,27 +2324,47 @@
                     }
                 }
 
-                // If no bundles in DB, fetch from API ONCE and save
+                // Check if we need to fetch from API (only if database is empty)
                 if (data.bundles.length === 0) {
                     updateProgress(85, 'First time setup...', 'Fetching bundles from Etisalat API');
                     console.log('🌐 No bundles in database - fetching from API (one-time setup)...');
                     const apiBundles = await generateBundlesFromAPI();
                     
-                    // Save to Supabase if available
+                    // Save to Supabase if available (with duplicate prevention)
                     if (useSupabase) {
-                        updateProgress(90, 'Saving to database...', 'Storing bundles in Supabase');
+                        updateProgress(90, 'Saving to database...', 'Storing unique bundles in Supabase');
+                        let savedCount = 0;
+                        let duplicateCount = 0;
+                        
                         for (const bundle of apiBundles) {
-                            await db.create('bundles', bundle);
+                            try {
+                                // Use bundle.id as unique identifier
+                                const uniqueBundle = {
+                                    ...bundle,
+                                    unique_id: bundle.id // Store original ID for uniqueness check
+                                };
+                                await db.create('bundles', uniqueBundle);
+                                savedCount++;
+                            } catch (error) {
+                                // Skip if duplicate (unique constraint violation)
+                                if (error.message?.includes('duplicate') || error.code === '23505') {
+                                    duplicateCount++;
+                                    console.log(`⚠️ Skipped duplicate bundle: ${bundle.name}`);
+                                } else {
+                                    console.error('Error saving bundle:', error);
+                                }
+                            }
                         }
+                        
                         data.bundles = await db.getAll('bundles');
-                        console.log('💾 Bundles saved to Supabase (one-time import complete)');
+                        console.log(`💾 Saved ${savedCount} unique bundles to Supabase (${duplicateCount} duplicates skipped)`);
                     } else {
                         data.bundles = apiBundles;
                         saveData();
                         console.log('💾 Bundles saved to localStorage');
                     }
                 } else {
-                    console.log('✅ Loaded bundles from database (cached)');
+                    console.log(`✅ Loaded ${data.bundles.length} bundles from database (no API call needed)`);
                 }
 
                 updateProgress(100, 'Complete!', 'All data loaded');
@@ -2435,7 +2483,7 @@
                     return;
                 }
 
-                console.log('🔄 Refreshing current tab data...');
+                console.log('🔄 Reloading current tab from Supabase database (no API call)...');
                 
                 // Map current type to table name
                 const typeToTable = {
@@ -2448,7 +2496,7 @@
                 
                 const table = typeToTable[currentType];
                 if (table) {
-                    // Force refresh from Supabase (clear cache)
+                    // Force refresh from Supabase (clear local cache, reload from DB - NO API!)
                     const refreshedData = await db.refresh(table);
                     
                     // Update local data
@@ -2465,7 +2513,7 @@
                     }
                     
                     renderAll();
-                    console.log(`✅ ${currentType} refreshed from Supabase`);
+                    console.log(`✅ Reloaded ${refreshedData.length} ${currentType} from Supabase (cached in DB)`);
                 }
             } catch (error) {
                 console.error('❌ Error refreshing:', error);
@@ -2479,14 +2527,14 @@
 
         // OLD: Refresh bundles from API (force fetch)
         async function refreshBundles() {
-            if (!confirm('Refresh bundles from API? This will fetch the latest data from Etisalat and update the database.')) {
+            if (!confirm('🔄 Refresh bundles from API?\n\nThis will fetch the latest data from Etisalat and update the database.\n\nNote: This is the ONLY time data is fetched from the API.')) {
                 return;
             }
             
             try {
                 showLoading();
-                updateProgress(0, 'Refreshing...', 'Fetching latest bundles from API');
-                console.log('🔄 Refreshing bundles from API...');
+                updateProgress(0, 'Refreshing...', 'Fetching latest bundles from Etisalat API');
+                console.log('🔄 Refreshing bundles from API (user-initiated)...');
                 
                 const apiBundles = await generateBundlesFromAPI();
                 
@@ -2498,20 +2546,51 @@
                     
                     // Delete all existing bundles from database
                     const existingBundles = await db.getAll('bundles');
+                    console.log(`🗑️ Clearing ${existingBundles.length} old bundles from database...`);
+                    
                     for (const bundle of existingBundles) {
                         await db.delete('bundles', bundle.id);
                     }
-                    console.log('🗑️ Cleared old bundles from database');
+                    console.log('✅ Old bundles cleared');
                     
-                    updateProgress(90, 'Updating database...', 'Saving new bundles');
-                    // Save new bundles to database
+                    updateProgress(90, 'Updating database...', 'Saving new unique bundles');
+                    
+                    // Save new bundles to database (with duplicate prevention)
+                    let savedCount = 0;
+                    let duplicateCount = 0;
+                    
+                    // Remove duplicates from API response first
+                    const uniqueBundles = [];
+                    const seenIds = new Set();
+                    
                     for (const bundle of apiBundles) {
-                        await db.create('bundles', bundle);
+                        if (!seenIds.has(bundle.id)) {
+                            seenIds.add(bundle.id);
+                            uniqueBundles.push(bundle);
+                        } else {
+                            duplicateCount++;
+                        }
+                    }
+                    
+                    console.log(`📦 Processing ${uniqueBundles.length} unique bundles (${duplicateCount} duplicates removed from API response)`);
+                    
+                    // Save unique bundles to database
+                    for (const bundle of uniqueBundles) {
+                        try {
+                            const uniqueBundle = {
+                                ...bundle,
+                                unique_id: bundle.id
+                            };
+                            await db.create('bundles', uniqueBundle);
+                            savedCount++;
+                        } catch (error) {
+                            console.error(`Error saving bundle ${bundle.name}:`, error);
+                        }
                     }
                     
                     // Reload from database
                     data.bundles = await db.getAll('bundles');
-                    console.log('💾 Updated bundles saved to Supabase');
+                    console.log(`💾 Saved ${savedCount} unique bundles to Supabase`);
                 } else {
                     // Fallback to localStorage
                     data.bundles = apiBundles;
@@ -2525,7 +2604,7 @@
                 // Re-render the bundles tab
                 renderAll();
                 
-                alert(`✅ Successfully refreshed ${apiBundles.length} bundles from API and updated database!`);
+                alert(`✅ Successfully refreshed ${data.bundles.length} unique bundles from API!\n\nDatabase updated. All future loads will use cached data from Supabase.`);
             } catch (error) {
                 console.error('❌ Error refreshing bundles:', error);
                 alert('⚠️ Failed to refresh bundles. Please check console for details.');

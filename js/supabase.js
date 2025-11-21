@@ -19,24 +19,38 @@ class SupabaseManager {
     }
 
     init() {
-        if (typeof window.supabase === 'undefined') {
-            console.error('❌ Supabase library not loaded');
+        // Check if Supabase library is loaded
+        if (typeof window.supabase === 'undefined' || typeof window.supabase.createClient === 'undefined') {
+            console.error('❌ Supabase library not loaded. Make sure the CDN script is included before this file.');
+            console.error('Add: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>');
             return;
         }
 
+        // Check if credentials are configured
         if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) {
-            console.error('❌ Supabase credentials not configured');
+            console.error('❌ Supabase credentials not configured in js/config.js');
+            return;
+        }
+
+        // Validate credentials format
+        if (CONFIG.SUPABASE_URL.includes('your-project') || CONFIG.SUPABASE_ANON_KEY.includes('your-anon-key')) {
+            console.error('❌ Supabase credentials are placeholder values. Please update js/config.js with real credentials.');
             return;
         }
 
         try {
+            // Create Supabase client
             this.supabase = window.supabase.createClient(
                 CONFIG.SUPABASE_URL,
                 CONFIG.SUPABASE_ANON_KEY
             );
-            console.log('✅ Supabase initialized');
+            
+            console.log('✅ Supabase initialized successfully');
+            console.log('   URL:', CONFIG.SUPABASE_URL);
+            console.log('   Key:', CONFIG.SUPABASE_ANON_KEY.substring(0, 20) + '...');
         } catch (error) {
             console.error('❌ Failed to initialize Supabase:', error);
+            console.error('   Error details:', error.message);
         }
     }
 
@@ -100,6 +114,12 @@ class SupabaseManager {
 
     // ===== READ Operations =====
     async getAll(table) {
+        // Check if Supabase is initialized
+        if (!this.supabase) {
+            console.warn(`⚠️ Supabase not initialized - loading ${table} from localStorage`);
+            return this.loadFromLocalStorage(table) || [];
+        }
+
         // Check cache first
         if (this.isCacheValid(table)) {
             console.log(`📦 Loading ${table} from cache`);
@@ -120,20 +140,36 @@ class SupabaseManager {
                 .select('*')
                 .order('id', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                console.error(`❌ Supabase error fetching ${table}:`, error);
+                console.error('   Code:', error.code);
+                console.error('   Message:', error.message);
+                console.error('   Details:', error.details);
+                throw error;
+            }
 
+            console.log(`✅ Fetched ${data?.length || 0} items from ${table}`);
+            
             // Update cache
             this.updateCache(table, data || []);
             return data || [];
         } catch (error) {
             console.error(`❌ Error fetching ${table}:`, error);
             // Return cached or localStorage data as fallback
-            return this.loadFromLocalStorage(table) || [];
+            const fallback = this.loadFromLocalStorage(table) || [];
+            console.log(`   Returning ${fallback.length} items from fallback storage`);
+            return fallback;
         }
     }
 
     // ===== CREATE Operations =====
     async create(table, item) {
+        // Check if Supabase is initialized
+        if (!this.supabase) {
+            console.error(`❌ Supabase not initialized - cannot create ${table} item`);
+            throw new Error('Supabase not initialized');
+        }
+
         // If offline, queue for later sync
         if (!this.isOnline) {
             console.log(`📴 Offline - queuing ${table} create for sync`);
@@ -150,12 +186,23 @@ class SupabaseManager {
 
         try {
             console.log(`☁️ Creating ${table} item...`);
+            console.log('   Item data:', JSON.stringify(item, null, 2));
+            
             const { data, error } = await this.supabase
                 .from(table)
                 .insert([item])
                 .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error(`❌ Supabase error creating ${table}:`, error);
+                console.error('   Code:', error.code);
+                console.error('   Message:', error.message);
+                console.error('   Details:', error.details);
+                console.error('   Hint:', error.hint);
+                throw error;
+            }
+
+            console.log(`✅ ${table} saved to Supabase with ID:`, data[0]?.id);
 
             // Update cache
             const cached = this.cache[table].data || [];
@@ -171,6 +218,12 @@ class SupabaseManager {
 
     // ===== UPDATE Operations =====
     async update(table, id, updates) {
+        // Check if Supabase is initialized
+        if (!this.supabase) {
+            console.error(`❌ Supabase not initialized - cannot update ${table} item`);
+            throw new Error('Supabase not initialized');
+        }
+
         if (!this.isOnline) {
             console.log(`📴 Offline - queuing ${table} update for sync`);
             this.pendingSync.push({ action: 'update', table, id, updates });
@@ -187,13 +240,23 @@ class SupabaseManager {
 
         try {
             console.log(`☁️ Updating ${table} item ${id}...`);
+            console.log('   Updates:', JSON.stringify(updates, null, 2));
+
             const { data, error } = await this.supabase
                 .from(table)
                 .update(updates)
                 .eq('id', id)
                 .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error(`❌ Supabase error updating ${table}:`, error);
+                console.error('   Code:', error.code);
+                console.error('   Message:', error.message);
+                console.error('   Details:', error.details);
+                throw error;
+            }
+
+            console.log(`✅ ${table} item ${id} updated in Supabase`);
 
             // Update cache
             const cached = this.cache[table].data || [];
@@ -211,6 +274,12 @@ class SupabaseManager {
 
     // ===== DELETE Operations =====
     async delete(table, id) {
+        // Check if Supabase is initialized
+        if (!this.supabase) {
+            console.error(`❌ Supabase not initialized - cannot delete ${table} item`);
+            throw new Error('Supabase not initialized');
+        }
+
         if (!this.isOnline) {
             console.log(`📴 Offline - queuing ${table} delete for sync`);
             this.pendingSync.push({ action: 'delete', table, id });
@@ -230,7 +299,15 @@ class SupabaseManager {
                 .delete()
                 .eq('id', id);
 
-            if (error) throw error;
+            if (error) {
+                console.error(`❌ Supabase error deleting ${table}:`, error);
+                console.error('   Code:', error.code);
+                console.error('   Message:', error.message);
+                console.error('   Details:', error.details);
+                throw error;
+            }
+
+            console.log(`✅ ${table} item ${id} deleted from Supabase`);
 
             // Remove from cache
             const cached = this.cache[table].data || [];
