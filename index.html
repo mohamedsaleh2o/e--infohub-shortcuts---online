@@ -2,27 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#e30613">
     <title>Link Shortcuts Hub</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
+            background: #fafafa;
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior-y: contain; /* Disable pull-to-refresh on mobile */
         }
 
         .container {
             display: flex;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile browsers */
             overflow: hidden;
+        }
+
+        /* Safe area support for iOS notch/home indicator */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .sidebar-header {
+                padding-top: max(25px, env(safe-area-inset-top));
+            }
+
+            .main-content {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
         }
 
         .sidebar {
@@ -84,6 +104,54 @@
             font-size: 18px;
             width: 20px;
             text-align: center;
+        }
+
+        .sidebar-navigator {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .sidebar-navigator-title {
+            color: #ecf0f1;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .navigator-link {
+            display: block;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navigator-link:hover {
+            background: rgba(227, 6, 19, 0.2);
+            transform: translateX(4px);
+        }
+
+        .navigator-link-name {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .navigator-link-path {
+            font-size: 11px;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .sidebar-footer {
@@ -168,7 +236,10 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
         }
 
         button:hover {
@@ -178,7 +249,21 @@
         }
 
         button:active {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.98);
+            background: #b00410;
+        }
+
+        /* Mobile touch feedback */
+        @media (hover: none) {
+            button:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            
+            button:active {
+                transform: scale(0.96);
+                opacity: 0.9;
+            }
         }
 
         .bundle-grid {
@@ -540,38 +625,6 @@
             background: linear-gradient(135deg, #fff 0%, #ecf0f1 100%);
         }
 
-        .filter-chips {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-chip {
-            padding: 10px 20px;
-            background: #f8f9fa;
-            color: #495057;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-chip:hover {
-            background: #e9ecef;
-            border-color: #e30613;
-            transform: translateY(-1px);
-        }
-
-        .filter-chip.active {
-            background: #e30613;
-            color: white;
-            border-color: #e30613;
-            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
-        }
-
         .cpr-section {
             background: #f8f9fa;
             border-left: 4px solid #e30613;
@@ -872,167 +925,507 @@
             font-size: 16px;
         }
 
+        /* Mobile AppBar - Hidden on desktop */
+        .mobile-appbar {
+            display: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .fab-button {
+            display: none;
+        }
+
         /* Mobile Responsiveness */
+        /* Mobile-First Responsive Design - App-like Experience */
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+            body {
+                overflow-x: hidden;
             }
 
+            .container {
+                flex-direction: column;
+                height: 100dvh; /* Use dynamic viewport height for mobile */
+            }
+
+            /* Mobile AppBar */
             .sidebar {
                 width: 100%;
                 height: auto;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                max-width: 280px;
+                height: 100vh;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            /* Mobile AppBar - Always visible */
+            .mobile-appbar {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                padding: 12px 16px;
+                background: #e30613;
+                color: white;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 99;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                height: 56px;
+            }
+
+            .mobile-appbar-left {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .hamburger-btn {
+                background: transparent;
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 8px;
+                width: auto;
+                min-height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-appbar-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .refresh-btn {
+                background: transparent;
+                border: none;
+                color: white;
+                font-size: 22px;
+                cursor: pointer;
+                padding: 8px;
+                width: auto;
+                min-height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Overlay for sidebar */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 98;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
             }
 
             .sidebar-header {
-                padding: 20px 15px;
+                padding: 12px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
             }
 
             .sidebar-header img {
-                width: 50px;
-                height: 35px;
+                width: 40px;
+                height: 28px;
             }
 
             h1 {
-                font-size: 1.1em;
+                font-size: 1em;
+                margin: 0;
             }
 
+            /* Navigation Menu in Sidebar */
             .nav-menu {
-                padding: 10px 0;
+                padding: 20px 0;
                 display: flex;
-                flex-wrap: wrap;
-                flex-direction: row;
+                flex-direction: column;
                 max-height: none;
-                overflow-x: auto;
+                overflow-y: auto;
+                gap: 0;
+                background: #2c3e50;
             }
 
             .nav-item {
-                padding: 12px 15px;
-                flex: 0 0 auto;
-                border-left: none;
-                border-bottom: 4px solid transparent;
-                font-size: 14px;
+                padding: 15px 25px;
+                flex: none;
+                border-left: 4px solid transparent;
+                border-bottom: none;
+                font-size: 15px;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                justify-content: flex-start;
             }
 
             .nav-item.active {
-                border-left: none;
-                border-bottom-color: #e30613;
+                border-left-color: #e30613;
+                border-bottom: none;
+                background: rgba(227, 6, 19, 0.2);
+            }
+
+            .nav-icon {
+                font-size: 18px;
+            }
+
+            /* Show sidebar navigator in sidebar on mobile */
+            .sidebar-navigator {
+                display: block;
             }
 
             .sidebar-footer {
-                padding: 15px;
-                display: flex;
-                gap: 10px;
+                display: block;
             }
 
-            .btn-header {
-                margin-bottom: 0;
-            }
-
+            /* Main content takes remaining space - App-like background */
             .main-content {
-                height: calc(100vh - 300px);
+                flex: 1;
+                height: auto;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                background: #fafafa;
+                padding-top: 0; /* No padding, handled by tab-content */
             }
 
+            /* Hide content header on mobile - title not needed */
             .content-header {
-                padding: 20px 15px;
+                display: none;
             }
 
-            .content-header h2 {
-                font-size: 1.4em;
-            }
+            :root {
+    --appbar-height: 56px;
+    --searchbar-height: 90px;
+    --content-margin: 24px;
+}
 
             .tab-content {
-                padding: 15px;
-            }
+                padding-top: calc(var(--appbar-height) + var(--searchbar-height) + var(--content-margin));
+            }  
+            
 
+            /* Search bar - Fixed below appbar on mobile */
             .search-add {
                 flex-direction: column;
-                gap: 10px;
+                gap: 8px;
+                margin-bottom: 0;
+                padding: 12px 16px;
+                background: white;
+                position: fixed;
+                top: 56px; /* Below appbar */
+                left: 0;
+                right: 0;
+                z-index: 50;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            /* Hide refresh button in search-add */
+            .search-add button:first-of-type {
+                display: none;
+            }
+
+            /* Hide add button in search-add (will use FAB) */
+            .search-add button:last-child {
+                display: none;
             }
 
             input[type="text"] {
                 width: 100%;
+                padding: 12px 16px;
+                font-size: 15px;
+                border-radius: 10px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             }
 
             button {
                 width: 100%;
-                padding: 12px 20px;
+                padding: 14px 20px;
+                font-size: 14px;
+                border-radius: 10px;
+                font-weight: 600;
             }
 
+            /* Card Grid - Single column with margins */
             .bundle-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
+                display: block;
+                margin-top: 110px;
+                padding: 16px; /* Add padding on all sides */
             }
 
             .bundle-card {
-                padding: 15px;
+                padding: 18px;
+                border-radius: 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                margin-bottom: 16px;
+                background: white;
+                display: block;
             }
 
+            .bundle-name {
+                font-size: 1.1em;
+            }
+
+            .bundle-price {
+                font-size: 1.6em;
+            }
+
+            .bundle-subtitle {
+                font-size: 0.9em;
+            }
+
+            .bundle-keywords {
+                font-size: 0.85em;
+            }
+
+            /* Action buttons stack on mobile */
             .bundle-actions {
-                flex-direction: column;
+                flex-direction: row;
+                gap: 8px;
+                flex-wrap: wrap;
             }
 
             .bundle-actions button {
-                width: 100%;
+                flex: 1;
+                min-width: calc(50% - 4px);
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            /* CPR Section - Mobile optimized */
+            .cpr-section {
+                margin-top: 12px;
+            }
+
+            .cpr-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 0;
+                gap: 4px;
             }
 
             .cpr-label {
-                min-width: 100px;
-                font-size: 0.8em;
+                min-width: auto;
+                font-size: 0.75em;
+                font-weight: 600;
+                color: #666;
             }
 
             .cpr-value {
-                font-size: 0.8em;
+                font-size: 0.85em;
+                padding-left: 0;
             }
 
+            .cpr-toggle {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            /* Navigation path */
             .nav-path {
-                font-size: 0.85em;
-                padding: 12px 15px;
+                font-size: 0.8em;
+                padding: 10px 12px;
+                overflow-x: auto;
+                white-space: nowrap;
             }
 
             .nav-path .nav-step {
-                font-size: 0.85em;
+                font-size: 0.8em;
             }
 
             .nav-path .nav-arrow {
                 margin: 0 4px;
             }
 
+            /* Modal - Full screen on mobile */
+            .modal {
+                padding: 0;
+            }
+
             .modal-content {
-                width: 95%;
-                padding: 20px;
-                max-height: 90vh;
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+                padding: 0;
                 overflow-y: auto;
             }
 
             .modal-header {
                 font-size: 1.2em;
+                padding: 16px;
+                position: sticky;
+                top: 0;
+                background: white;
+                z-index: 10;
+                border-bottom: 1px solid #eee;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            .modal-footer {
+                padding: 16px;
+                position: sticky;
+                bottom: 0;
+                background: white;
+                border-top: 1px solid #eee;
             }
 
             .form-group {
-                margin-bottom: 15px;
+                margin-bottom: 16px;
             }
 
+            /* Details Modal - Full screen */
             .details-content {
                 width: 100%;
-                height: 95vh;
+                height: 100vh;
+                border-radius: 0;
             }
 
             .details-header {
-                padding: 15px 20px;
-                flex-wrap: wrap;
-                gap: 10px;
+                padding: 12px 16px;
+                flex-wrap: nowrap;
+                gap: 12px;
             }
 
             .details-title {
-                font-size: 1.1em;
+                font-size: 1em;
                 flex: 1;
-                min-width: 200px;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .btn-close-details {
-                padding: 8px 15px;
+                padding: 8px 16px;
                 font-size: 13px;
+                flex-shrink: 0;
+            }
+
+            /* Profile Modal - Full screen with smooth scroll */
+            .bundle-profile-modal {
+                padding: 0;
+            }
+
+            .bundle-profile-content {
+                width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .bundle-profile-header {
+                padding: 20px 16px;
+            }
+
+            .bundle-profile-title {
+                font-size: 1.4em;
+            }
+
+            .bundle-profile-price {
+                font-size: 2em;
+            }
+
+            .bundle-profile-body {
+                padding: 16px;
+            }
+
+            .profile-section {
+                margin-bottom: 20px;
+            }
+
+            .profile-section-title {
+                font-size: 1.1em;
+            }
+
+            .profile-info-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            /* Loading overlay */
+            .loading-overlay {
+                padding: 20px;
+            }
+
+            .progress-container {
+                max-width: 100%;
+                padding: 0 16px;
+            }
+
+            /* Discount badge */
+            .discount-badge {
+                top: 8px;
+                right: 8px;
+                padding: 4px 10px;
+                font-size: 0.75em;
+            }
+
+            /* Touch-friendly tap targets */
+            button, .btn, .nav-item {
+                min-height: 44px; /* Apple's recommended touch target */
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            }
+
+            /* Floating Action Button (FAB) */
+            .fab-button {
+                display: flex !important;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #e30613;
+                color: white;
+                border: none;
+                font-size: 24px;
+                box-shadow: 0 4px 16px rgba(227, 6, 19, 0.4);
+                z-index: 90;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                min-height: 56px;
+            }
+
+            .fab-button:active {
+                transform: scale(0.9);
+            }
+
+            /* Smooth scrolling for mobile */
+            * {
+                -webkit-overflow-scrolling: touch;
             }
         }
 
@@ -1055,46 +1448,159 @@
             }
         }
 
-        /* Small mobile devices */
-        @media (max-width: 480px) {
+        /* Landscape mode on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .sidebar-header {
+                padding: 8px 12px;
+            }
+
             .sidebar-header img {
-                width: 45px;
-                height: 30px;
+                width: 32px;
+                height: 22px;
             }
 
             h1 {
-                font-size: 1em;
+                font-size: 0.85em;
+            }
+
+            .nav-menu {
+                padding: 0;
             }
 
             .nav-item {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-
-            .nav-icon {
-                font-size: 16px;
-            }
-
-            .content-header h2 {
-                font-size: 1.2em;
-            }
-
-            .filter-chips {
-                gap: 8px;
-                margin-bottom: 15px;
-            }
-
-            .filter-chip {
                 padding: 8px 16px;
                 font-size: 12px;
             }
 
-            .bundle-name {
-                font-size: 1.1em;
+            .content-header {
+                padding: 10px 12px;
             }
 
-            .bundle-price {
-                font-size: 1.5em;
+            .tab-content {
+                padding: 10px;
+            }
+
+            .bundle-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .bundle-card {
+                padding: 12px;
+            }
+
+            .bundle-profile-content {
+                height: 100vh;
+            }
+
+            .bundle-profile-header {
+                padding: 16px;
+            }
+
+            .bundle-profile-body {
+                padding: 12px;
+            }
+
+            .profile-info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Small mobile devices - Extra compact */
+        @media (max-width: 480px) {
+            .sidebar-header {
+                padding: 10px 12px;
+            }
+
+            .sidebar-header img {
+                width: 35px;
+                height: 24px;
+            }
+
+            h1 {
+                font-size: 0.9em;
+            }
+
+            .nav-item {
+                padding: 10px 16px;
+                font-size: 12px;
+                gap: 4px;
+            }
+
+            .nav-icon {
+                font-size: 14px;
+            }
+
+            .content-header {
+                padding: 12px;
+            }
+
+            .content-header h2 {
+                font-size: 1.15em;
+            }
+
+            .tab-content {
+                padding: 10px;
+            }
+
+            input[type="text"] {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .bundle-card {
+                padding: 14px;
+            }
+
+            .bundle-name {
+                font-size: 1em;
+            }
+
+            .bundle-price, .discounted-price {
+                font-size: 1.4em;
+            }
+
+            .bundle-subtitle {
+                font-size: 0.85em;
+            }
+
+            .bundle-actions button {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .discount-badge {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+
+            .bundle-profile-title {
+                font-size: 1.2em;
+            }
+
+            .bundle-profile-price {
+                font-size: 1.8em;
+            }
+
+            .bundle-profile-subtitle {
+                font-size: 0.95em;
+            }
+
+            .profile-section-title {
+                font-size: 1em;
+            }
+
+            .profile-info-label {
+                font-size: 0.8em;
+            }
+
+            .profile-info-value {
+                font-size: 0.9em;
             }
 
             .bundle-subtitle {
@@ -1145,9 +1651,21 @@
     </style>
 </head>
 <body>
+    <!-- Mobile AppBar -->
+    <div class="mobile-appbar">
+        <div class="mobile-appbar-left">
+            <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+            <div class="mobile-appbar-title">Bundles</div>
+        </div>
+        <button class="refresh-btn" onclick="refreshBundles()">🔄</button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <div class="container">
         <!-- Sidebar Navigation -->
-        <div class="sidebar">
+        <div class="sidebar" id="mobileSidebar">
             <div class="sidebar-header">
                 <img width="60px" height="40" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png"/>
                 <h1>Link Shortcuts Hub</h1>
@@ -1174,13 +1692,14 @@
                     <span class="nav-icon">🧭</span>
                     <span>Navigator</span>
                 </div>
+                <div class="nav-item" onclick="switchTab('scenarios')">
+                    <span class="nav-icon">📝</span>
+                    <span>Scenarios</span>
+                </div>
             </div>
 
             <div class="sidebar-footer">
                 <button class="btn-header" onclick="refreshBundles()">🔄 Refresh Bundles</button>
-                <button class="btn-header" onclick="exportData()">📥 Export Data</button>
-                <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
-                <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(event)">
             </div>
         </div>
 
@@ -1195,13 +1714,6 @@
                     <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
                     <button onclick="refreshBundles()" style="background: #28a745; margin-right: 10px;">🔄 Refresh from API</button>
                     <button onclick="openAddModal('bundle')">+ Add Bundle</button>
-                </div>
-                <div class="filter-chips">
-                    <button class="filter-chip active" onclick="filterByCategory('all')">All Plans</button>
-                    <button class="filter-chip" onclick="filterByCategory('Freedom Live')">Freedom Live</button>
-                    <button class="filter-chip" onclick="filterByCategory('New Freedom')">New Freedom</button>
-                    <button class="filter-chip" onclick="filterByCategory('Non-stop')">Non-stop</button>
-                    <button class="filter-chip" onclick="filterByCategory('Emirati Freedom')">Emirati Freedom</button>
                 </div>
                 <div id="bundlesList" class="bundle-grid"></div>
             </div>
@@ -1232,13 +1744,24 @@
 
             <div id="navigator" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchNavigator" placeholder="Search Navigator by name or keywords..." onkeyup="filterNavigator()">
+                    <input type="text" id="searchNavigator" placeholder="Search navigator by name or keywords..." onkeyup="filterNavigator()">
                     <button onclick="openAddModal('navigator')">+ Add Navigator</button>
                 </div>
                 <div id="navigatorList" class="bundle-grid"></div>
             </div>
+
+            <div id="scenarios" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchScenarios" placeholder="Search scenarios by title..." onkeyup="filterScenarios()">
+                    <button onclick="openAddModal('scenario')">+ Add Scenario</button>
+                </div>
+                <div id="scenariosList" class="bundle-grid"></div>
+            </div>
         </div>
     </div>
+
+    <!-- Floating Action Button (FAB) -->
+    <button class="fab-button" onclick="openAddModal('bundle')" title="Add Bundle">+</button>
 
     <div id="addModal" class="modal">
         <div class="modal-content">
@@ -1263,6 +1786,12 @@
                 <label>Navigation Path</label>
                 <input type="text" id="itemPath" placeholder="e.g., Home -> Profile -> Balance Details">
                 <small style="color: #6c757d; font-size: 0.85em; display: block; margin-top: 5px;">Use " -> " (space-arrow-space) to separate steps</small>
+            </div>
+
+            <!-- Scenario Description Field -->
+            <div class="form-group" id="descriptionGroup" style="display: none;">
+                <label>Description / Call Notes</label>
+                <textarea id="itemDescription" rows="8" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Write your call scenario notes here...&#10;&#10;Example:&#10;- Customer called about billing issue&#10;- Explained the charges breakdown&#10;- Offered discount on next cycle&#10;- Customer satisfied and accepted"></textarea>
             </div>
             
             <!-- CPR Fields for Bundles -->
@@ -1348,10 +1877,10 @@
             addons: [],
             devicec: [],
             sla: [],
-            navigator: []
+            navigator: [],
+            scenarios: []
         };
         let currentType = 'bundle';
-        let selectedCategory = 'all';
         let allBundles = [];
 
         // Product IDs to fetch from API
@@ -1703,6 +2232,20 @@
             }
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
         function switchTab(tab) {
             document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1716,9 +2259,19 @@
                 'addons': 'Addons',
                 'devicec': 'Device Care',
                 'sla': 'SLA',
-                'navigator': 'Navigator'
+                'navigator': 'Navigator',
+                'scenarios': 'Call Scenarios'
             };
             document.getElementById('contentTitle').textContent = titles[tab] || tab;
+            
+            // Update mobile appbar title
+            const appbarTitle = document.querySelector('.mobile-appbar-title');
+            if (appbarTitle) {
+                appbarTitle.textContent = titles[tab] || tab;
+            }
+            
+            // Close sidebar on mobile after selection
+            closeSidebar();
         }
 
         function openAddModal(type) {
@@ -1729,6 +2282,7 @@
             document.getElementById('itemLink').value = '';
             document.getElementById('itemTime').value = '';
             document.getElementById('itemPath').value = '';
+            document.getElementById('itemDescription').value = '';
             
             // Clear CPR fields
             document.getElementById('cprDuration').value = '';
@@ -1743,6 +2297,7 @@
             const linkGroup = document.getElementById('linkGroup');
             const timeGroup = document.getElementById('timeGroup');
             const pathGroup = document.getElementById('pathGroup');
+            const descriptionGroup = document.getElementById('descriptionGroup');
             const cprFields = document.getElementById('cprFields');
             
             if (type === 'sla') {
@@ -1750,24 +2305,36 @@
                 linkGroup.style.display = 'none';
                 timeGroup.style.display = 'block';
                 pathGroup.style.display = 'none';
+                descriptionGroup.style.display = 'none';
                 cprFields.style.display = 'none';
             } else if (type === 'navigator') {
                 modalTitle.textContent = 'Add New Navigation Guide';
                 linkGroup.style.display = 'none';
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'block';
+                descriptionGroup.style.display = 'none';
                 cprFields.style.display = 'none';
+            } else if (type === 'scenario') {
+                modalTitle.textContent = 'Add New Call Scenario';
+                linkGroup.style.display = 'none';
+                timeGroup.style.display = 'none';
+                pathGroup.style.display = 'none';
+                descriptionGroup.style.display = 'block';
+                cprFields.style.display = 'none';
+                document.getElementById('itemName').placeholder = 'Enter scenario title...';
             } else if (type === 'bundle') {
                 modalTitle.textContent = 'Add New Bundle';
                 linkGroup.style.display = 'block';
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
+                descriptionGroup.style.display = 'none';
                 cprFields.style.display = 'block';
             } else if (type === 'addon') {
                 modalTitle.textContent = 'Add New Addon';
                 linkGroup.style.display = 'block';
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
+                descriptionGroup.style.display = 'none';
                 cprFields.style.display = 'block';
             } else {
                 const typeNames = {
@@ -1777,6 +2344,7 @@
                 linkGroup.style.display = 'block';
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
+                descriptionGroup.style.display = 'none';
                 cprFields.style.display = 'none';
             }
             
@@ -1820,6 +2388,21 @@
                     name,
                     keywords,
                     path
+                };
+            } else if (currentType === 'scenario') {
+                const description = document.getElementById('itemDescription').value.trim();
+                
+                if (!name) {
+                    alert('Please fill in the scenario title');
+                    return;
+                }
+                
+                item = {
+                    id: Date.now(),
+                    title: name,
+                    keywords,
+                    description,
+                    timestamp: new Date().toISOString()
                 };
             } else {
                 const link = document.getElementById('itemLink').value.trim();
@@ -1870,6 +2453,8 @@
                 data.sla.push(item);
             } else if (currentType === 'navigator') {
                 data.navigator.push(item);
+            } else if (currentType === 'scenario') {
+                data.scenarios.push(item);
             }
 
             saveData();
@@ -1898,6 +2483,8 @@
                 data.sla = data.sla.filter(item => item.id != id);
             } else if (type === 'navigator') {
                 data.navigator = data.navigator.filter(item => item.id != id);
+            } else if (type === 'scenario') {
+                data.scenarios = data.scenarios.filter(item => item.id != id);
             }
 
             saveData();
@@ -2101,6 +2688,19 @@
             }
         }
 
+        function toggleScenarioDescription(itemId) {
+            const descContent = document.getElementById('scenario-desc-' + itemId);
+            const button = event.target;
+            
+            if (descContent.style.display === 'none') {
+                descContent.style.display = 'block';
+                button.textContent = 'Hide Description';
+            } else {
+                descContent.style.display = 'none';
+                button.textContent = 'Show Description';
+            }
+        }
+
         function renderItems(items, containerId, type) {
             const container = document.getElementById(containerId);
             
@@ -2142,6 +2742,29 @@
                             <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
                             <div class="nav-path">${pathHTML || 'No path set'}</div>
                             <div class="bundle-actions">
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else if (type === 'scenario') {
+                // Scenario items with title and expandable description
+                container.innerHTML = items.map(item => {
+                    const timestamp = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown';
+                    const hasDescription = item.description && item.description.trim();
+                    
+                    return `
+                        <div class="bundle-card scenario-card">
+                            <div class="bundle-name">📝 ${escapeHtml(item.title)}</div>
+                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                            <div class="sla-time">🕐 ${timestamp}</div>
+                            ${hasDescription ? `
+                                <div class="scenario-description" id="scenario-desc-${item.id}" style="display: none; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; white-space: pre-wrap; color: #495057;">
+                                    ${escapeHtml(item.description)}
+                                </div>
+                                <button class="cpr-toggle" onclick="toggleScenarioDescription('${item.id}')" style="margin-top: 10px;">Show Description</button>
+                            ` : '<div style="font-size: 0.9em; color: #999; margin-top: 5px;">No description</div>'}
+                            <div class="bundle-actions" style="margin-top: 10px;">
                                 <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
                             </div>
                         </div>
@@ -2264,34 +2887,16 @@
             return div.innerHTML;
         }
 
-        function filterByCategory(category) {
-            selectedCategory = category;
-            
-            // Update active chip
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Apply filter
-            filterBundles();
-        }
-
         function filterBundles() {
             const search = document.getElementById('searchBundles').value.toLowerCase();
             let filtered = data.bundles.filter(item => {
-                // Category filter
-                const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-                
-                // Search filter
-                const matchesSearch = !search || 
+                // Search filter only (no category filter)
+                return !search || 
                     item.name.toLowerCase().includes(search) || 
                     (item.keywords && item.keywords.toLowerCase().includes(search));
-                
-                return matchesCategory && matchesSearch;
             });
             
-            console.log(`🔍 Filtering bundles: ${filtered.length} of ${data.bundles.length} bundles match (category: ${selectedCategory}, search: "${search}")`);
+            console.log(`🔍 Filtering bundles: ${filtered.length} of ${data.bundles.length} bundles match (search: "${search}")`);
             renderItems(filtered, 'bundlesList', 'bundle');
         }
 
@@ -2331,15 +2936,50 @@
             renderItems(filtered, 'navigatorList', 'navigator');
         }
 
+        function filterScenarios() {
+            const search = document.getElementById('searchScenarios').value.toLowerCase();
+            const filtered = data.scenarios.filter(item => 
+                item.title.toLowerCase().includes(search) || 
+                (item.keywords && item.keywords.toLowerCase().includes(search)) ||
+                (item.description && item.description.toLowerCase().includes(search))
+            );
+            renderItems(filtered, 'scenariosList', 'scenario');
+        }
+
         function renderAll() {
             console.log('🎨 Rendering all tabs...');
-            console.log(`📊 Data counts: Bundles=${data.bundles.length}, Addons=${data.addons.length}, DeviceC=${data.devicec.length}, SLA=${data.sla.length}, Navigator=${data.navigator.length}`);
+            console.log(`📊 Data counts: Bundles=${data.bundles.length}, Addons=${data.addons.length}, DeviceC=${data.devicec.length}, SLA=${data.sla.length}, Navigator=${data.navigator.length}, Scenarios=${data.scenarios.length}`);
             
-            filterBundles(); // Use filter function to respect category selection
+            filterBundles();
             filterAddons();
             filterDeviceC();
             filterSLA();
             filterNavigator();
+            filterScenarios();
+        }
+
+        // Render Navigator in Sidebar
+        function renderNavigatorSidebar() {
+            const container = document.getElementById('navigatorSidebarList');
+            if (!container) return;
+
+            if (!data.navigator || data.navigator.length === 0) {
+                container.innerHTML = '<div style="color: rgba(255,255,255,0.5); font-size: 12px; padding: 8px;">No navigator items</div>';
+                return;
+            }
+
+            container.innerHTML = data.navigator.map(item => {
+                // Parse path to show hierarchy
+                const pathParts = item.path ? item.path.split(' > ') : [];
+                const pathText = pathParts.slice(0, 3).join(' › ');
+                
+                return `
+                    <a href="${escapeHtml(item.link)}" target="_blank" class="navigator-link" title="${escapeHtml(item.name)}">
+                        <span class="navigator-link-name">${escapeHtml(item.name)}</span>
+                        ${pathText ? `<span class="navigator-link-path">${escapeHtml(pathText)}</span>` : ''}
+                    </a>
+                `;
+            }).join('');
         }
 
         // Export data to JSON file
