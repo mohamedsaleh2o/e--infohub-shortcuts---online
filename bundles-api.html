@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freedom Plans - e& UAE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E60028 0%, #B8001F 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #E60028;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            padding: 50px;
+        }
+
+        .error {
+            text-align: center;
+            color: white;
+            background: rgba(255, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .bundles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .bundle-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bundle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .bundle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #E60028, #B8001F);
+        }
+
+        .bundle-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .bundle-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .bundle-price {
+            font-size: 2.2em;
+            color: #E60028;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bundle-price small {
+            font-size: 0.5em;
+            color: #666;
+        }
+
+        .bundle-subtitle {
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 8px;
+        }
+
+        .cpr-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: background 0.3s ease;
+        }
+
+        .cpr-toggle:hover {
+            background: #e9ecef;
+        }
+
+        .cpr-toggle span {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .cpr-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .cpr-details.open {
+            max-height: 2000px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #E60028;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .detail-value {
+            color: #212529;
+            line-height: 1.6;
+        }
+
+        .view-details-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #E60028, #B8001F);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .view-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 0, 40, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #E60028, #B8001F);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            color: #E60028;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .api-info {
+            background: rgba(230, 0, 40, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #E60028;
+        }
+
+        .api-info h3 {
+            color: #E60028;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .bundles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .modal-content {
+                margin: 10px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-container {
+                gap: 8px;
+            }
+
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 e& Freedom Plans</h1>
+            <p class="subtitle">Full-Time Data Connectivity</p>
+            
+            <div class="api-info">
+                <h3>📡 Live API Integration</h3>
+                <p>Data fetched from: <code>etisalat.ae/graphql</code></p>
+                <p id="apiStatus">Status: Loading...</p>
+            </div>
+
+            <div class="tabs-container">
+                <button class="tab-btn active" onclick="switchTab('all')">All Plans</button>
+                <button class="tab-btn" onclick="switchTab('Freedom Live')">Freedom Live</button>
+                <button class="tab-btn" onclick="switchTab('New Freedom')">New Freedom</button>
+                <button class="tab-btn" onclick="switchTab('Non-stop')">Non-stop</button>
+                <button class="tab-btn" onclick="switchTab('Emirati Freedom')">Emirati Freedom</button>
+            </div>
+        </header>
+
+        <div id="loading" class="loading">🔄 Loading bundles from API...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="bundles" class="bundles-grid"></div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <h2 id="modalTitle"></h2>
+                <p id="modalPrice"></p>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://www.etisalat.ae/graphql/execute.json/etisalat/nwt-consumer-generic;fragmentpath=/content/dam/cfm-etisalat/bau-consumer/mobile/postpaid-simplification/endless-data/main;variation=master';
+        
+        let allBundles = [];
+        let selectedCategory = 'all';
+        let apiData = null;
+
+        // Plans data structure from FAQ (as fallback/supplement)
+        const plansData = {
+            'Freedom Live': [125, 150, 225, 250, 375, 425, 650, 750, 1250, 1350],
+            'New Freedom': [125, 150, 200, 225, 260, 300, 325, 375, 500, 600, 700, 1200, 1300],
+            'Non-stop': [250, 275, 325, 375, 500, 600],
+            'Emirati Freedom': [250, 275, 400, 450, 750, 850, 1500, 1600]
+        };
+
+        const planDetails = {
+            125: { data: '10GB', minutes: '300 Flexi', roaming: '0GB', commitment: '12 months' },
+            150: { data: '15GB', minutes: '500 Flexi', roaming: '0GB', commitment: '12 months' },
+            200: { data: '13GB', minutes: '400 Flexi', roaming: '0GB', commitment: '12 months' },
+            225: { data: '20GB', minutes: '700 Flexi', roaming: '1GB', commitment: '12 months' },
+            250: { data: '25GB', minutes: '1000 Flexi', roaming: '5GB', commitment: '12 months' },
+            260: { data: '26GB', minutes: '800 Flexi', roaming: '2GB', commitment: '12 months' },
+            275: { data: 'Unlimited', minutes: '900 Flexi', roaming: '1GB', commitment: '12 months' },
+            300: { data: '30GB', minutes: '1000 Flexi', roaming: '3GB', commitment: '12 months' },
+            325: { data: '27GB or Unlimited', minutes: 'Unlimited Local', roaming: '5GB', commitment: '12 months' },
+            375: { data: '40GB', minutes: 'Unlimited Local', roaming: '7GB', commitment: '12 months' },
+            400: { data: '40GB', minutes: 'Unlimited', roaming: '10GB', commitment: '12 months' },
+            425: { data: '50GB', minutes: 'Unlimited', roaming: '10GB', commitment: '12 months' },
+            450: { data: '45GB', minutes: 'Unlimited', roaming: '12GB', commitment: '12 months' },
+            500: { data: 'Unlimited', minutes: '1500 Flexi', roaming: '10GB', commitment: '12 months' },
+            600: { data: 'Unlimited', minutes: 'Unlimited', roaming: '15GB', commitment: '12 months' },
+            650: { data: '80GB', minutes: 'Unlimited', roaming: '20GB', commitment: '12 months' },
+            700: { data: 'Unlimited', minutes: 'Unlimited', roaming: '20GB', commitment: '12 months' },
+            750: { data: '100GB', minutes: 'Unlimited', roaming: '30GB', commitment: '12 months' },
+            850: { data: '120GB', minutes: 'Unlimited', roaming: '35GB', commitment: '12 months' },
+            1200: { data: 'Unlimited', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' },
+            1250: { data: '150GB', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' },
+            1300: { data: 'Unlimited', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' },
+            1350: { data: '200GB', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' },
+            1500: { data: 'Unlimited', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' },
+            1600: { data: 'Unlimited', minutes: 'Unlimited', roaming: '40GB', commitment: '12 months' }
+        };
+
+        // Fetch data from API
+        async function fetchAPIData() {
+            try {
+                console.log('📡 Fetching data from API...');
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                apiData = await response.json();
+                console.log('✅ API data received:', apiData);
+                
+                document.getElementById('apiStatus').innerHTML = '✅ Status: <span style="color: #28a745;">Connected</span>';
+                
+                return apiData;
+            } catch (error) {
+                console.error('❌ API fetch error:', error);
+                document.getElementById('apiStatus').innerHTML = '⚠️ Status: <span style="color: #ffc107;">Using fallback data</span>';
+                document.getElementById('error').textContent = 'Using local plan data (API temporarily unavailable)';
+                document.getElementById('error').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('error').style.display = 'none';
+                }, 5000);
+                return null;
+            }
+        }
+
+        // Extract CPR info from API data
+        function extractCPRFromAPI(apiData) {
+            if (!apiData) return null;
+            
+            const cprInfo = {
+                exitCharges: null,
+                outOfBundleCharges: null,
+                documents: null,
+                roamingBenefits: null,
+                discounts: null,
+                starzplayOffer: null
+            };
+
+            try {
+                const mainSection = apiData.data?.nwtConsumerGenericModulesByPath?.item?.consumerMainSection || [];
+                
+                mainSection.forEach(section => {
+                    // Extract offers from category banner
+                    if (section.componentName && section.componentName.includes('category-banner')) {
+                        section.genericInfoSection?.forEach(info => {
+                            if (info.heading && info.heading.includes('STARZPLAY')) {
+                                cprInfo.starzplayOffer = info.heading;
+                            }
+                            if (info.heading && info.heading.includes('50%')) {
+                                cprInfo.discounts = parseDiscountInfo(info.popupInfo);
+                            }
+                        });
+                    }
+                    
+                    // Extract Important to Know section
+                    if (section.componentName && section.componentName.includes('important-to-know')) {
+                        section.genericInfoSection?.forEach(info => {
+                            // Extract exit charges
+                            if (info.heading === 'Plan Exit Charges') {
+                                cprInfo.exitCharges = parseExitCharges(info.popupInfo);
+                            }
+                            
+                            // Extract out of bundle charges
+                            if (info.heading === 'Out of Bundle Charges') {
+                                cprInfo.outOfBundleCharges = parseOutOfBundleCharges(info.popupInfo);
+                            }
+                            
+                            // Extract necessary documents
+                            if (info.heading === 'Necessary Documents') {
+                                cprInfo.documents = parseDocuments(info.popupInfo);
+                            }
+                        });
+                    }
+                });
+                
+                console.log('📊 Extracted CPR Info:', cprInfo);
+            } catch (error) {
+                console.error('Error extracting CPR from API:', error);
+            }
+
+            return cprInfo;
+        }
+        
+        function parseDiscountInfo(popupInfo) {
+            if (!popupInfo) return null;
+            try {
+                const description = popupInfo.popupSection?.[0]?.description?.json;
+                if (!description) return null;
+                
+                let discountText = '';
+                description.forEach(node => {
+                    if (node.nodeType === 'paragraph') {
+                        const text = extractTextFromNode(node);
+                        if (text) discountText += text + ' ';
+                    }
+                    if (node.nodeType === 'unordered-list') {
+                        const plans = extractListItems(node);
+                        if (plans.length > 0) {
+                            discountText += '\nEligible Plans: ' + plans.join(', ');
+                        }
+                    }
+                });
+                return discountText.trim() || null;
+            } catch (error) {
+                console.error('Error parsing discount info:', error);
+                return null;
+            }
+        }
+        
+        function parseExitCharges(popupInfo) {
+            if (!popupInfo) return null;
+            try {
+                const description = popupInfo.popupSection?.[0]?.description?.json;
+                if (!description) return null;
+                
+                let exitText = '';
+                description.forEach(node => {
+                    if (node.nodeType === 'paragraph') {
+                        const text = extractTextFromNode(node);
+                        if (text && !text.includes('----')) {
+                            exitText += text + '\n';
+                        }
+                    }
+                    if (node.nodeType === 'ordered-list') {
+                        const items = extractListItems(node);
+                        items.forEach((item, idx) => {
+                            exitText += `${idx + 1}. ${item}\n`;
+                        });
+                    }
+                });
+                return exitText.trim() || null;
+            } catch (error) {
+                console.error('Error parsing exit charges:', error);
+                return null;
+            }
+        }
+        
+        function parseOutOfBundleCharges(popupInfo) {
+            if (!popupInfo) return null;
+            try {
+                const description = popupInfo.popupSection?.[0]?.description?.json;
+                if (!description) return null;
+                
+                const charges = {
+                    calls: { local: null, international: null },
+                    sms: { local: null, international: null },
+                    mms: { local: null, international: null },
+                    videoCalls: { local: null, international: null },
+                    data: null
+                };
+                
+                description.forEach(node => {
+                    if (node.nodeType === 'table') {
+                        const rows = node.content?.[1]?.content || [];
+                        rows.forEach(row => {
+                            const cells = row.content || [];
+                            if (cells.length >= 2) {
+                                const service = extractTextFromNode(cells[0]).toLowerCase();
+                                const chargeText = extractTextFromNode(cells[1]);
+                                
+                                if (service.includes('call') && !service.includes('video')) {
+                                    const parts = chargeText.split('International:');
+                                    charges.calls.local = parts[0].replace('Local:', '').trim();
+                                    charges.calls.international = parts[1]?.trim() || 'As per standard rates';
+                                } else if (service.includes('sms')) {
+                                    const parts = chargeText.split('International:');
+                                    charges.sms.local = parts[0].replace('Local:', '').trim();
+                                    charges.sms.international = parts[1]?.trim() || 'AED 0.63/SMS';
+                                } else if (service.includes('mms')) {
+                                    const parts = chargeText.split('International:');
+                                    charges.mms.local = parts[0].replace('Local:', '').trim();
+                                    charges.mms.international = parts[1]?.trim() || 'AED 1.89/50KB';
+                                } else if (service.includes('video')) {
+                                    const parts = chargeText.split('International:');
+                                    charges.videoCalls.local = parts[0].replace('Local:', '').trim();
+                                    charges.videoCalls.international = parts[1]?.trim() || 'As per operator rates';
+                                }
+                            }
+                        });
+                    }
+                    if (node.nodeType === 'paragraph') {
+                        const text = extractTextFromNode(node);
+                        if (text.includes('1.05') || text.includes('1MB')) {
+                            charges.data = 'AED 1.05/MB';
+                        }
+                    }
+                });
+                
+                // Set defaults if not found
+                if (!charges.calls.local) charges.calls.local = 'AED 0.32/min';
+                if (!charges.sms.local) charges.sms.local = 'AED 0.19/SMS';
+                if (!charges.data) charges.data = 'AED 1.05/MB';
+                if (!charges.videoCalls.local) charges.videoCalls.local = 'AED 0.63/min';
+                
+                return charges;
+            } catch (error) {
+                console.error('Error parsing out of bundle charges:', error);
+                return null;
+            }
+        }
+        
+        function parseDocuments(popupInfo) {
+            if (!popupInfo) return null;
+            try {
+                const description = popupInfo.popupSection?.[0]?.description?.json;
+                if (!description) return null;
+                
+                let docText = '';
+                description.forEach(node => {
+                    if (node.nodeType === 'paragraph') {
+                        const text = extractTextFromNode(node);
+                        if (text && !text.includes('----')) {
+                            docText += text + '\n';
+                        }
+                    }
+                    if (node.nodeType === 'ordered-list') {
+                        const items = extractListItems(node);
+                        items.forEach((item, idx) => {
+                            docText += `${idx + 1}. ${item}\n`;
+                        });
+                    }
+                });
+                return docText.trim() || null;
+            } catch (error) {
+                console.error('Error parsing documents:', error);
+                return null;
+            }
+        }
+        
+        function extractTextFromNode(node) {
+            if (!node || !node.content) return '';
+            let text = '';
+            node.content.forEach(item => {
+                if (item.nodeType === 'text') {
+                    text += item.value;
+                } else if (item.nodeType === 'line-break') {
+                    text += ' ';
+                }
+            });
+            return text.trim();
+        }
+        
+        function extractListItems(listNode) {
+            if (!listNode || !listNode.content) return [];
+            const items = [];
+            listNode.content.forEach(listItem => {
+                if (listItem.nodeType === 'list-item' && listItem.content) {
+                    let itemText = '';
+                    listItem.content.forEach(content => {
+                        if (content.nodeType === 'text') {
+                            itemText += content.value;
+                        }
+                    });
+                    if (itemText.trim()) {
+                        items.push(itemText.trim());
+                    }
+                }
+            });
+            return items;
+        }
+
+
+
+        // Generate bundles
+        async function generateBundles() {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Fetch API data
+            const apiResponse = await fetchAPIData();
+            const cprFromAPI = extractCPRFromAPI(apiResponse);
+            
+            allBundles = [];
+            
+            for (const [category, prices] of Object.entries(plansData)) {
+                prices.forEach(price => {
+                    const details = planDetails[price] || { 
+                        data: 'Contact for details', 
+                        minutes: 'Contact for details',
+                        roaming: '0GB',
+                        commitment: '12 months'
+                    };
+                    
+                    // Determine discount eligibility based on API data
+                    let discount = 'Standard pricing';
+                    if (cprFromAPI && cprFromAPI.discounts) {
+                        const eligiblePlans = ['250', '260', '325', '500', '1200'];
+                        const planNumber = price.toString();
+                        if (eligiblePlans.some(p => cprFromAPI.discounts.includes(p) && planNumber === p)) {
+                            discount = 'Up to 50% off for 6 months (eligible plan - activate within 7 days)';
+                        }
+                    } else if (price >= 250 && price <= 1200) {
+                        discount = 'Check eligibility for promotional offers';
+                    }
+                    
+                    // Use API exit charges or fallback
+                    const exitCharge = cprFromAPI?.exitCharges || 
+                        `Early termination: ${price >= 1000 ? 'AED 1000' : 'AED ' + price} or 1 month rental (whichever is lower)`;
+                    
+                    // Use API out of bundle charges or defaults
+                    const outOfBundleCharges = cprFromAPI?.outOfBundleCharges || {
+                        calls: { local: 'AED 0.32/min', international: 'As per standard rates' },
+                        sms: { local: 'AED 0.19/SMS', international: 'AED 0.63/SMS' },
+                        mms: { local: 'AED 0.47/50KB', international: 'AED 1.89/50KB' },
+                        data: 'AED 1.05/MB',
+                        videoCalls: { local: 'AED 0.63/min', international: 'As per operator rates' }
+                    };
+                    
+                    // Use API documents or defaults
+                    const documents = cprFromAPI?.documents || 
+                        'Original Emirates ID\nAny of the following:\n1. Salary certificate (min AED 2,500)\n2. Vehicle licence\n3. Bank statement (3 months)\n4. Utility bill\n5. Tenancy/ownership contract';
+                    
+                    allBundles.push({
+                        category,
+                        price,
+                        name: `${category} ${price}`,
+                        data: details.data,
+                        minutes: details.minutes,
+                        roaming: details.roaming,
+                        commitment: details.commitment,
+                        discount: discount,
+                        exitCharge: exitCharge,
+                        features: getFeatures(price, category, cprFromAPI),
+                        outOfBundleCharges: outOfBundleCharges,
+                        documents: documents,
+                        apiSource: apiResponse !== null,
+                        starzplayEligible: price >= 225 && cprFromAPI?.starzplayOffer
+                    });
+                });
+            }
+            
+            document.getElementById('loading').style.display = 'none';
+            displayBundles();
+        }
+
+        function getFeatures(price, category, cprFromAPI) {
+            const features = [];
+            
+            // Wi-Fi hours (all plans)
+            features.push('100 UAE Wi-Fi hours');
+            
+            // STARZPLAY (plans 225 and above)
+            if (price >= 225 && cprFromAPI?.starzplayOffer) {
+                features.push('Free STARZPLAY Entertainment');
+            }
+            
+            // Smiles benefits (plans 250 and above)
+            if (price >= 250) {
+                features.push('Smiles Benefits: Unlimited Buy 1 Get 1 vouchers');
+                features.push('GoChat: Free daily voice and video calls');
+            }
+            
+            // Roaming (varies by plan)
+            if (price >= 225 && price < 1200) {
+                features.push(`Roaming Data: ${price >= 225 ? 'Included' : 'N/A'}`);
+            }
+            if (price >= 1200) {
+                features.push('40GB Roam Like Home Data (Preferred Partners)');
+            }
+            
+            // GCC Roaming (all Freedom plans)
+            features.push('Use local allowances in GCC countries');
+            
+            // Emirati Freedom specific
+            if (category === 'Emirati Freedom') {
+                features.push('Priority Customer Service');
+                features.push('UAE Nationals Exclusive Benefits');
+            }
+            
+            return features;
+        }
+
+        function displayBundles() {
+            const filtered = selectedCategory === 'all' 
+                ? allBundles 
+                : allBundles.filter(b => b.category === selectedCategory);
+            
+            const bundlesContainer = document.getElementById('bundles');
+            bundlesContainer.innerHTML = '';
+            
+            filtered.forEach((bundle, index) => {
+                const card = createBundleCard(bundle, index);
+                bundlesContainer.appendChild(card);
+            });
+        }
+
+        function createBundleCard(bundle, index) {
+            const card = document.createElement('div');
+            card.className = 'bundle-card';
+            
+            card.innerHTML = `
+                <div class="bundle-header">
+                    <div class="bundle-title">${bundle.name}</div>
+                    <div class="bundle-price">AED ${bundle.price}<small>/month</small></div>
+                    <div class="bundle-subtitle">${bundle.data} Data • ${bundle.minutes} Minutes</div>
+                    ${bundle.apiSource ? '<span style="color: #28a745; font-size: 0.8em;">✓ API Verified</span>' : ''}
+                </div>
+
+                <div class="cpr-toggle" onclick="toggleCPR(${index})">
+                    <span>📋 Plan Details (CPR)</span>
+                    <span class="toggle-icon" id="toggle-${index}">▼</span>
+                </div>
+
+                <div class="cpr-details" id="cpr-${index}">
+                    <div class="detail-item">
+                        <span class="detail-label">📅 Duration / Commitment</span>
+                        <div class="detail-value">${bundle.commitment} commitment period</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">💳 Charging Type</span>
+                        <div class="detail-value">Monthly contract - Billed monthly at AED ${bundle.price} (inc. VAT)</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">🎁 Discounts & Offers</span>
+                        <div class="detail-value">${bundle.discount}</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">📊 Allowance</span>
+                        <div class="detail-value">
+                            • Data: ${bundle.data}<br>
+                            • Minutes: ${bundle.minutes}<br>
+                            • Roaming: ${bundle.roaming}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">⚠️ Restrictions</span>
+                        <div class="detail-value">
+                            • Out-of-bundle data restricted by default (must be enabled by customer)<br>
+                            • Premium numbers excluded<br>
+                            • Fair usage policy applies<br>
+                            • Out-of-bundle pulse: 1MB (AED 1.05/MB)<br>
+                            • In-bundle data pulse: 30KB
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">💰 Out-of-Bundle Rates</span>
+                        <div class="detail-value">
+                            • Calls: ${bundle.outOfBundleCharges.calls.local}<br>
+                            • SMS: ${bundle.outOfBundleCharges.sms.local}<br>
+                            • Data: ${bundle.outOfBundleCharges.data}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">🚪 Exit Charge</span>
+                        <div class="detail-value">${bundle.exitCharge}</div>
+                    </div>
+                </div>
+
+                <button class="view-details-btn" onclick="viewFullDetails(${index})">
+                    View Full Bundle Profile
+                </button>
+            `;
+
+            return card;
+        }
+
+        function toggleCPR(index) {
+            const details = document.getElementById(`cpr-${index}`);
+            const icon = document.getElementById(`toggle-${index}`);
+            
+            details.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        function viewFullDetails(index) {
+            const bundle = allBundles[index];
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalPrice = document.getElementById('modalPrice');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = bundle.name;
+            modalPrice.textContent = `AED ${bundle.price}/month ${bundle.apiSource ? '✓ API Verified' : ''}`;
+
+            const charges = `
+                • Local calls: ${bundle.outOfBundleCharges.calls.local}<br>
+                • International calls: ${bundle.outOfBundleCharges.calls.international}<br>
+                • Local SMS: ${bundle.outOfBundleCharges.sms.local}<br>
+                • International SMS: ${bundle.outOfBundleCharges.sms.international}<br>
+                ${bundle.outOfBundleCharges.mms ? `• Local MMS: ${bundle.outOfBundleCharges.mms.local}<br>` : ''}
+                ${bundle.outOfBundleCharges.mms ? `• International MMS: ${bundle.outOfBundleCharges.mms.international}<br>` : ''}
+                • Data: ${bundle.outOfBundleCharges.data}<br>
+                • Video calls (local): ${bundle.outOfBundleCharges.videoCalls.local}<br>
+                • Video calls (intl): ${bundle.outOfBundleCharges.videoCalls.international}<br>
+                <small style="display: block; margin-top: 10px;">*5% VAT included in all rates</small>
+            `;
+
+            modalBody.innerHTML = `
+                <div class="modal-section">
+                    <h3>📊 Plan Overview</h3>
+                    <div class="info-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Category</span>
+                            <div class="detail-value">${bundle.category}</div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Monthly Price</span>
+                            <div class="detail-value">AED ${bundle.price}</div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Data Allowance</span>
+                            <div class="detail-value">${bundle.data}</div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Minutes</span>
+                            <div class="detail-value">${bundle.minutes}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🌍 Roaming & International</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Roaming Data</span>
+                        <div class="detail-value">${bundle.roaming} in preferred countries</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">GCC Roaming</span>
+                        <div class="detail-value">Use local allowances in GCC countries</div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🎁 Features & Benefits</h3>
+                    ${bundle.features.map(f => `
+                        <div class="detail-item">
+                            <div class="detail-value">✓ ${f}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="modal-section">
+                    <h3>💰 Complete Fee Structure</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Monthly Rental</span>
+                        <div class="detail-value">AED ${bundle.price} (inc. VAT)</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">One-time Activation</span>
+                        <div class="detail-value">AED 125</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Out-of-Bundle Rates</span>
+                        <div class="detail-value">${charges}</div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>📋 Terms & Conditions</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Commitment Period</span>
+                        <div class="detail-value">${bundle.commitment}</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Early Exit Charge</span>
+                        <div class="detail-value">${bundle.exitCharge}</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Required Documents</span>
+                        <div class="detail-value" style="white-space: pre-line;">${bundle.documents.replace(/\n/g, '<br>')}</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Upgrade Policy</span>
+                        <div class="detail-value">No exit charge for upgrades to higher monthly commitment plans</div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🎯 Special Promotions</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Current Offers</span>
+                        <div class="detail-value">
+                            ${bundle.discount}<br>
+                            ${bundle.features.includes('Free STARZPLAY') ? '• Free STARZPLAY Entertainment<br>' : ''}
+                            • Free eSIM instant activation (online only)
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function switchTab(category) {
+            selectedCategory = category;
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayBundles();
+        }
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        generateBundles();
+    </script>
+</body>
+</html>

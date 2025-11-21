@@ -208,6 +208,25 @@
             margin-bottom: 10px;
         }
 
+        .bundle-price {
+            font-size: 1.8em;
+            color: #e30613;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bundle-price small {
+            font-size: 0.5em;
+            color: #666;
+        }
+
+        .bundle-subtitle {
+            color: #495057;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
         .bundle-keywords {
             color: #6c757d;
             font-size: 0.9em;
@@ -482,6 +501,38 @@
             background: linear-gradient(135deg, #fff 0%, #ecf0f1 100%);
         }
 
+        .filter-chips {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-chip:hover {
+            background: #e9ecef;
+            border-color: #e30613;
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: #e30613;
+            color: white;
+            border-color: #e30613;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
+        }
+
         .cpr-section {
             background: #f8f9fa;
             border-left: 4px solid #e30613;
@@ -542,7 +593,219 @@
         }
 
         .cpr-content.expanded {
-            max-height: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .cpr-content.expanded::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cpr-content.expanded::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .cpr-content.expanded::-webkit-scrollbar-thumb {
+            background: #e30613;
+            border-radius: 3px;
+        }
+
+        .cpr-content.expanded::-webkit-scrollbar-thumb:hover {
+            background: #c40510;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-logo {
+            width: 100px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .progress-container {
+            width: 400px;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e30613 0%, #c40510 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .progress-subtext {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .bundle-profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .bundle-profile-modal.active {
+            display: flex;
+        }
+
+        .bundle-profile-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .bundle-profile-header {
+            background: linear-gradient(135deg, #e30613 0%, #c40510 100%);
+            color: white;
+            padding: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .bundle-profile-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .bundle-profile-price {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .bundle-profile-subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .bundle-profile-body {
+            padding: 30px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #e30613;
+            padding-bottom: 10px;
+        }
+
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e30613;
+        }
+
+        .profile-info-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-info-value {
+            font-size: 1.1em;
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .profile-cpr-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e30613;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn-profile-close {
+            flex: 1;
+            background: #6c757d;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .btn-profile-open {
+            flex: 2;
+            background: #e30613;
+            padding: 15px;
+            font-size: 16px;
         }
 
         /* Mobile Responsiveness */
@@ -752,8 +1015,26 @@
                 font-size: 1.2em;
             }
 
+            .filter-chips {
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            .filter-chip {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
             .bundle-name {
                 font-size: 1.1em;
+            }
+
+            .bundle-price {
+                font-size: 1.5em;
+            }
+
+            .bundle-subtitle {
+                font-size: 0.85em;
             }
 
             .bundle-keywords {
@@ -832,6 +1113,7 @@
             </div>
 
             <div class="sidebar-footer">
+                <button class="btn-header" onclick="refreshBundles()">🔄 Refresh Bundles</button>
                 <button class="btn-header" onclick="exportData()">📥 Export Data</button>
                 <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
                 <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(event)">
@@ -848,6 +1130,13 @@
                 <div class="search-add">
                     <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
                     <button onclick="openAddModal('bundle')">+ Add Bundle</button>
+                </div>
+                <div class="filter-chips">
+                    <button class="filter-chip active" onclick="filterByCategory('all')">All Plans</button>
+                    <button class="filter-chip" onclick="filterByCategory('Freedom Live')">Freedom Live</button>
+                    <button class="filter-chip" onclick="filterByCategory('New Freedom')">New Freedom</button>
+                    <button class="filter-chip" onclick="filterByCategory('Non-stop')">Non-stop</button>
+                    <button class="filter-chip" onclick="filterByCategory('Emirati Freedom')">Emirati Freedom</button>
                 </div>
                 <div id="bundlesList" class="bundle-grid"></div>
             </div>
@@ -966,9 +1255,27 @@
         </div>
     </div>
 
+    <!-- Loading Overlay with Progress Bar -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <img class="loading-logo" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png" alt="Loading...">
+            <div class="progress-text" id="progressText">Loading bundles...</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-subtext" id="progressSubtext">Fetching plan data from API</div>
+        </div>
+    </div>
+
+    <!-- Bundle Profile Modal -->
+    <div id="bundleProfileModal" class="bundle-profile-modal" onclick="if(event.target.id === 'bundleProfileModal') closeBundleProfile()">
+        <div class="bundle-profile-content" id="bundleProfileContent">
+            <!-- Content will be dynamically generated -->
+        </div>
+    </div>
+
     <script>
         // Configuration
-        const JSON_FILE_PATH = 'server-files/data.json'; // Path to your JSON data file
         const STORAGE_KEY = 'linkShortcutsData';
         
         let data = {
@@ -979,42 +1286,271 @@
             navigator: []
         };
         let currentType = 'bundle';
+        let selectedCategory = 'all';
+        let allBundles = [];
 
-        // Load data from GitHub JSON file, fallback to localStorage
-        async function loadData() {
-            try {
-                console.log('📥 Loading data from JSON file...');
-                const response = await fetch(JSON_FILE_PATH);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to load JSON file');
-                }
-                
-                const jsonData = await response.json();
-                data = jsonData;
-                
-                // Also save to localStorage as cache
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                
-                console.log('✅ Data loaded from JSON file');
-            } catch (error) {
-                console.error('Error loading JSON file:', error);
-                console.log('ℹ️ Falling back to localStorage');
-                
-                // Fallback to localStorage
-                try {
-                    const saved = localStorage.getItem(STORAGE_KEY);
-                    if (saved) {
-                        data = JSON.parse(saved);
-                        console.log('✅ Data loaded from localStorage');
+        // Product IDs to fetch from API
+        const PRODUCT_IDS = [
+            'prod-n-freedom-260-300-f-sp',
+            'prod-newfreedom-np-g',
+            'prod-newfreedom-np-s',
+            'prod1010030',
+            'prod1340021',
+            'prod1340023',
+            'prod1340024',
+            'prod1340026',
+            'prod1340027',
+            'prod1340028',
+            'prod1340030',
+            'prod1340031',
+            'prod1340031-nafis',
+            'prod1750029',
+            'prod1750029-nafis',
+            'prod1750030',
+            'prod1750030-nafis',
+            'prod1760112',
+            'prod1760113',
+            'prod1760114',
+            'prod1760115',
+            'prod1760120',
+            'prod1760120-gold',
+            'prod1760120-nafis',
+            'prod1760121',
+            'prod1760121-gold',
+            'prod1760121-nafis',
+            'prod830087',
+            'prodfreedom260-300-flexi',
+            'prodfreedom260-300-local',
+            'prodn830087',
+            'sp-prod-n-freedom-150f',
+            'sp-prod-n-freedom-150l',
+            'sp-prod-n-freedom-225f',
+            'sp-prod-n-freedom-225l',
+            'sp-prod-n-freedom-300f',
+            'sp-prod-n-freedom-300l',
+            'sp-prod-n-freedom-375f',
+            'sp-prod-n-freedom-375l',
+            'sp-prod-n-freedom-ns275f',
+            'sp-prod-n-freedom-ns275l',
+            'sp-prod-n-freedom-ns375f',
+            'sp-prod-n-freedom-ns375l',
+            'prod930028'
+        ];
+
+        // Extract CPR information from API response
+        function extractCPRFromPlan(planSku, productName) {
+            const cpr = {
+                duration: '',
+                fees: '',
+                discounts: '',
+                allowance: '',
+                restrictions: '',
+                exitCharge: '',
+                isContract: ''
+            };
+
+            // Extract commitment/duration
+            const commitment = planSku.contractDuration || '';
+            cpr.duration = commitment;
+            cpr.isContract = commitment.toLowerCase().includes('commitment') && !commitment.toLowerCase().includes('no commitment') ? 'Yes' : 'No';
+
+            // Extract fees
+            const recurringPrice = planSku.recurringPrice || planSku.price?.firstBill || '0';
+            const oneTimePrice = planSku.price?.oneTime || '0';
+            cpr.fees = `Monthly: AED ${recurringPrice}${oneTimePrice !== '0.0' && oneTimePrice !== '0' ? `, One-time: AED ${oneTimePrice}` : ''}`;
+
+            // Extract discounts from description
+            const description = planSku.description || '';
+            const discountMatches = description.match(/(\d+%\s*off|discount|buy\s*1\s*get\s*1|free)/gi);
+            cpr.discounts = discountMatches ? discountMatches.join(', ') : 'Standard pricing';
+
+            // Extract allowances from dynamic attributes
+            const allowances = [];
+            if (planSku.dynamicAttributesList) {
+                planSku.dynamicAttributesList.forEach(attr => {
+                    if (attr.value && attr.value !== 'No' && attr.value !== 'لا') {
+                        allowances.push(`${attr.key}: ${attr.value}`);
                     }
-                } catch (error) {
-                    console.error('Error loading from localStorage:', error);
-                }
+                });
             }
-            
-            renderAll();
+            cpr.allowance = allowances.join('\n') || 'See plan details';
+
+            // Extract restrictions
+            const restrictions = [];
+            if (planSku.outOfBundleLink) {
+                restrictions.push('Out-of-bundle charges apply');
+            }
+            restrictions.push('Fair usage policy applies');
+            restrictions.push('Premium numbers may be excluded');
+            cpr.restrictions = restrictions.join('\n');
+
+            // Exit charge (typically 1 month rental for contract plans)
+            if (cpr.isContract === 'Yes') {
+                cpr.exitCharge = `Early termination: AED ${recurringPrice} (or 1 month rental)`;
+            } else {
+                cpr.exitCharge = 'No exit charge (No commitment plan)';
+            }
+
+            return cpr;
         }
+
+        // Fetch plan data from API
+        async function fetchPlanFromAPI(productId) {
+            try {
+                const response = await fetch(`https://www.etisalat.ae/b2c/eshop/getPostPaidPlanProduct/${productId}`);
+                if (!response.ok) {
+                    console.warn(`Failed to fetch ${productId}: ${response.status}`);
+                    return null;
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Error fetching ${productId}:`, error);
+                return null;
+            }
+        }
+
+        // Generate bundles from API data with progress tracking
+        async function generateBundlesFromAPI() {
+            console.log('📡 Fetching bundles from API...');
+            const bundles = [];
+            const totalProducts = PRODUCT_IDS.length;
+            let processedCount = 0;
+            
+            for (const productId of PRODUCT_IDS) {
+                const productData = await fetchPlanFromAPI(productId);
+                processedCount++;
+                
+                // Update progress
+                const progress = (processedCount / totalProducts) * 100;
+                updateProgress(progress, `Loading bundles... (${processedCount}/${totalProducts})`, 
+                              `Processing ${productId}`);
+                
+                if (!productData || !productData.planSkus) continue;
+
+                productData.planSkus.forEach(planSku => {
+                    const cpr = extractCPRFromPlan(planSku, productData.productName);
+                    
+                    // Extract key benefits for display
+                    const keyBenefits = planSku.keyBenefits || [];
+                    const dataAllowance = keyBenefits.find(b => b.key.toLowerCase().includes('data'))?.value || 'N/A';
+                    const minutesAllowance = keyBenefits.find(b => b.key.toLowerCase().includes('minute'))?.value || 'N/A';
+                    const roamingAllowance = keyBenefits.find(b => b.key.toLowerCase().includes('roaming'))?.value || '0GB';
+                    
+                    const price = planSku.recurringPrice || planSku.price?.firstBill || '0';
+                    const planName = planSku.displayName || productData.productName || 'Unknown Plan';
+                    
+                    bundles.push({
+                        id: `api-${planSku.skuId}`,
+                        name: planName,
+                        price: parseFloat(price),
+                        data: dataAllowance,
+                        minutes: minutesAllowance,
+                        roaming: roamingAllowance,
+                        commitment: planSku.contractDuration || 'N/A',
+                        keywords: `${planName.toLowerCase()}, postpaid, aed ${price}, ${dataAllowance}`,
+                        link: 'https://www.etisalat.ae/en/consumer/mobile/plans-and-packages/postpaid-plans',
+                        source: 'api',
+                        category: planName.includes('Freedom Live') ? 'Freedom Live' : 
+                                 planName.includes('New Freedom') ? 'New Freedom' :
+                                 planName.includes('Non-stop') ? 'Non-stop' :
+                                 planName.includes('Emirati') ? 'Emirati Freedom' : 'Other',
+                        cpr: cpr,
+                        description: planSku.description || '',
+                        fullData: planSku // Store complete plan data for profile view
+                    });
+                });
+            }
+
+            console.log(`✅ Fetched ${bundles.length} bundles from API`);
+            return bundles;
+        }
+
+        // Update progress bar
+        function updateProgress(percentage, text, subtext) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const progressSubtext = document.getElementById('progressSubtext');
+            
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressText) progressText.textContent = text;
+            if (progressSubtext) progressSubtext.textContent = subtext;
+        }
+
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // Load data from localStorage or generate bundles
+        async function loadData() {
+                    try {
+                        showLoading();
+                        updateProgress(0, 'Initializing...', 'Preparing to load data');
+                        console.log('📦 Loading data...');
+
+                        // Try to load mock-data.json (prefill non-bundle sections only for SLA & Navigator)
+                        updateProgress(10, 'Loading configuration...', 'Fetching mock data');
+                        let mockData = null;
+                        try {
+                            const resp = await fetch('./mock-data.json');
+                            if (resp.ok) mockData = await resp.json();
+                            console.log('✅ mock-data.json loaded');
+                        } catch (e) {
+                            console.warn('No mock-data.json found or failed to load', e);
+                        }
+
+                        // Try to load from localStorage first
+                        updateProgress(20, 'Loading saved data...', 'Reading from local storage');
+                        const saved = localStorage.getItem(STORAGE_KEY);
+                        if (saved) {
+                            const savedData = JSON.parse(saved);
+                            // Load non-bundle data from localStorage or fallback to mock
+                            data.addons = savedData.addons || [];
+                            data.devicec = savedData.devicec || [];
+                            // SLA & Navigator always from mock data (fixed data)
+                            data.sla = mockData?.sla || savedData.sla || [];
+                            data.navigator = mockData?.navigator || savedData.navigator || [];
+                            // Don't load old bundles - start fresh from API only
+                            data.bundles = [];
+                            console.log('✅ Data loaded from localStorage (SLA & Navigator from JSON)');
+                        } else {
+                            // No local saved data — populate from mock if available
+                            data.addons = [];
+                            data.devicec = [];
+                            // SLA & Navigator from mock data (fixed data)
+                            data.sla = mockData?.sla || [];
+                            data.navigator = mockData?.navigator || [];
+                            data.bundles = [];
+                            console.log('ℹ️ Using mock data for SLA & Navigator');
+                        }
+
+                        // Always generate fresh plan bundles and keep any user bundles
+                        console.log('� Fetching bundles from API...');
+                        const apiBundles = await generateBundlesFromAPI();
+                        data.bundles = apiBundles; // Only API bundles, no old data
+                        
+                        updateProgress(100, 'Complete!', 'Rendering data...');
+                        // Small delay to show 100% before hiding
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                        console.log(`✅ Loaded ${apiBundles.length} bundles from API`);
+                        console.log(`� Total bundles: ${data.bundles.length}`);
+
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                        alert('⚠️ Failed to load bundles from API. Please check console for details.');
+                    } finally {
+                        hideLoading();
+                    }
+
+                    console.log('🚀 Calling renderAll()...');
+                    renderAll();
+                }
 
         // Save data to localStorage only
         function saveData() {
@@ -1202,19 +1738,26 @@
         }
 
         function deleteItem(type, id) {
-            if (!confirm('Are you sure you want to delete this item?')) return;
+            // Prevent deletion of API-fetched bundles
+            if (typeof id === 'string' && id.startsWith('api-')) {
+                if (!confirm('This is an API-fetched bundle. Are you sure you want to delete it? It will be re-fetched on next page load.')) {
+                    return;
+                }
+            } else if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
 
             // Delete from local data array
             if (type === 'bundle') {
-                data.bundles = data.bundles.filter(item => item.id !== id);
+                data.bundles = data.bundles.filter(item => item.id != id);
             } else if (type === 'addon') {
-                data.addons = data.addons.filter(item => item.id !== id);
+                data.addons = data.addons.filter(item => item.id != id);
             } else if (type === 'devicec') {
-                data.devicec = data.devicec.filter(item => item.id !== id);
+                data.devicec = data.devicec.filter(item => item.id != id);
             } else if (type === 'sla') {
-                data.sla = data.sla.filter(item => item.id !== id);
+                data.sla = data.sla.filter(item => item.id != id);
             } else if (type === 'navigator') {
-                data.navigator = data.navigator.filter(item => item.id !== id);
+                data.navigator = data.navigator.filter(item => item.id != id);
             }
 
             saveData();
@@ -1276,6 +1819,120 @@
             iframe.style.display = 'block';
             document.getElementById('iframeError').style.display = 'none';
             currentViewLink = '';
+        }
+
+        // Show bundle profile in modal
+        function showBundleProfile(item) {
+            const modal = document.getElementById('bundleProfileModal');
+            const content = document.getElementById('bundleProfileContent');
+            
+            const formatMultiline = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text || 'N/A';
+                return div.innerHTML.replace(/\n/g, '<br>');
+            };
+            
+            // Build comprehensive profile
+            let profileHTML = `
+                <div class="bundle-profile-header">
+                    <div class="bundle-profile-title">${escapeHtml(item.name)}</div>
+                    <div class="bundle-profile-price">AED ${item.price}<small>/month</small></div>
+                    <div class="bundle-profile-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes${item.roaming !== '0GB' ? ` • ${escapeHtml(item.roaming)} Roaming` : ''}</div>
+                </div>
+                
+                <div class="bundle-profile-body">
+                    <!-- Key Benefits Section -->
+                    <div class="profile-section">
+                        <div class="profile-section-title">📊 Key Benefits</div>
+                        <div class="profile-info-grid">
+                            <div class="profile-info-item">
+                                <div class="profile-info-label">Local Data</div>
+                                <div class="profile-info-value">${escapeHtml(item.data)}</div>
+                            </div>
+                            <div class="profile-info-item">
+                                <div class="profile-info-label">Minutes</div>
+                                <div class="profile-info-value">${escapeHtml(item.minutes)}</div>
+                            </div>
+                            <div class="profile-info-item">
+                                <div class="profile-info-label">Roaming Data</div>
+                                <div class="profile-info-value">${escapeHtml(item.roaming)}</div>
+                            </div>
+                            <div class="profile-info-item">
+                                <div class="profile-info-label">Commitment</div>
+                                <div class="profile-info-value">${escapeHtml(item.commitment)}</div>
+                            </div>
+                        </div>
+                    </div>
+            `;
+            
+            // CPR Section
+            if (item.cpr) {
+                profileHTML += `
+                    <div class="profile-section">
+                        <div class="profile-section-title">📋 Critical Product Requirements (CPR)</div>
+                        <div class="profile-cpr-section">
+                            <div class="profile-info-grid">
+                                ${item.cpr.duration ? `<div class="profile-info-item">
+                                    <div class="profile-info-label">📅 Duration</div>
+                                    <div class="profile-info-value">${formatMultiline(item.cpr.duration)}</div>
+                                </div>` : ''}
+                                ${item.cpr.isContract ? `<div class="profile-info-item">
+                                    <div class="profile-info-label">📋 Contract Required</div>
+                                    <div class="profile-info-value">${formatMultiline(item.cpr.isContract)}</div>
+                                </div>` : ''}
+                                ${item.cpr.fees ? `<div class="profile-info-item">
+                                    <div class="profile-info-label">💰 Fees</div>
+                                    <div class="profile-info-value">${formatMultiline(item.cpr.fees)}</div>
+                                </div>` : ''}
+                                ${item.cpr.discounts ? `<div class="profile-info-item">
+                                    <div class="profile-info-label">🎁 Discounts</div>
+                                    <div class="profile-info-value">${formatMultiline(item.cpr.discounts)}</div>
+                                </div>` : ''}
+                            </div>
+                            ${item.cpr.allowance ? `<div class="profile-info-item" style="margin-top: 15px;">
+                                <div class="profile-info-label">📊 Allowance Details</div>
+                                <div class="profile-info-value">${formatMultiline(item.cpr.allowance)}</div>
+                            </div>` : ''}
+                            ${item.cpr.restrictions ? `<div class="profile-info-item" style="margin-top: 15px;">
+                                <div class="profile-info-label">⚠️ Restrictions & Limitations</div>
+                                <div class="profile-info-value">${formatMultiline(item.cpr.restrictions)}</div>
+                            </div>` : ''}
+                            ${item.cpr.exitCharge ? `<div class="profile-info-item" style="margin-top: 15px;">
+                                <div class="profile-info-label">🚪 Exit Charge</div>
+                                <div class="profile-info-value">${formatMultiline(item.cpr.exitCharge)}</div>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Description Section
+            if (item.description) {
+                profileHTML += `
+                    <div class="profile-section">
+                        <div class="profile-section-title">📝 Description</div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-value">${item.description}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Actions
+            profileHTML += `
+                    <div class="profile-actions">
+                        <button class="btn-profile-close" onclick="closeBundleProfile()">Close</button>
+                        <button class="btn-profile-open" onclick="openLink('${escapeHtml(item.link)}'); closeBundleProfile();">🔗 View Official Page</button>
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = profileHTML;
+            modal.classList.add('active');
+        }
+
+        function closeBundleProfile() {
+            document.getElementById('bundleProfileModal').classList.remove('active');
         }
 
         function toggleCPR(itemId) {
@@ -1342,54 +1999,77 @@
                 container.innerHTML = items.map(item => {
                     let cprHTML = '';
                     
-                    // Add CPR section for bundles and addons
-                    if ((type === 'bundle' || type === 'addon') && item.cpr) {
-                        cprHTML = `
-                            <div class="cpr-section">
-                                <div class="cpr-title">📋 CPR Information</div>
-                                <div class="cpr-content" id="cpr-${item.id}">
-                                    <div class="cpr-grid">
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Duration:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.duration || 'N/A')}</span>
-                                        </div>
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Fees:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.fees || 'N/A')}</span>
-                                        </div>
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Discounts:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.discounts || 'None')}</span>
-                                        </div>
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Allowance:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.allowance || 'N/A')}</span>
-                                        </div>
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Restrictions:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.restrictions || 'None')}</span>
-                                        </div>
-                                        <div class="cpr-item">
-                                            <span class="cpr-label">Exit Charge:</span>
-                                            <span class="cpr-value">${escapeHtml(item.cpr.exitCharge || 'N/A')}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="cpr-toggle" onclick="toggleCPR(${item.id})">Show CPR Details</button>
-                            </div>
+
+                    
+                    // Helper function for formatting multiline text
+                    const formatMultiline = (text) => {
+                        return escapeHtml(text || 'N/A').replace(/\n/g, '<br>');
+                    };
+                    
+                    // Plan details for API bundles (display like product.html)
+                    let planDetailsHTML = '';
+                    if (type === 'bundle' && item.source === 'api') {
+                        
+                        planDetailsHTML = `
+                            <div class="bundle-price">AED ${item.price}<small>/month</small></div>
+                            <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
+                            ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
                         `;
                     }
                     
+                    // Add comprehensive CPR for all bundles/addons with CPR data
+                    if ((type === 'bundle' || type === 'addon') && item.cpr) {
+                            cprHTML = `
+                                <div class="cpr-section">
+                                    <div class="cpr-title">📋 Plan Details (CPR)</div>
+                                    <div class="cpr-content" id="cpr-${item.id}">
+                                        <div class="cpr-grid">
+                                            ${item.cpr.duration ? `<div class="cpr-item">
+                                                <span class="cpr-label">📅 Duration:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.duration)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.isContract ? `<div class="cpr-item">
+                                                <span class="cpr-label">� Contract:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.isContract)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.fees ? `<div class="cpr-item">
+                                                <span class="cpr-label">💰 Fees:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.fees)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.discounts ? `<div class="cpr-item">
+                                                <span class="cpr-label">🎁 Discounts:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.discounts)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.allowance ? `<div class="cpr-item">
+                                                <span class="cpr-label">📊 Allowance:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.allowance)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.restrictions ? `<div class="cpr-item">
+                                                <span class="cpr-label">⚠️ Restrictions:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.restrictions)}</span>
+                                            </div>` : ''}
+                                            ${item.cpr.exitCharge ? `<div class="cpr-item">
+                                                <span class="cpr-label">🚪 Exit Charge:</span>
+                                                <span class="cpr-value">${formatMultiline(item.cpr.exitCharge)}</span>
+                                            </div>` : ''}
+                                        </div>
+                                    </div>
+                                    <button class="cpr-toggle" onclick="toggleCPR('${item.id}')">Show CPR Details</button>
+                                </div>
+                            `;
+                    }
+                    
                     return `
-                        <div class="bundle-card">
+                        <div class="bundle-card ${item.category ? 'plan-card' : ''}">
                             <div class="bundle-name">${escapeHtml(item.name)}</div>
-                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
-                            <a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>
+                            ${planDetailsHTML}
+                            ${!planDetailsHTML ? `<div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>` : ''}
+                            ${!planDetailsHTML ? `<a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>` : ''}
                             ${cprHTML}
                             <div class="bundle-actions">
-                                <button class="btn-view" onclick='viewDetails(${JSON.stringify(item)})'>View</button>
-                                <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open</button>
-                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
+                                <button class="btn-view" onclick='showBundleProfile(${JSON.stringify(item).replace(/'/g, "&#39;")})'>View Profile</button>
+                                <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open Link</button>
+                                ${item.source === 'api' ? '<button class="btn-delete" style="background: #6c757d;" disabled title="API plans cannot be deleted">API Plan</button>' : `<button class="btn-delete" onclick="deleteItem('${type}', '${item.id}')">Delete</button>`}
                             </div>
                         </div>
                     `;
@@ -1403,12 +2083,34 @@
             return div.innerHTML;
         }
 
+        function filterByCategory(category) {
+            selectedCategory = category;
+            
+            // Update active chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Apply filter
+            filterBundles();
+        }
+
         function filterBundles() {
             const search = document.getElementById('searchBundles').value.toLowerCase();
-            const filtered = data.bundles.filter(item => 
-                item.name.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search))
-            );
+            let filtered = data.bundles.filter(item => {
+                // Category filter
+                const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+                
+                // Search filter
+                const matchesSearch = !search || 
+                    item.name.toLowerCase().includes(search) || 
+                    (item.keywords && item.keywords.toLowerCase().includes(search));
+                
+                return matchesCategory && matchesSearch;
+            });
+            
+            console.log(`🔍 Filtering bundles: ${filtered.length} of ${data.bundles.length} bundles match (category: ${selectedCategory}, search: "${search}")`);
             renderItems(filtered, 'bundlesList', 'bundle');
         }
 
@@ -1449,11 +2151,14 @@
         }
 
         function renderAll() {
-            renderItems(data.bundles, 'bundlesList', 'bundle');
-            renderItems(data.addons, 'addonsList', 'addon');
-            renderItems(data.devicec, 'devicecList', 'devicec');
-            renderItems(data.sla, 'slaList', 'sla');
-            renderItems(data.navigator, 'navigatorList', 'navigator');
+            console.log('🎨 Rendering all tabs...');
+            console.log(`📊 Data counts: Bundles=${data.bundles.length}, Addons=${data.addons.length}, DeviceC=${data.devicec.length}, SLA=${data.sla.length}, Navigator=${data.navigator.length}`);
+            
+            filterBundles(); // Use filter function to respect category selection
+            filterAddons();
+            filterDeviceC();
+            filterSLA();
+            filterNavigator();
         }
 
         // Export data to JSON file
@@ -1514,6 +2219,35 @@
                 closeAddModal();
             }
         });
+
+        // Manual refresh bundles
+        async function refreshBundles() {
+            if (!confirm('This will fetch fresh bundles from the API. Continue?')) {
+                return;
+            }
+
+            try {
+                console.log('🔄 Starting manual bundle refresh...');
+                
+                // Keep user-created bundles
+                const userBundles = data.bundles.filter(b => b.source !== 'api');
+                
+                // Fetch fresh bundles from API
+                const apiBundles = await generateBundlesFromAPI();
+                data.bundles = [...userBundles, ...apiBundles];
+                
+                console.log(`✅ Fetched ${apiBundles.length} bundles from API`);
+                
+                // Save and re-render
+                saveData();
+                renderAll();
+                
+                alert('✅ Bundles refreshed successfully!');
+            } catch (error) {
+                console.error('Error refreshing bundles:', error);
+                alert('❌ Failed to refresh bundles. Check console for details.');
+            }
+        }
 
         // Load data on page load
         loadData();

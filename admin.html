@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Link Shortcuts Hub (CRUD)</title>
+  <style>
+    body{font-family:Segoe UI, Roboto, Arial; padding:18px; background:#f7f7f8}
+    h1{color:#e30613}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:18px}
+    .card{background:#fff;padding:16px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+    input,select,textarea{width:100%;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:6px}
+    button{background:#e30613;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer}
+    .small{font-size:13px;padding:6px 8px}
+    .muted{color:#666;font-size:13px}
+    .actions{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <h1>Admin — Link Shortcuts Hub (CRUD)</h1>
+  <p class="muted">This admin page uses Supabase (Postgres) for fast CRUD. See <code>supabase-setup.sql</code>.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong>Bundles & Addons</strong>
+        <div>
+          <select id="filterType" onchange="loadList()">
+            <option value="bundle">Bundles</option>
+            <option value="addon">Addons</option>
+            <option value="devicec">DeviceC</option>
+            <option value="sla">SLA</option>
+            <option value="navigator">Navigator</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listCard">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Keywords</th><th style="width:170px">Actions</th></tr>
+          </thead>
+          <tbody id="itemsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <strong>Create / Edit</strong>
+      <div style="margin-top:12px">
+        <label>Type</label>
+        <select id="typeField"><option value="bundle">bundle</option><option value="addon">addon</option><option value="devicec">devicec</option><option value="sla">sla</option><option value="navigator">navigator</option></select>
+
+        <label style="margin-top:8px">Name</label>
+        <input id="nameField" placeholder="Name" />
+
+        <label style="margin-top:8px">Keywords</label>
+        <input id="keywordsField" placeholder="comma separated keywords" />
+
+        <label style="margin-top:8px">Link</label>
+        <input id="linkField" placeholder="https://..." />
+
+        <label style="margin-top:8px">CPR JSON (optional)</label>
+        <textarea id="cprField" rows="6" placeholder='{"duration":"30 days"}'></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button onclick="saveItem()">Save</button>
+          <button class="small" onclick="resetForm()" style="background:#6c757d">Reset</button>
+        </div>
+
+        <p class="muted" style="margin-top:12px">Replace the placeholders in the JS file with your Supabase URL and anon key (see README).</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="assets/js/supabase-crud.js"></script>
+</body>
+</html>

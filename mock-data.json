@@ -1,0 +1,84 @@
+{
+  "addons": [
+    {
+      "id": 1730101001,
+      "name": "Daily Data Pack",
+      "keywords": "data, daily, internet",
+      "link": "https://example.com/addons/daily-data",
+      "cpr": { "duration": "1 day", "fees": "AED 5", "allowance": "500MB" }
+    },
+    {
+      "id": 1730101002,
+      "name": "Weekly Social Pack",
+      "keywords": "social, whatsapp, instagram",
+      "link": "https://example.com/addons/social-weekly",
+      "cpr": { "duration": "7 days", "fees": "AED 15", "allowance": "Unlimited social data" }
+    },
+    {
+      "id": 1730101003,
+      "name": "International Minutes",
+      "keywords": "international, calls, minutes",
+      "link": "https://example.com/addons/international",
+      "cpr": { "duration": "30 days", "fees": "AED 30", "allowance": "300 international minutes" }
+    }
+  ],
+
+  "devicec": [
+    {
+      "id": 1730201001,
+      "name": "Phone Diagnostics",
+      "keywords": "diagnostics, repair, troubleshoot",
+      "link": "https://example.com/device/diagnostics",
+      "cpr": { "duration": "N/A", "fees": "Free", "notes": "Online diagnostics tool" }
+    },
+    {
+      "id": 1730201002,
+      "name": "Battery Replacement",
+      "keywords": "battery, repair, device",
+      "link": "https://example.com/device/battery",
+      "cpr": { "duration": "7 days", "fees": "AED 120", "notes": "Includes warranty" }
+    }
+  ],
+
+  "sla": [
+    {
+      "id": 1730301001,
+      "name": "Support Response",
+      "keywords": "support, response, help",
+      "time": "4 hours"
+    },
+    {
+      "id": 1730301002,
+      "name": "Network Outage Resolution",
+      "keywords": "network, outage, resolution",
+      "time": "24 hours"
+    },
+    {
+      "id": 1730301003,
+      "name": "Billing Dispute",
+      "keywords": "billing, dispute, refund",
+      "time": "72 hours"
+    }
+  ],
+
+  "navigator": [
+    {
+      "id": 1730401001,
+      "name": "Check Balance",
+      "keywords": "balance, account, credit",
+      "path": "Home -> Profile -> Balance Details"
+    },
+    {
+      "id": 1730401002,
+      "name": "Download Invoice",
+      "keywords": "invoice, billing, download",
+      "path": "Billing -> Invoice History -> Download"
+    },
+    {
+      "id": 1730401003,
+      "name": "Activate Roaming",
+      "keywords": "roaming, travel, activate",
+      "path": "Services -> International -> Roaming -> Activate"
+    }
+  ]
+}
