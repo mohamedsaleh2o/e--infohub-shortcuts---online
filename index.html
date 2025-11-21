@@ -193,12 +193,51 @@
             padding: 20px;
             transition: all 0.3s;
             border: 2px solid transparent;
+            position: relative;
         }
 
         .bundle-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             border-color: #e30613;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #e30613, #ff4757);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(227, 6, 19, 0.3);
+            z-index: 1;
+        }
+
+        .bundle-pricing {
+            margin: 10px 0 15px 0;
+        }
+
+        .original-price {
+            font-size: 1em;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 5px;
+        }
+
+        .discounted-price {
+            font-size: 1.8em;
+            color: #e30613;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .discount-duration {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
         }
 
         .bundle-name {
@@ -722,10 +761,35 @@
             margin-bottom: 10px;
         }
 
+        .bundle-profile-discount-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .bundle-profile-original-price {
+            font-size: 1.2em;
+            text-decoration: line-through;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
         .bundle-profile-price {
             font-size: 2.5em;
             font-weight: 800;
             margin-bottom: 5px;
+        }
+
+        .bundle-profile-duration {
+            font-size: 1em;
+            opacity: 0.9;
+            font-style: italic;
+            margin-bottom: 10px;
         }
 
         .bundle-profile-subtitle {
@@ -1129,6 +1193,7 @@
             <div id="bundles" class="tab-content active">
                 <div class="search-add">
                     <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
+                    <button onclick="refreshBundles()" style="background: #28a745; margin-right: 10px;">🔄 Refresh from API</button>
                     <button onclick="openAddModal('bundle')">+ Add Bundle</button>
                 </div>
                 <div class="filter-chips">
@@ -1346,7 +1411,11 @@
                 allowance: '',
                 restrictions: '',
                 exitCharge: '',
-                isContract: ''
+                isContract: '',
+                hasDiscount: false,
+                originalPrice: '',
+                discountedPrice: '',
+                discountDuration: ''
             };
 
             // Extract commitment/duration
@@ -1354,15 +1423,43 @@
             cpr.duration = commitment;
             cpr.isContract = commitment.toLowerCase().includes('commitment') && !commitment.toLowerCase().includes('no commitment') ? 'Yes' : 'No';
 
-            // Extract fees
+            // Check for promotional pricing
             const recurringPrice = planSku.recurringPrice || planSku.price?.firstBill || '0';
+            const oldRecurringPrice = planSku.oldRecurringPrice || '';
             const oneTimePrice = planSku.price?.oneTime || '0';
-            cpr.fees = `Monthly: AED ${recurringPrice}${oneTimePrice !== '0.0' && oneTimePrice !== '0' ? `, One-time: AED ${oneTimePrice}` : ''}`;
+            
+            // If oldRecurringPrice exists and is different from recurringPrice, it's a discount
+            if (oldRecurringPrice && parseFloat(oldRecurringPrice) > parseFloat(recurringPrice)) {
+                cpr.hasDiscount = true;
+                cpr.originalPrice = oldRecurringPrice;
+                cpr.discountedPrice = recurringPrice;
+                
+                // Calculate discount percentage
+                const discountPercent = Math.round(((parseFloat(oldRecurringPrice) - parseFloat(recurringPrice)) / parseFloat(oldRecurringPrice)) * 100);
+                
+                // Try to extract discount duration from commitment or description
+                const commitmentMatch = commitment.match(/(\d+)\s*(month|months)/i);
+                cpr.discountDuration = commitmentMatch ? `for ${commitmentMatch[0]}` : '';
+                
+                cpr.fees = `Discounted: AED ${recurringPrice}/month (${discountPercent}% OFF)\nOriginal: AED ${oldRecurringPrice}/month ${cpr.discountDuration}${oneTimePrice !== '0.0' && oneTimePrice !== '0' ? `\nOne-time: AED ${oneTimePrice}` : ''}`;
+            } else {
+                cpr.fees = `Monthly: AED ${recurringPrice}${oneTimePrice !== '0.0' && oneTimePrice !== '0' ? `, One-time: AED ${oneTimePrice}` : ''}`;
+            }
 
             // Extract discounts from description
             const description = planSku.description || '';
-            const discountMatches = description.match(/(\d+%\s*off|discount|buy\s*1\s*get\s*1|free)/gi);
-            cpr.discounts = discountMatches ? discountMatches.join(', ') : 'Standard pricing';
+            const discountMatches = description.match(/(\d+%\s*off|discount|buy\s*1\s*get\s*1|free|silver number|choose your own gift)/gi);
+            
+            // Build discount text
+            let discountText = [];
+            if (cpr.hasDiscount) {
+                const discountPercent = Math.round(((parseFloat(oldRecurringPrice) - parseFloat(recurringPrice)) / parseFloat(oldRecurringPrice)) * 100);
+                discountText.push(`${discountPercent}% OFF monthly fee ${cpr.discountDuration}`);
+            }
+            if (discountMatches) {
+                discountText = discountText.concat(discountMatches);
+            }
+            cpr.discounts = discountText.length > 0 ? discountText.join('\n') : 'Standard pricing';
 
             // Extract allowances from dynamic attributes
             const allowances = [];
@@ -1385,8 +1482,9 @@
             cpr.restrictions = restrictions.join('\n');
 
             // Exit charge (typically 1 month rental for contract plans)
+            const priceForExitCharge = cpr.hasDiscount ? oldRecurringPrice : recurringPrice;
             if (cpr.isContract === 'Yes') {
-                cpr.exitCharge = `Early termination: AED ${recurringPrice} (or 1 month rental)`;
+                cpr.exitCharge = `Early termination: AED ${priceForExitCharge} (or 1 month rental)`;
             } else {
                 cpr.exitCharge = 'No exit charge (No commitment plan)';
             }
@@ -1516,8 +1614,8 @@
                             // SLA & Navigator always from mock data (fixed data)
                             data.sla = mockData?.sla || savedData.sla || [];
                             data.navigator = mockData?.navigator || savedData.navigator || [];
-                            // Don't load old bundles - start fresh from API only
-                            data.bundles = [];
+                            // Load cached bundles if available
+                            data.bundles = savedData.bundles || [];
                             console.log('✅ Data loaded from localStorage (SLA & Navigator from JSON)');
                         } else {
                             // No local saved data — populate from mock if available
@@ -1532,10 +1630,19 @@
 
                         // Always generate fresh plan bundles and keep any user bundles
                         console.log('� Fetching bundles from API...');
-                        const apiBundles = await generateBundlesFromAPI();
-                        data.bundles = apiBundles; // Only API bundles, no old data
+                        // Only fetch from API if no cached bundles exist
+                        const hasCachedBundles = data.bundles && data.bundles.length > 0;
+                        if (!hasCachedBundles) {
+                            const apiBundles = await generateBundlesFromAPI();
+                            data.bundles = apiBundles;
+                            // Save to localStorage immediately
+                            saveData();
+                            console.log('💾 Bundles cached to localStorage');
+                        } else {
+                            console.log(`✅ Using ${data.bundles.length} cached bundles`);
+                            updateProgress(100, 'Complete!', 'Using cached data');
+                        }
                         
-                        updateProgress(100, 'Complete!', 'Rendering data...');
                         // Small delay to show 100% before hiding
                         await new Promise(resolve => setTimeout(resolve, 300));
                         console.log(`✅ Loaded ${apiBundles.length} bundles from API`);
@@ -1560,6 +1667,39 @@
             } catch (error) {
                 console.error('Error saving data:', error);
                 alert('Failed to save data to browser storage.');
+            }
+        }
+
+        // Refresh bundles from API (force fetch)
+        async function refreshBundles() {
+            if (!confirm('Refresh bundles from API? This will fetch the latest data from Etisalat.')) {
+                return;
+            }
+            
+            try {
+                showLoading();
+                updateProgress(0, 'Refreshing...', 'Fetching latest bundles from API');
+                console.log('🔄 Refreshing bundles from API...');
+                
+                const apiBundles = await generateBundlesFromAPI();
+                data.bundles = apiBundles;
+                
+                // Save to localStorage
+                saveData();
+                console.log('💾 Updated bundles cached to localStorage');
+                
+                updateProgress(100, 'Complete!', 'Bundles refreshed successfully');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Re-render the bundles tab
+                renderAll();
+                
+                alert(`✅ Successfully refreshed ${apiBundles.length} bundles from API!`);
+            } catch (error) {
+                console.error('Error refreshing bundles:', error);
+                alert('⚠️ Failed to refresh bundles. Please check console for details.');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -1832,11 +1972,24 @@
                 return div.innerHTML.replace(/\n/g, '<br>');
             };
             
-            // Build comprehensive profile
+            // Build comprehensive profile with discount info
+            let pricingHTML = '';
+            if (item.cpr && item.cpr.hasDiscount) {
+                const discountPercent = Math.round(((parseFloat(item.cpr.originalPrice) - parseFloat(item.cpr.discountedPrice)) / parseFloat(item.cpr.originalPrice)) * 100);
+                pricingHTML = `
+                    <div class="bundle-profile-discount-badge">${discountPercent}% OFF</div>
+                    <div class="bundle-profile-original-price">Was: AED ${item.cpr.originalPrice}<small>/month</small></div>
+                    <div class="bundle-profile-price" style="color: #e30613;">Now: AED ${item.cpr.discountedPrice}<small>/month</small></div>
+                    ${item.cpr.discountDuration ? `<div class="bundle-profile-duration">${escapeHtml(item.cpr.discountDuration)}</div>` : ''}
+                `;
+            } else {
+                pricingHTML = `<div class="bundle-profile-price">AED ${item.price}<small>/month</small></div>`;
+            }
+            
             let profileHTML = `
                 <div class="bundle-profile-header">
                     <div class="bundle-profile-title">${escapeHtml(item.name)}</div>
-                    <div class="bundle-profile-price">AED ${item.price}<small>/month</small></div>
+                    ${pricingHTML}
                     <div class="bundle-profile-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes${item.roaming !== '0GB' ? ` • ${escapeHtml(item.roaming)} Roaming` : ''}</div>
                 </div>
                 
@@ -2009,12 +2162,22 @@
                     // Plan details for API bundles (display like product.html)
                     let planDetailsHTML = '';
                     if (type === 'bundle' && item.source === 'api') {
-                        
-                        planDetailsHTML = `
-                            <div class="bundle-price">AED ${item.price}<small>/month</small></div>
-                            <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
-                            ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
-                        `;
+                        // Check if there's a discount
+                        if (item.cpr && item.cpr.hasDiscount) {
+                            planDetailsHTML = `
+                                <div class="original-price" style="font-size: 0.9em;">AED ${item.cpr.originalPrice}<small>/month</small></div>
+                                <div class="bundle-price" style="color: #e30613;">AED ${item.cpr.discountedPrice}<small>/month</small></div>
+                                ${item.cpr.discountDuration ? `<div class="discount-duration" style="font-size: 0.85em; color: #666; font-style: italic; margin-top: 5px;">${escapeHtml(item.cpr.discountDuration)}</div>` : ''}
+                                <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
+                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
+                            `;
+                        } else {
+                            planDetailsHTML = `
+                                <div class="bundle-price">AED ${item.price}<small>/month</small></div>
+                                <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
+                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
+                            `;
+                        }
                     }
                     
                     // Add comprehensive CPR for all bundles/addons with CPR data
@@ -2059,9 +2222,27 @@
                             `;
                     }
                     
+                    // Build discount badge and pricing HTML
+                    let discountBadgeHTML = '';
+                    let pricingHTML = '';
+                    
+                    if (item.cpr && item.cpr.hasDiscount) {
+                        const discountPercent = Math.round(((parseFloat(item.cpr.originalPrice) - parseFloat(item.cpr.discountedPrice)) / parseFloat(item.cpr.originalPrice)) * 100);
+                        discountBadgeHTML = `<div class="discount-badge">${discountPercent}% OFF</div>`;
+                        pricingHTML = `
+                            <div class="bundle-pricing">
+                                <div class="original-price">AED ${item.cpr.originalPrice}/mo</div>
+                                <div class="discounted-price">AED ${item.cpr.discountedPrice}/mo</div>
+                                ${item.cpr.discountDuration ? `<div class="discount-duration">${item.cpr.discountDuration}</div>` : ''}
+                            </div>
+                        `;
+                    }
+                    
                     return `
                         <div class="bundle-card ${item.category ? 'plan-card' : ''}">
+                            ${discountBadgeHTML}
                             <div class="bundle-name">${escapeHtml(item.name)}</div>
+                            ${pricingHTML}
                             ${planDetailsHTML}
                             ${!planDetailsHTML ? `<div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>` : ''}
                             ${!planDetailsHTML ? `<a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>` : ''}
