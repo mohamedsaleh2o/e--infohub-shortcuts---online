@@ -150,9 +150,17 @@ class SupabaseManager {
 
             console.log(`✅ Fetched ${data?.length || 0} items from ${table}`);
             
+            // Extract data from JSONB column (NoSQL style)
+            const extractedData = data.map(row => ({
+                ...row.data,  // Spread the JSON data
+                id: row.id,   // Keep the database ID
+                created_at: row.created_at,
+                updated_at: row.updated_at
+            }));
+            
             // Update cache
-            this.updateCache(table, data || []);
-            return data || [];
+            this.updateCache(table, extractedData || []);
+            return extractedData || [];
         } catch (error) {
             console.error(`❌ Error fetching ${table}:`, error);
             // Return cached or localStorage data as fallback
@@ -188,9 +196,17 @@ class SupabaseManager {
             console.log(`☁️ Creating ${table} item...`);
             console.log('   Item data:', JSON.stringify(item, null, 2));
             
+            // Remove id from item if it exists (database will generate it)
+            const { id, created_at, updated_at, ...itemData } = item;
+            
+            // Wrap item in data field (NoSQL style)
+            const payload = {
+                data: itemData
+            };
+            
             const { data, error } = await this.supabase
                 .from(table)
-                .insert([item])
+                .insert([payload])
                 .select();
 
             if (error) {
@@ -204,11 +220,19 @@ class SupabaseManager {
 
             console.log(`✅ ${table} saved to Supabase with ID:`, data[0]?.id);
 
+            // Extract and return the saved item
+            const savedItem = {
+                ...data[0].data,
+                id: data[0].id,
+                created_at: data[0].created_at,
+                updated_at: data[0].updated_at
+            };
+
             // Update cache
             const cached = this.cache[table].data || [];
-            this.updateCache(table, [data[0], ...cached]);
+            this.updateCache(table, [savedItem, ...cached]);
 
-            return data[0];
+            return savedItem;
         } catch (error) {
             console.error(`❌ Error creating ${table}:`, error);
             console.error('Error details:', error.message, error.details, error.hint);
@@ -242,9 +266,17 @@ class SupabaseManager {
             console.log(`☁️ Updating ${table} item ${id}...`);
             console.log('   Updates:', JSON.stringify(updates, null, 2));
 
+            // Remove metadata fields from updates
+            const { id: _, created_at, updated_at, ...updateData } = updates;
+            
+            // Wrap updates in data field (NoSQL style)
+            const payload = {
+                data: updateData
+            };
+
             const { data, error } = await this.supabase
                 .from(table)
-                .update(updates)
+                .update(payload)
                 .eq('id', id)
                 .select();
 
@@ -258,14 +290,22 @@ class SupabaseManager {
 
             console.log(`✅ ${table} item ${id} updated in Supabase`);
 
+            // Extract updated item
+            const updatedItem = {
+                ...data[0].data,
+                id: data[0].id,
+                created_at: data[0].created_at,
+                updated_at: data[0].updated_at
+            };
+
             // Update cache
             const cached = this.cache[table].data || [];
             const updated = cached.map(item => 
-                item.id === id ? data[0] : item
+                item.id === id ? updatedItem : item
             );
             this.updateCache(table, updated);
 
-            return data[0];
+            return updatedItem;
         } catch (error) {
             console.error(`❌ Error updating ${table}:`, error);
             throw error;

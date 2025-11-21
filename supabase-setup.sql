@@ -3,93 +3,75 @@
 -- This creates separate tables for better performance and organization
 
 -- ============================
--- BUNDLES TABLE
+-- BUNDLES TABLE (NoSQL Style - Flexible Schema)
 -- ============================
 CREATE TABLE bundles (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    keywords TEXT,
-    link TEXT,
-    price NUMERIC,
-    data TEXT,
-    minutes TEXT,
-    roaming TEXT,
-    commitment TEXT,
-    category TEXT,
-    source TEXT DEFAULT 'manual',
-    cpr JSONB,
-    description TEXT,
-    fullData JSONB,
-    unique_id TEXT UNIQUE,
+    data JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_bundles_name ON bundles(name);
-CREATE INDEX idx_bundles_category ON bundles(category);
-CREATE INDEX idx_bundles_source ON bundles(source);
-CREATE INDEX idx_bundles_unique_id ON bundles(unique_id);
+-- Create GIN index for fast JSON queries
+CREATE INDEX idx_bundles_data ON bundles USING GIN (data);
+
+-- Create indexes on specific JSON fields for better performance
+CREATE INDEX idx_bundles_name ON bundles ((data->>'name'));
+CREATE INDEX idx_bundles_source ON bundles ((data->>'source'));
+CREATE INDEX idx_bundles_unique_id ON bundles ((data->>'unique_id'));
 
 -- ============================
--- ADDONS TABLE
+-- ADDONS TABLE (NoSQL Style)
 -- ============================
 CREATE TABLE addons (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    keywords TEXT,
-    link TEXT,
-    cpr JSONB,
+    data JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_addons_name ON addons(name);
+CREATE INDEX idx_addons_data ON addons USING GIN (data);
+CREATE INDEX idx_addons_name ON addons ((data->>'name'));
 
 -- ============================
--- SLA TABLE (Service Level Agreements)
+-- SLA TABLE (NoSQL Style - Service Level Agreements)
 -- ============================
 CREATE TABLE slas (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    keywords TEXT,
-    time TEXT NOT NULL,
-    description TEXT,
+    data JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_slas_name ON slas(name);
+CREATE INDEX idx_slas_data ON slas USING GIN (data);
+CREATE INDEX idx_slas_name ON slas ((data->>'name'));
 
 -- ============================
--- NAVIGATORS TABLE (UI Navigation Paths)
+-- NAVIGATORS TABLE (NoSQL Style - UI Navigation Paths)
 -- ============================
 CREATE TABLE navigators (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    keywords TEXT,
-    path TEXT NOT NULL,
-    description TEXT,
+    data JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_navigators_name ON navigators(name);
+CREATE INDEX idx_navigators_data ON navigators USING GIN (data);
+CREATE INDEX idx_navigators_name ON navigators ((data->>'name'));
 
 -- ============================
--- SCENARIOS TABLE (Customer Service Scenarios)
+-- SCENARIOS TABLE (NoSQL Style - Customer Service Scenarios)
 -- ============================
 CREATE TABLE scenarios (
     id BIGSERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    keywords TEXT,
-    description TEXT,
-    tag TEXT CHECK (tag IN ('inquiry', 'request', 'complaint')),
+    data JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_scenarios_title ON scenarios(title);
-CREATE INDEX idx_scenarios_tag ON scenarios(tag);
+CREATE INDEX idx_scenarios_data ON scenarios USING GIN (data);
+CREATE INDEX idx_scenarios_title ON scenarios ((data->>'title'));
+CREATE INDEX idx_scenarios_tag ON scenarios ((data->>'tag'));
 
 -- ============================
 -- ENABLE ROW LEVEL SECURITY (RLS)

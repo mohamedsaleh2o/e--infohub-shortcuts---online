@@ -2,26 +2,56 @@
 -- MIGRATION: Add missing columns to bundles table
 -- ============================
 -- Run this in your Supabase SQL Editor to fix the PGRST204 error
--- This adds the fullData and unique_id columns that the app is trying to use
+-- URL: https://supabase.com/dashboard/project/ywsbhmpzmtqovgtltsfw/sql/new
 
--- Add fullData column to store complete plan data
+-- Step 1: Add fullData column to store complete plan data
 ALTER TABLE bundles ADD COLUMN IF NOT EXISTS fullData JSONB;
 
--- Add unique_id column to prevent duplicates
-ALTER TABLE bundles ADD COLUMN IF NOT EXISTS unique_id TEXT UNIQUE;
+-- Step 2: Add unique_id column to prevent duplicates
+ALTER TABLE bundles ADD COLUMN IF NOT EXISTS unique_id TEXT;
 
--- Create index on unique_id for faster lookups
-CREATE INDEX IF NOT EXISTS idx_bundles_unique_id ON bundles(unique_id);
-
--- Display success message
-DO $$
+-- Step 3: Add unique constraint (dropping first if exists to avoid error)
+DO $$ 
 BEGIN
-    RAISE NOTICE '✅ Migration completed successfully!';
-    RAISE NOTICE '   - Added fullData column (JSONB)';
-    RAISE NOTICE '   - Added unique_id column (TEXT UNIQUE)';
-    RAISE NOTICE '   - Created index on unique_id';
-    RAISE NOTICE '';
-    RAISE NOTICE '🔄 Please refresh your schema cache in the app now.';
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'bundles_unique_id_key'
+    ) THEN
+        ALTER TABLE bundles ADD CONSTRAINT bundles_unique_id_key UNIQUE (unique_id);
+    END IF;
 END $$;
 
-COMMIT;
+-- Step 4: Create index on unique_id for faster lookups
+CREATE INDEX IF NOT EXISTS idx_bundles_unique_id ON bundles(unique_id);
+
+-- Step 5: Verify the columns were added
+DO $$
+DECLARE
+    fulldata_exists boolean;
+    unique_id_exists boolean;
+BEGIN
+    -- Check if fullData column exists
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'bundles' AND column_name = 'fulldata'
+    ) INTO fulldata_exists;
+    
+    -- Check if unique_id column exists
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'bundles' AND column_name = 'unique_id'
+    ) INTO unique_id_exists;
+    
+    -- Display results
+    RAISE NOTICE '========================================';
+    RAISE NOTICE '✅ MIGRATION COMPLETED SUCCESSFULLY!';
+    RAISE NOTICE '========================================';
+    RAISE NOTICE 'Column Status:';
+    RAISE NOTICE '  - fullData column: %', CASE WHEN fulldata_exists THEN '✓ EXISTS' ELSE '✗ MISSING' END;
+    RAISE NOTICE '  - unique_id column: %', CASE WHEN unique_id_exists THEN '✓ EXISTS' ELSE '✗ MISSING' END;
+    RAISE NOTICE '';
+    RAISE NOTICE '� Next Steps:';
+    RAISE NOTICE '  1. Refresh your browser (Ctrl+F5)';
+    RAISE NOTICE '  2. Check the console for success messages';
+    RAISE NOTICE '  3. Try loading bundles again';
+    RAISE NOTICE '========================================';
+END $$;
