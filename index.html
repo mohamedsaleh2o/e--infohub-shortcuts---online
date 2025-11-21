@@ -6,7 +6,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e30613">
-    <title>Link Shortcuts Hub</title>
+    <title>E& InfoHub - Link Shortcuts</title>
+    
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         * {
             margin: 0;
@@ -625,6 +629,34 @@
             background: linear-gradient(135deg, #fff 0%, #ecf0f1 100%);
         }
 
+        .tag-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 8px 0;
+            text-transform: capitalize;
+        }
+
+        .tag-inquiry {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        .tag-request {
+            background-color: #e8f5e9;
+            color: #388e3c;
+            border: 1px solid #c8e6c9;
+        }
+
+        .tag-complaint {
+            background-color: #ffebee;
+            color: #d32f2f;
+            border: 1px solid #ffcdd2;
+        }
+
         .cpr-section {
             background: #f8f9fa;
             border-left: 4px solid #e30613;
@@ -1015,7 +1047,7 @@
                 background: transparent;
                 border: none;
                 color: white;
-                font-size: 22px;
+                font-size: 20px;
                 cursor: pointer;
                 padding: 8px;
                 width: auto;
@@ -1023,6 +1055,20 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                transition: transform 0.3s ease;
+            }
+
+            .refresh-btn:active {
+                transform: rotate(180deg);
+            }
+
+            .refresh-btn.spinning {
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
 
             /* Overlay for sidebar */
@@ -1657,7 +1703,13 @@
             <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
             <div class="mobile-appbar-title">Bundles</div>
         </div>
-        <button class="refresh-btn" onclick="refreshBundles()">🔄</button>
+        <button class="refresh-btn" onclick="refreshCurrentTab()" id="refreshBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        </button>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -1790,8 +1842,18 @@
 
             <!-- Scenario Description Field -->
             <div class="form-group" id="descriptionGroup" style="display: none;">
-                <label>Description / Call Notes</label>
-                <textarea id="itemDescription" rows="8" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Write your call scenario notes here...&#10;&#10;Example:&#10;- Customer called about billing issue&#10;- Explained the charges breakdown&#10;- Offered discount on next cycle&#10;- Customer satisfied and accepted"></textarea>
+                <label>Description</label>
+                <textarea id="itemDescription" rows="8" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Describe the scenario...&#10;&#10;Include:&#10;- Issue/Request details&#10;- SLA requirements&#10;- Notes to consider"></textarea>
+            </div>
+
+            <!-- Scenario Tag Field -->
+            <div class="form-group" id="tagGroup" style="display: none;">
+                <label>Tag</label>
+                <select id="itemTag" style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                    <option value="inquiry">Inquiry</option>
+                    <option value="request">Request</option>
+                    <option value="complaint">Complaint</option>
+                </select>
             </div>
             
             <!-- CPR Fields for Bundles -->
@@ -1868,6 +1930,10 @@
         </div>
     </div>
 
+    <!-- Configuration and Database Manager -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase.js"></script>
+
     <script>
         // Configuration
         const STORAGE_KEY = 'linkShortcutsData';
@@ -1878,7 +1944,43 @@
             devicec: [],
             sla: [],
             navigator: [],
-            scenarios: []
+            scenarios: [
+                {
+                    id: 1,
+                    title: "Billing Dispute Resolution",
+                    description: "Customer called regarding unexpected charges on bill.\n\nSLA: Resolve within 24 hours\n\nNotes to consider:\n- Verify customer account and billing cycle\n- Check for any promotional offers that may have expired\n- Offer itemized breakdown of charges\n- Escalate to billing team if needed",
+                    tag: "complaint",
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    title: "Plan Upgrade Request",
+                    description: "Customer wants to upgrade from 150GB to unlimited data plan.\n\nSLA: Process within 2 hours\n\nNotes to consider:\n- Check customer eligibility for upgrade\n- Explain price difference and commitment terms\n- Verify no outstanding payments\n- Confirm upgrade effective date",
+                    tag: "request",
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 3,
+                    title: "Network Coverage Inquiry",
+                    description: "Customer asking about 5G coverage in their area.\n\nSLA: Respond within 1 hour\n\nNotes to consider:\n- Check coverage map for customer's location\n- Inform about upcoming network expansions\n- Suggest alternative solutions if coverage is limited\n- Provide contact for technical support if needed",
+                    tag: "inquiry",
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 4,
+                    title: "Service Interruption Complaint",
+                    description: "Customer experiencing no internet connection for past 2 hours.\n\nSLA: Acknowledge immediately, resolve within 4 hours\n\nNotes to consider:\n- Check for network outages in area\n- Verify SIM card status and device settings\n- Offer temporary data compensation\n- Schedule technician visit if hardware issue",
+                    tag: "complaint",
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 5,
+                    title: "International Roaming Activation",
+                    description: "Customer traveling abroad needs roaming activated.\n\nSLA: Activate within 30 minutes\n\nNotes to consider:\n- Verify customer's destination country\n- Explain roaming rates and packages\n- Check passport/visa if required\n- Confirm activation before travel date",
+                    tag: "request",
+                    timestamp: new Date().toISOString()
+                }
+            ]
         };
         let currentType = 'bundle';
         let allBundles = [];
@@ -2114,8 +2216,92 @@
             document.getElementById('loadingOverlay').classList.remove('active');
         }
 
-        // Load data from localStorage or generate bundles
+        // Load data from Supabase with smart caching
         async function loadData() {
+            try {
+                showLoading();
+                updateProgress(0, 'Initializing...', 'Connecting to database');
+                console.log('📦 Loading data...');
+                
+                // Check if Supabase is configured
+                const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+
+                if (useSupabase) {
+                    console.log('☁️ Using Supabase database');
+                    
+                    // Load from Supabase with automatic caching
+                    updateProgress(20, 'Loading bundles...', 'Fetching from cloud/cache');
+                    data.bundles = await db.getAll('bundles');
+                    
+                    updateProgress(40, 'Loading addons...', 'Fetching from cloud/cache');
+                    data.addons = await db.getAll('addons');
+                    
+                    updateProgress(60, 'Loading SLAs...', 'Fetching from cloud/cache');
+                    data.sla = await db.getAll('slas');
+                    
+                    updateProgress(70, 'Loading navigators...', 'Fetching from cloud/cache');
+                    data.navigator = await db.getAll('navigators');
+                    
+                    updateProgress(80, 'Loading scenarios...', 'Fetching from cloud/cache');
+                    data.scenarios = await db.getAll('scenarios');
+
+                    console.log('✅ Data loaded from Supabase');
+                } else {
+                    console.warn('⚠️ Supabase not configured - using localStorage only');
+                    
+                    // Fallback to localStorage
+                    updateProgress(20, 'Loading saved data...', 'Reading from local storage');
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) {
+                        const savedData = JSON.parse(saved);
+                        data.bundles = savedData.bundles || [];
+                        data.addons = savedData.addons || [];
+                        data.sla = savedData.sla || [];
+                        data.navigator = savedData.navigator || [];
+                        data.scenarios = savedData.scenarios || [];
+                        console.log('✅ Data loaded from localStorage');
+                    }
+                }
+
+                // If no bundles, fetch from API and save to Supabase
+                if (data.bundles.length === 0) {
+                    updateProgress(85, 'Generating bundles...', 'Fetching from Etisalat API');
+                    console.log('🌐 No cached bundles - fetching from API...');
+                    const apiBundles = await generateBundlesFromAPI();
+                    
+                    // Save to Supabase if available
+                    if (useSupabase) {
+                        updateProgress(90, 'Saving bundles...', 'Syncing to cloud');
+                        for (const bundle of apiBundles) {
+                            await db.create('bundles', bundle);
+                        }
+                        data.bundles = await db.getAll('bundles');
+                        console.log('💾 Bundles saved to Supabase');
+                    } else {
+                        data.bundles = apiBundles;
+                        saveData();
+                    }
+                }
+
+                updateProgress(100, 'Complete!', 'All data loaded');
+                console.log(`📊 Bundles: ${data.bundles.length}, Scenarios: ${data.scenarios.length}`);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                alert('⚠️ Failed to load data. Check console.');
+            } finally {
+                hideLoading();
+            }
+
+            console.log('🚀 Rendering UI...');
+            renderAll();
+        }
+
+        // OLD CODE BELOW - TO BE REMOVED
+        /*
+        async function loadData_OLD() {
                     try {
                         showLoading();
                         updateProgress(0, 'Initializing...', 'Preparing to load data');
@@ -2187,8 +2373,9 @@
                     console.log('🚀 Calling renderAll()...');
                     renderAll();
                 }
+        */
 
-        // Save data to localStorage only
+        // Save data to localStorage (backup)
         function saveData() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -2199,7 +2386,62 @@
             }
         }
 
-        // Refresh bundles from API (force fetch)
+        // Refresh current tab data from Supabase
+        async function refreshCurrentTab() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) refreshBtn.classList.add('spinning');
+            
+            try {
+                const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+                
+                if (!useSupabase) {
+                    alert('⚠️ Supabase not configured. Using cached data.');
+                    return;
+                }
+
+                console.log('🔄 Refreshing current tab data...');
+                
+                // Map current type to table name
+                const typeToTable = {
+                    'bundles': 'bundles',
+                    'addons': 'addons',
+                    'sla': 'slas',
+                    'navigator': 'navigators',
+                    'scenarios': 'scenarios'
+                };
+                
+                const table = typeToTable[currentType];
+                if (table) {
+                    // Force refresh from Supabase (clear cache)
+                    const refreshedData = await db.refresh(table);
+                    
+                    // Update local data
+                    if (currentType === 'bundles') {
+                        data.bundles = refreshedData;
+                    } else if (currentType === 'addons') {
+                        data.addons = refreshedData;
+                    } else if (currentType === 'sla') {
+                        data.sla = refreshedData;
+                    } else if (currentType === 'navigator') {
+                        data.navigator = refreshedData;
+                    } else if (currentType === 'scenarios') {
+                        data.scenarios = refreshedData;
+                    }
+                    
+                    renderAll();
+                    console.log(`✅ ${currentType} refreshed from Supabase`);
+                }
+            } catch (error) {
+                console.error('❌ Error refreshing:', error);
+                alert('Failed to refresh data');
+            } finally {
+                setTimeout(() => {
+                    if (refreshBtn) refreshBtn.classList.remove('spinning');
+                }, 500);
+            }
+        }
+
+        // OLD: Refresh bundles from API (force fetch)
         async function refreshBundles() {
             if (!confirm('Refresh bundles from API? This will fetch the latest data from Etisalat.')) {
                 return;
@@ -2306,6 +2548,7 @@
                 timeGroup.style.display = 'block';
                 pathGroup.style.display = 'none';
                 descriptionGroup.style.display = 'none';
+                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'none';
             } else if (type === 'navigator') {
                 modalTitle.textContent = 'Add New Navigation Guide';
@@ -2313,6 +2556,7 @@
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'block';
                 descriptionGroup.style.display = 'none';
+                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'none';
             } else if (type === 'scenario') {
                 modalTitle.textContent = 'Add New Call Scenario';
@@ -2320,14 +2564,17 @@
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
                 descriptionGroup.style.display = 'block';
+                document.getElementById('tagGroup').style.display = 'block';
                 cprFields.style.display = 'none';
                 document.getElementById('itemName').placeholder = 'Enter scenario title...';
+                document.getElementById('itemTag').value = 'inquiry'; // Default value
             } else if (type === 'bundle') {
                 modalTitle.textContent = 'Add New Bundle';
                 linkGroup.style.display = 'block';
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
                 descriptionGroup.style.display = 'none';
+                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'block';
             } else if (type === 'addon') {
                 modalTitle.textContent = 'Add New Addon';
@@ -2335,6 +2582,7 @@
                 timeGroup.style.display = 'none';
                 pathGroup.style.display = 'none';
                 descriptionGroup.style.display = 'none';
+                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'block';
             } else {
                 const typeNames = {
@@ -2355,9 +2603,10 @@
             document.getElementById('addModal').classList.remove('active');
         }
 
-        function saveItem() {
+        async function saveItem() {
             const name = document.getElementById('itemName').value.trim();
             const keywords = document.getElementById('itemKeywords').value.trim();
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
             
             let item;
             
@@ -2370,11 +2619,15 @@
                 }
                 
                 item = {
-                    id: Date.now(),
                     name,
                     keywords,
                     time
                 };
+                
+                // Add id only for localStorage fallback
+                if (!useSupabase) {
+                    item.id = Date.now();
+                }
             } else if (currentType === 'navigator') {
                 const path = document.getElementById('itemPath').value.trim();
                 
@@ -2384,13 +2637,18 @@
                 }
                 
                 item = {
-                    id: Date.now(),
                     name,
                     keywords,
                     path
                 };
+                
+                // Add id only for localStorage fallback
+                if (!useSupabase) {
+                    item.id = Date.now();
+                }
             } else if (currentType === 'scenario') {
                 const description = document.getElementById('itemDescription').value.trim();
+                const tag = document.getElementById('itemTag').value;
                 
                 if (!name) {
                     alert('Please fill in the scenario title');
@@ -2398,12 +2656,17 @@
                 }
                 
                 item = {
-                    id: Date.now(),
                     title: name,
                     keywords,
                     description,
-                    timestamp: new Date().toISOString()
+                    tag
                 };
+                
+                // Add id and timestamp only for localStorage fallback
+                if (!useSupabase) {
+                    item.id = Date.now();
+                    item.timestamp = new Date().toISOString();
+                }
             } else {
                 const link = document.getElementById('itemLink').value.trim();
                 
@@ -2413,11 +2676,15 @@
                 }
                 
                 item = {
-                    id: Date.now(),
                     name,
                     keywords,
                     link
                 };
+                
+                // Add id only for localStorage fallback
+                if (!useSupabase) {
+                    item.id = Date.now();
+                }
                 
                 // Add CPR data for bundles and addons
                 if (currentType === 'bundle' || currentType === 'addon') {
@@ -2442,53 +2709,121 @@
                 }
             }
 
-            // Add to local data array
-            if (currentType === 'bundle') {
-                data.bundles.push(item);
-            } else if (currentType === 'addon') {
-                data.addons.push(item);
-            } else if (currentType === 'devicec') {
-                data.devicec.push(item);
-            } else if (currentType === 'sla') {
-                data.sla.push(item);
-            } else if (currentType === 'navigator') {
-                data.navigator.push(item);
-            } else if (currentType === 'scenario') {
-                data.scenarios.push(item);
-            }
+            // Save to Supabase or localStorage
+            try {
+                if (useSupabase) {
+                    // Map type to table name
+                    const tableMap = {
+                        'bundle': 'bundles',
+                        'addon': 'addons',
+                        'sla': 'slas',
+                        'navigator': 'navigators',
+                        'scenario': 'scenarios'
+                    };
+                    
+                    const table = tableMap[currentType];
+                    await db.create(table, item);
+                    
+                    // Refresh data from Supabase
+                    if (currentType === 'bundle') {
+                        data.bundles = await db.getAll('bundles');
+                    } else if (currentType === 'addon') {
+                        data.addons = await db.getAll('addons');
+                    } else if (currentType === 'sla') {
+                        data.sla = await db.getAll('slas');
+                    } else if (currentType === 'navigator') {
+                        data.navigator = await db.getAll('navigators');
+                    } else if (currentType === 'scenario') {
+                        data.scenarios = await db.getAll('scenarios');
+                    }
+                    
+                    console.log(`✅ ${currentType} saved to Supabase`);
+                } else {
+                    // Fallback to localStorage
+                    if (currentType === 'bundle') {
+                        data.bundles.push(item);
+                    } else if (currentType === 'addon') {
+                        data.addons.push(item);
+                    } else if (currentType === 'devicec') {
+                        data.devicec.push(item);
+                    } else if (currentType === 'sla') {
+                        data.sla.push(item);
+                    } else if (currentType === 'navigator') {
+                        data.navigator.push(item);
+                    } else if (currentType === 'scenario') {
+                        data.scenarios.push(item);
+                    }
+                    saveData();
+                    console.log(`💾 ${currentType} saved to localStorage`);
+                }
 
-            saveData();
-            renderAll();
-            closeAddModal();
+                renderAll();
+                closeAddModal();
+            } catch (error) {
+                console.error('❌ Error saving item:', error);
+                alert('Failed to save item. Please try again.');
+            }
         }
 
-        function deleteItem(type, id) {
-            // Prevent deletion of API-fetched bundles
-            if (typeof id === 'string' && id.startsWith('api-')) {
-                if (!confirm('This is an API-fetched bundle. Are you sure you want to delete it? It will be re-fetched on next page load.')) {
-                    return;
-                }
-            } else if (!confirm('Are you sure you want to delete this item?')) {
+        async function deleteItem(type, id) {
+            if (!confirm('Are you sure you want to delete this item?')) {
                 return;
             }
 
-            // Delete from local data array
-            if (type === 'bundle') {
-                data.bundles = data.bundles.filter(item => item.id != id);
-            } else if (type === 'addon') {
-                data.addons = data.addons.filter(item => item.id != id);
-            } else if (type === 'devicec') {
-                data.devicec = data.devicec.filter(item => item.id != id);
-            } else if (type === 'sla') {
-                data.sla = data.sla.filter(item => item.id != id);
-            } else if (type === 'navigator') {
-                data.navigator = data.navigator.filter(item => item.id != id);
-            } else if (type === 'scenario') {
-                data.scenarios = data.scenarios.filter(item => item.id != id);
-            }
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+            
+            try {
+                if (useSupabase) {
+                    // Map type to table name
+                    const tableMap = {
+                        'bundle': 'bundles',
+                        'addon': 'addons',
+                        'sla': 'slas',
+                        'navigator': 'navigators',
+                        'scenario': 'scenarios'
+                    };
+                    
+                    const table = tableMap[type];
+                    await db.delete(table, id);
+                    
+                    // Refresh data from Supabase
+                    if (type === 'bundle') {
+                        data.bundles = await db.getAll('bundles');
+                    } else if (type === 'addon') {
+                        data.addons = await db.getAll('addons');
+                    } else if (type === 'sla') {
+                        data.sla = await db.getAll('slas');
+                    } else if (type === 'navigator') {
+                        data.navigator = await db.getAll('navigators');
+                    } else if (type === 'scenario') {
+                        data.scenarios = await db.getAll('scenarios');
+                    }
+                    
+                    console.log(`✅ ${type} deleted from Supabase`);
+                } else {
+                    // Fallback to localStorage
+                    if (type === 'bundle') {
+                        data.bundles = data.bundles.filter(item => item.id != id);
+                    } else if (type === 'addon') {
+                        data.addons = data.addons.filter(item => item.id != id);
+                    } else if (type === 'devicec') {
+                        data.devicec = data.devicec.filter(item => item.id != id);
+                    } else if (type === 'sla') {
+                        data.sla = data.sla.filter(item => item.id != id);
+                    } else if (type === 'navigator') {
+                        data.navigator = data.navigator.filter(item => item.id != id);
+                    } else if (type === 'scenario') {
+                        data.scenarios = data.scenarios.filter(item => item.id != id);
+                    }
+                    saveData();
+                    console.log(`💾 ${type} deleted from localStorage`);
+                }
 
-            saveData();
-            renderAll();
+                renderAll();
+            } catch (error) {
+                console.error('❌ Error deleting item:', error);
+                alert('Failed to delete item. Please try again.');
+            }
         }
 
         function openLink(url) {
@@ -2750,12 +3085,17 @@
             } else if (type === 'scenario') {
                 // Scenario items with title and expandable description
                 container.innerHTML = items.map(item => {
-                    const timestamp = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown';
+                    // Handle both created_at (Supabase) and timestamp (localStorage)
+                    const timestamp = item.created_at 
+                        ? new Date(item.created_at).toLocaleString() 
+                        : (item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown');
                     const hasDescription = item.description && item.description.trim();
+                    const tag = item.tag || 'inquiry';
                     
                     return `
                         <div class="bundle-card scenario-card">
                             <div class="bundle-name">📝 ${escapeHtml(item.title)}</div>
+                            <span class="tag-badge tag-${tag}">${tag.charAt(0).toUpperCase() + tag.slice(1)}</span>
                             <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
                             <div class="sla-time">🕐 ${timestamp}</div>
                             ${hasDescription ? `

@@ -1,30 +1,131 @@
--- Supabase Database Setup for Link Shortcuts Hub
+-- 🗄️ Supabase Database Setup for E& InfoHub
 -- Run this SQL in your Supabase SQL Editor
+-- This creates separate tables for better performance and organization
 
--- Create the shortcuts table
-CREATE TABLE shortcuts (
-    id BIGINT PRIMARY KEY,
-    type TEXT NOT NULL CHECK (type IN ('bundle', 'addon', 'devicec', 'sla', 'navigator')),
+-- ============================
+-- BUNDLES TABLE
+-- ============================
+CREATE TABLE bundles (
+    id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     keywords TEXT,
     link TEXT,
-    time TEXT,
-    path TEXT,
+    price NUMERIC,
+    data TEXT,
+    minutes TEXT,
+    roaming TEXT,
+    commitment TEXT,
+    category TEXT,
+    source TEXT DEFAULT 'manual',
     cpr JSONB,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create index for faster queries
-CREATE INDEX idx_shortcuts_type ON shortcuts(type);
-CREATE INDEX idx_shortcuts_name ON shortcuts(name);
+CREATE INDEX idx_bundles_name ON bundles(name);
+CREATE INDEX idx_bundles_category ON bundles(category);
+CREATE INDEX idx_bundles_source ON bundles(source);
 
--- Enable Row Level Security
-ALTER TABLE shortcuts ENABLE ROW LEVEL SECURITY;
+-- ============================
+-- ADDONS TABLE
+-- ============================
+CREATE TABLE addons (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    keywords TEXT,
+    link TEXT,
+    cpr JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
--- Create policy to allow all operations (for public access)
--- WARNING: This allows anyone to read/write. Adjust based on your security needs.
-CREATE POLICY "Enable all operations for everyone" ON shortcuts
+CREATE INDEX idx_addons_name ON addons(name);
+
+-- ============================
+-- SLA TABLE (Service Level Agreements)
+-- ============================
+CREATE TABLE slas (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    keywords TEXT,
+    time TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_slas_name ON slas(name);
+
+-- ============================
+-- NAVIGATORS TABLE (UI Navigation Paths)
+-- ============================
+CREATE TABLE navigators (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    keywords TEXT,
+    path TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_navigators_name ON navigators(name);
+
+-- ============================
+-- SCENARIOS TABLE (Customer Service Scenarios)
+-- ============================
+CREATE TABLE scenarios (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    keywords TEXT,
+    description TEXT,
+    tag TEXT CHECK (tag IN ('inquiry', 'request', 'complaint')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_scenarios_title ON scenarios(title);
+CREATE INDEX idx_scenarios_tag ON scenarios(tag);
+
+-- ============================
+-- ENABLE ROW LEVEL SECURITY (RLS)
+-- ============================
+ALTER TABLE bundles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE addons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE slas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE navigators ENABLE ROW LEVEL SECURITY;
+ALTER TABLE scenarios ENABLE ROW LEVEL SECURITY;
+
+-- ============================
+-- RLS POLICIES (Allow all for now - adjust for production)
+-- ============================
+-- BUNDLES policies
+CREATE POLICY "Enable all operations for bundles" ON bundles
+    FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- ADDONS policies
+CREATE POLICY "Enable all operations for addons" ON addons
+    FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- SLAS policies
+CREATE POLICY "Enable all operations for slas" ON slas
+    FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- NAVIGATORS policies
+CREATE POLICY "Enable all operations for navigators" ON navigators
+    FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- SCENARIOS policies
+CREATE POLICY "Enable all operations for scenarios" ON scenarios
     FOR ALL
     USING (true)
     WITH CHECK (true);
@@ -35,7 +136,9 @@ CREATE POLICY "Enable all operations for everyone" ON shortcuts
 -- CREATE POLICY "Enable update for authenticated users" ON shortcuts FOR UPDATE USING (auth.role() = 'authenticated');
 -- CREATE POLICY "Enable delete for authenticated users" ON shortcuts FOR DELETE USING (auth.role() = 'authenticated');
 
--- Function to automatically update updated_at timestamp
+-- ============================
+-- AUTO-UPDATE TIMESTAMPS
+-- ============================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -44,21 +147,41 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Trigger to update updated_at on row update
-CREATE TRIGGER update_shortcuts_updated_at 
-    BEFORE UPDATE ON shortcuts 
+-- Apply triggers to all tables
+CREATE TRIGGER update_bundles_updated_at 
+    BEFORE UPDATE ON bundles 
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
--- Optional: Insert sample data (uncomment if you want to start with examples)
-/*
-INSERT INTO shortcuts (id, type, name, keywords, link, cpr) VALUES
-(1730000001, 'bundle', 'Freedom Plans', 'postpaid, freedom, unlimited, 5G', 'https://www.etisalat.ae/b2c/plans/postpaid', 
- '{"duration": "30 days", "fees": "AED 199/month", "discounts": "20% discount for first 3 months", "allowance": "Unlimited local calls, 100GB data, 500 international minutes", "restrictions": "Fair usage policy applies, 5G only in covered areas", "exitCharge": "AED 100 early termination fee"}'::jsonb);
-*/
+CREATE TRIGGER update_addons_updated_at 
+    BEFORE UPDATE ON addons 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
 
--- Grant necessary permissions (if using service role)
--- GRANT ALL ON shortcuts TO authenticated;
--- GRANT ALL ON shortcuts TO anon;
+CREATE TRIGGER update_slas_updated_at 
+    BEFORE UPDATE ON slas 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_navigators_updated_at 
+    BEFORE UPDATE ON navigators 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_scenarios_updated_at 
+    BEFORE UPDATE ON scenarios 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================
+-- OPTIONAL: SAMPLE DATA
+-- ============================
+-- Uncomment to insert sample scenarios
+/*
+INSERT INTO scenarios (title, description, tag) VALUES
+('Billing Dispute Resolution', 'Customer disputes recent charges.\nSLA: Resolve within 24 hours.\nNote: Check billing history, offer refund if valid.', 'complaint'),
+('Plan Upgrade Request', 'Customer wants to upgrade to higher data plan.\nSLA: Process within 2 hours.\nNote: Check eligibility, explain new charges.', 'request'),
+('Network Coverage Inquiry', 'Customer asking about 5G coverage in specific area.\nSLA: Respond within 1 hour.\nNote: Check coverage map, provide alternatives.', 'inquiry');
+*/
 
 COMMIT;
