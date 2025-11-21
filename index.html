@@ -631,30 +631,60 @@
 
         .tag-badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 6px 14px;
+            border-radius: 16px;
             font-size: 0.85em;
-            font-weight: 600;
+            font-weight: 700;
             margin: 8px 0;
             text-transform: capitalize;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.3px;
         }
 
         .tag-inquiry {
-            background-color: #e3f2fd;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             color: #1976d2;
-            border: 1px solid #bbdefb;
+            border: 1px solid #90caf9;
         }
 
         .tag-request {
-            background-color: #e8f5e9;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             color: #388e3c;
-            border: 1px solid #c8e6c9;
+            border: 1px solid #81c784;
         }
 
         .tag-complaint {
-            background-color: #ffebee;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
             color: #d32f2f;
-            border: 1px solid #ffcdd2;
+            border: 1px solid #ef5350;
+        }
+
+        .scenario-card {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-card:has(.tag-inquiry) {
+            border-left-color: #1976d2;
+        }
+
+        .scenario-card:has(.tag-request) {
+            border-left-color: #388e3c;
+        }
+
+        .scenario-card:has(.tag-complaint) {
+            border-left-color: #d32f2f;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .scenario-description {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border: 1px solid #dee2e6;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .cpr-section {
@@ -1763,7 +1793,7 @@
 
             <div id="bundles" class="tab-content active">
                 <div class="search-add">
-                    <input type="text" id="searchBundles" placeholder="Search bundles by name or keywords..." onkeyup="filterBundles()">
+                    <input type="text" id="searchBundles" placeholder="🔍 Search: international, roaming, 4GB, Freedom, price, contract..." onkeyup="filterBundles()">
                     <button onclick="refreshBundles()" style="background: #28a745; margin-right: 10px;">🔄 Refresh from API</button>
                     <button onclick="openAddModal('bundle')">+ Add Bundle</button>
                 </div>
@@ -1772,7 +1802,7 @@
 
             <div id="addons" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchAddons" placeholder="Search addons by name or keywords..." onkeyup="filterAddons()">
+                    <input type="text" id="searchAddons" placeholder="🔍 Search addons: data, minutes, roaming..." onkeyup="filterAddons()">
                     <button onclick="openAddModal('addon')">+ Add Addon</button>
                 </div>
                 <div id="addonsList" class="bundle-grid"></div>
@@ -1780,7 +1810,7 @@
 
             <div id="devicec" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchDeviceC" placeholder="Search Device Care by name or keywords..." onkeyup="filterDeviceC()">
+                    <input type="text" id="searchDeviceC" placeholder="🔍 Search Device Care..." onkeyup="filterDeviceC()">
                     <button onclick="openAddModal('devicec')">+ Add DeviceC</button>
                 </div>
                 <div id="devicecList" class="bundle-grid"></div>
@@ -1788,7 +1818,7 @@
 
             <div id="sla" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchSLA" placeholder="Search SLA by name or keywords..." onkeyup="filterSLA()">
+                    <input type="text" id="searchSLA" placeholder="🔍 Search SLA: hours, days, time..." onkeyup="filterSLA()">
                     <button onclick="openAddModal('sla')">+ Add SLA</button>
                 </div>
                 <div id="slaList" class="bundle-grid"></div>
@@ -1796,7 +1826,7 @@
 
             <div id="navigator" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchNavigator" placeholder="Search navigator by name or keywords..." onkeyup="filterNavigator()">
+                    <input type="text" id="searchNavigator" placeholder="🔍 Search paths: profile, balance, settings..." onkeyup="filterNavigator()">
                     <button onclick="openAddModal('navigator')">+ Add Navigator</button>
                 </div>
                 <div id="navigatorList" class="bundle-grid"></div>
@@ -1804,7 +1834,7 @@
 
             <div id="scenarios" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchScenarios" placeholder="Search scenarios by title..." onkeyup="filterScenarios()">
+                    <input type="text" id="searchScenarios" placeholder="🔍 Search scenarios: inquiry, complaint, issue, description..." onkeyup="filterScenarios()">
                     <button onclick="openAddModal('scenario')">+ Add Scenario</button>
                 </div>
                 <div id="scenariosList" class="bundle-grid"></div>
@@ -1984,6 +2014,9 @@
         };
         let currentType = 'bundle';
         let allBundles = [];
+        
+        // Search debounce timer for performance
+        let searchDebounceTimer = null;
 
         // Product IDs to fetch from API
         const PRODUCT_IDS = [
@@ -2263,24 +2296,27 @@
                     }
                 }
 
-                // If no bundles, fetch from API and save to Supabase
+                // If no bundles in DB, fetch from API ONCE and save
                 if (data.bundles.length === 0) {
-                    updateProgress(85, 'Generating bundles...', 'Fetching from Etisalat API');
-                    console.log('🌐 No cached bundles - fetching from API...');
+                    updateProgress(85, 'First time setup...', 'Fetching bundles from Etisalat API');
+                    console.log('🌐 No bundles in database - fetching from API (one-time setup)...');
                     const apiBundles = await generateBundlesFromAPI();
                     
                     // Save to Supabase if available
                     if (useSupabase) {
-                        updateProgress(90, 'Saving bundles...', 'Syncing to cloud');
+                        updateProgress(90, 'Saving to database...', 'Storing bundles in Supabase');
                         for (const bundle of apiBundles) {
                             await db.create('bundles', bundle);
                         }
                         data.bundles = await db.getAll('bundles');
-                        console.log('💾 Bundles saved to Supabase');
+                        console.log('💾 Bundles saved to Supabase (one-time import complete)');
                     } else {
                         data.bundles = apiBundles;
                         saveData();
+                        console.log('💾 Bundles saved to localStorage');
                     }
+                } else {
+                    console.log('✅ Loaded bundles from database (cached)');
                 }
 
                 updateProgress(100, 'Complete!', 'All data loaded');
@@ -2443,7 +2479,7 @@
 
         // OLD: Refresh bundles from API (force fetch)
         async function refreshBundles() {
-            if (!confirm('Refresh bundles from API? This will fetch the latest data from Etisalat.')) {
+            if (!confirm('Refresh bundles from API? This will fetch the latest data from Etisalat and update the database.')) {
                 return;
             }
             
@@ -2453,11 +2489,35 @@
                 console.log('🔄 Refreshing bundles from API...');
                 
                 const apiBundles = await generateBundlesFromAPI();
-                data.bundles = apiBundles;
                 
-                // Save to localStorage
-                saveData();
-                console.log('💾 Updated bundles cached to localStorage');
+                // Check if Supabase is configured
+                const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+                
+                if (useSupabase) {
+                    updateProgress(85, 'Updating database...', 'Clearing old bundles');
+                    
+                    // Delete all existing bundles from database
+                    const existingBundles = await db.getAll('bundles');
+                    for (const bundle of existingBundles) {
+                        await db.delete('bundles', bundle.id);
+                    }
+                    console.log('🗑️ Cleared old bundles from database');
+                    
+                    updateProgress(90, 'Updating database...', 'Saving new bundles');
+                    // Save new bundles to database
+                    for (const bundle of apiBundles) {
+                        await db.create('bundles', bundle);
+                    }
+                    
+                    // Reload from database
+                    data.bundles = await db.getAll('bundles');
+                    console.log('💾 Updated bundles saved to Supabase');
+                } else {
+                    // Fallback to localStorage
+                    data.bundles = apiBundles;
+                    saveData();
+                    console.log('💾 Updated bundles cached to localStorage');
+                }
                 
                 updateProgress(100, 'Complete!', 'Bundles refreshed successfully');
                 await new Promise(resolve => setTimeout(resolve, 500));
@@ -2465,9 +2525,9 @@
                 // Re-render the bundles tab
                 renderAll();
                 
-                alert(`✅ Successfully refreshed ${apiBundles.length} bundles from API!`);
+                alert(`✅ Successfully refreshed ${apiBundles.length} bundles from API and updated database!`);
             } catch (error) {
-                console.error('Error refreshing bundles:', error);
+                console.error('❌ Error refreshing bundles:', error);
                 alert('⚠️ Failed to refresh bundles. Please check console for details.');
             } finally {
                 hideLoading();
@@ -2510,6 +2570,12 @@
             const appbarTitle = document.querySelector('.mobile-appbar-title');
             if (appbarTitle) {
                 appbarTitle.textContent = titles[tab] || tab;
+            }
+            
+            // Update FAB button for current tab
+            const fabButton = document.querySelector('.fab-button');
+            if (fabButton) {
+                fabButton.setAttribute('onclick', `openAddModal('${tab === 'bundles' ? 'bundle' : tab === 'scenarios' ? 'scenario' : tab}')`);
             }
             
             // Close sidebar on mobile after selection
@@ -3010,6 +3076,134 @@
             document.getElementById('bundleProfileModal').classList.remove('active');
         }
 
+        function showScenarioProfile(item) {
+            const modal = document.getElementById('bundleProfileModal');
+            const content = document.getElementById('bundleProfileContent');
+            
+            // Handle both created_at (Supabase) and timestamp (localStorage)
+            const timestamp = item.created_at 
+                ? new Date(item.created_at).toLocaleString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) 
+                : (item.timestamp ? new Date(item.timestamp).toLocaleString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'Unknown');
+            
+            const tag = item.tag || 'inquiry';
+            const tagColors = {
+                'inquiry': { bg: '#e3f2fd', color: '#1976d2', emoji: '❓' },
+                'request': { bg: '#e8f5e9', color: '#388e3c', emoji: '📋' },
+                'complaint': { bg: '#ffebee', color: '#d32f2f', emoji: '⚠️' }
+            };
+            const tagStyle = tagColors[tag] || tagColors['inquiry'];
+            
+            let profileHTML = `
+                <div class="bundle-profile-header" style="background: linear-gradient(135deg, ${tagStyle.color} 0%, ${adjustBrightness(tagStyle.color, -20)} 100%);">
+                    <div class="bundle-profile-title">${tagStyle.emoji} ${escapeHtml(item.title)}</div>
+                    <div class="bundle-profile-discount-badge" style="background: ${tagStyle.bg}; color: ${tagStyle.color}; border-color: ${tagStyle.color};">
+                        ${tag.charAt(0).toUpperCase() + tag.slice(1)}
+                    </div>
+                    <div class="bundle-profile-duration">
+                        🕐 Created: ${timestamp}
+                    </div>
+                </div>
+                <div class="bundle-profile-body">
+            `;
+            
+            // Keywords Section
+            if (item.keywords) {
+                profileHTML += `
+                    <div class="profile-section">
+                        <div class="profile-section-title">🔍 Keywords</div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-value" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                ${item.keywords.split(',').map(kw => 
+                                    `<span style="background: #f0f0f0; padding: 6px 12px; border-radius: 16px; font-size: 0.9em;">${escapeHtml(kw.trim())}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Description Section
+            if (item.description && item.description.trim()) {
+                profileHTML += `
+                    <div class="profile-section">
+                        <div class="profile-section-title">📝 Full Description</div>
+                        <div class="profile-info-item" style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid ${tagStyle.color};">
+                            <div class="profile-info-value" style="white-space: pre-wrap; line-height: 1.8; color: #2c3e50; font-size: 1.05em;">
+                                ${escapeHtml(item.description)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                profileHTML += `
+                    <div class="profile-section">
+                        <div class="profile-section-title">📝 Description</div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-value" style="color: #999; font-style: italic;">No description provided</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Metadata Section
+            profileHTML += `
+                <div class="profile-section">
+                    <div class="profile-section-title">ℹ️ Scenario Information</div>
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">🏷️ Type</div>
+                            <div class="profile-info-value">${tag.charAt(0).toUpperCase() + tag.slice(1)}</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">🆔 ID</div>
+                            <div class="profile-info-value">#${item.id}</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">📅 Created</div>
+                            <div class="profile-info-value">${timestamp}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Actions
+            profileHTML += `
+                    <div class="profile-actions">
+                        <button class="btn-profile-close" onclick="closeBundleProfile()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = profileHTML;
+            modal.classList.add('active');
+        }
+
+        // Helper function to adjust color brightness
+        function adjustBrightness(color, percent) {
+            const num = parseInt(color.replace("#",""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 +
+                (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255))
+                .toString(16).slice(1);
+        }
+
         function toggleCPR(itemId) {
             const cprContent = document.getElementById('cpr-' + itemId);
             const button = event.target;
@@ -3092,6 +3286,11 @@
                     const hasDescription = item.description && item.description.trim();
                     const tag = item.tag || 'inquiry';
                     
+                    // Truncate description for preview
+                    const descriptionPreview = hasDescription && item.description.length > 120 
+                        ? item.description.substring(0, 120) + '...' 
+                        : item.description;
+                    
                     return `
                         <div class="bundle-card scenario-card">
                             <div class="bundle-name">📝 ${escapeHtml(item.title)}</div>
@@ -3099,13 +3298,13 @@
                             <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
                             <div class="sla-time">🕐 ${timestamp}</div>
                             ${hasDescription ? `
-                                <div class="scenario-description" id="scenario-desc-${item.id}" style="display: none; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; white-space: pre-wrap; color: #495057;">
-                                    ${escapeHtml(item.description)}
+                                <div class="scenario-description" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; color: #495057; font-size: 0.9em; line-height: 1.5;">
+                                    ${escapeHtml(descriptionPreview)}
                                 </div>
-                                <button class="cpr-toggle" onclick="toggleScenarioDescription('${item.id}')" style="margin-top: 10px;">Show Description</button>
                             ` : '<div style="font-size: 0.9em; color: #999; margin-top: 5px;">No description</div>'}
                             <div class="bundle-actions" style="margin-top: 10px;">
-                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                                <button class="btn-view" onclick="showScenarioProfile(${JSON.stringify(item).replace(/"/g, '&quot;')})">👁️ View Details</button>
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
                             </div>
                         </div>
                     `;
@@ -3228,61 +3427,174 @@
         }
 
         function filterBundles() {
-            const search = document.getElementById('searchBundles').value.toLowerCase();
-            let filtered = data.bundles.filter(item => {
-                // Search filter only (no category filter)
-                return !search || 
-                    item.name.toLowerCase().includes(search) || 
-                    (item.keywords && item.keywords.toLowerCase().includes(search));
+            const search = document.getElementById('searchBundles').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.bundles, 'bundlesList', 'bundle');
+                return;
+            }
+            
+            // Fast comprehensive search across all bundle fields
+            const filtered = data.bundles.filter(item => {
+                // Create searchable text from all bundle properties
+                const searchableText = [
+                    item.name,
+                    item.keywords,
+                    item.description,
+                    item.data,
+                    item.minutes,
+                    item.roaming,
+                    item.commitment,
+                    item.category,
+                    item.price?.toString(),
+                    // CPR fields
+                    item.cpr?.duration,
+                    item.cpr?.isContract,
+                    item.cpr?.fees,
+                    item.cpr?.discounts,
+                    item.cpr?.allowance,
+                    item.cpr?.restrictions,
+                    item.cpr?.exitCharge,
+                    // Full data for advanced fields
+                    item.fullData?.displayName,
+                    item.fullData?.description
+                ]
+                .filter(Boolean) // Remove null/undefined
+                .join(' ') // Combine all text
+                .toLowerCase();
+                
+                // Match if search term appears anywhere in the combined text
+                return searchableText.includes(search);
             });
             
-            console.log(`🔍 Filtering bundles: ${filtered.length} of ${data.bundles.length} bundles match (search: "${search}")`);
+            console.log(`🔍 Fast search: ${filtered.length} of ${data.bundles.length} bundles match "${search}"`);
             renderItems(filtered, 'bundlesList', 'bundle');
         }
 
         function filterAddons() {
-            const search = document.getElementById('searchAddons').value.toLowerCase();
-            const filtered = data.addons.filter(item => 
-                item.name.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search))
-            );
+            const search = document.getElementById('searchAddons').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.addons, 'addonsList', 'addon');
+                return;
+            }
+            
+            const filtered = data.addons.filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.keywords,
+                    item.link,
+                    item.description,
+                    item.price?.toString(),
+                    item.cpr?.duration,
+                    item.cpr?.fees,
+                    item.cpr?.restrictions
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
             renderItems(filtered, 'addonsList', 'addon');
         }
 
         function filterDeviceC() {
-            const search = document.getElementById('searchDeviceC').value.toLowerCase();
-            const filtered = data.devicec.filter(item => 
-                item.name.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search))
-            );
+            const search = document.getElementById('searchDeviceC').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.devicec, 'devicecList', 'devicec');
+                return;
+            }
+            
+            const filtered = data.devicec.filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.keywords,
+                    item.link,
+                    item.description
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
             renderItems(filtered, 'devicecList', 'devicec');
         }
 
         function filterSLA() {
-            const search = document.getElementById('searchSLA').value.toLowerCase();
-            const filtered = data.sla.filter(item => 
-                item.name.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search))
-            );
+            const search = document.getElementById('searchSLA').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.sla, 'slaList', 'sla');
+                return;
+            }
+            
+            const filtered = data.sla.filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.keywords,
+                    item.time
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
             renderItems(filtered, 'slaList', 'sla');
         }
 
         function filterNavigator() {
-            const search = document.getElementById('searchNavigator').value.toLowerCase();
-            const filtered = data.navigator.filter(item => 
-                item.name.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search))
-            );
+            const search = document.getElementById('searchNavigator').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.navigator, 'navigatorList', 'navigator');
+                return;
+            }
+            
+            const filtered = data.navigator.filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.keywords,
+                    item.path
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
             renderItems(filtered, 'navigatorList', 'navigator');
         }
 
         function filterScenarios() {
-            const search = document.getElementById('searchScenarios').value.toLowerCase();
-            const filtered = data.scenarios.filter(item => 
-                item.title.toLowerCase().includes(search) || 
-                (item.keywords && item.keywords.toLowerCase().includes(search)) ||
-                (item.description && item.description.toLowerCase().includes(search))
-            );
+            const search = document.getElementById('searchScenarios').value.toLowerCase().trim();
+            
+            if (!search) {
+                renderItems(data.scenarios, 'scenariosList', 'scenario');
+                return;
+            }
+            
+            const filtered = data.scenarios.filter(item => {
+                const searchableText = [
+                    item.title,
+                    item.keywords,
+                    item.description,
+                    item.tag
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
             renderItems(filtered, 'scenariosList', 'scenario');
         }
 
