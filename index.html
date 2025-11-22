@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#e30613">
+    <meta name="theme-col
+    or" content="#e30613">
     <title>E& InfoHub - Link Shortcuts</title>
     
     <!-- Supabase Client Library -->
@@ -1807,6 +1808,7 @@
 
             <div class="sidebar-footer">
                 <button class="btn-header" onclick="refreshBundles()">🔄 Refresh Bundles</button>
+                <button class="btn-header" onclick="downloadExamFile()" style="background: #007bff; border-color: rgba(255, 255, 255, 0.3);">📥 Download Exam File</button>
             </div>
         </div>
 
@@ -2523,6 +2525,22 @@
                     if (refreshBtn) refreshBtn.classList.remove('spinning');
                 }, 500);
             }
+        }
+
+        // Download exam file from Dropbox
+        function downloadExamFile() {
+            const examUrl = 'https://uce664b60576301993e481f0c9d7.dl.dropboxusercontent.com/cd/0/get/C1oec_T8P7rONV80bymwHKr2Z_2HicsjruGkJC5h1xNX0kRve3SFKmGziABaTU_7kDPS5xmAAJwMnu8mXnRVuoyKMwdZAl9hdvM63Uu44Ne_jp2-ay7qJvi-QLQU5UxlppQM36XkTGexJjpiao-mXkSzSUVRr8MGwFIBGA0udSNakg/file?_download_id=5918363442453318779782494133132353157184647076127504461480273087&_log_download_success=1';
+            
+            // Create a temporary link element and trigger download
+            const link = document.createElement('a');
+            link.href = examUrl;
+            link.download = 'exam-file'; // You can change this filename
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log('📥 Exam file download initiated');
         }
 
         // OLD: Refresh bundles from API (force fetch)
