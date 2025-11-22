@@ -2540,19 +2540,14 @@
             console.log('📄 Local exam PDF download initiated');
         }
 
-        // Download exam file from Dropbox link
+        // Open exam file from Dropbox link
         function downloadExamLink() {
-            const examUrl = 'https://uce664b60576301993e481f0c9d7.dl.dropboxusercontent.com/cd/0/get/C1oec_T8P7rONV80bymwHKr2Z_2HicsjruGkJC5h1xNX0kRve3SFKmGziABaTU_7kDPS5xmAAJwMnu8mXnRVuoyKMwdZAl9hdvM63Uu44Ne_jp2-ay7qJvi-QLQU5UxlppQM36XkTGexJjpiao-mXkSzSUVRr8MGwFIBGA0udSNakg/file?_download_id=5918363442453318779782494133132353157184647076127504461480273087&_log_download_success=1';
+            const examUrl = 'https://www.dropbox.com/scl/fi/xda8ys3uzhclwqn0f93lw/exam.pdf?rlkey=47aermrq9enfe8uoq8h7g73yo&st=8olknjmz&dl=0';
             
-            const link = document.createElement('a');
-            link.href = examUrl;
-            link.download = 'exam-file';
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Open in new tab
+            window.open(examUrl, '_blank');
             
-            console.log('� Dropbox exam file download initiated');
+            console.log('🔗 Dropbox exam file opened in new tab');
         }
 
         // OLD: Refresh bundles from API (force fetch)
