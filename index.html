@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-col
-    or" content="#e30613">
+    <meta name="theme-color" content="#e30613">
     <title>E& InfoHub - Link Shortcuts</title>
     
     <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -21,8 +28,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #fafafa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
             min-height: 100vh;
             margin: 0;
             padding: 0;
@@ -59,15 +66,16 @@
         }
 
         .sidebar-header {
-            background: #e30613;
+            background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
             color: white;
             padding: 25px 20px;
             text-align: center;
         }
 
         .sidebar-header img {
-            filter: brightness(0) invert(1);
+            height: 40px;
             margin-bottom: 10px;
+            object-fit: contain;
         }
         
         h1 {
@@ -216,6 +224,18 @@
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
+            position: relative;
+        }
+
+        .search-add input[type="text"] {
+            flex: 1;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23999'%3E%3Cpath d='M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z'/%3E%3C/svg%3E") no-repeat 14px center;
+            background-size: 18px;
         }
 
         input[type="text"] {
@@ -230,6 +250,12 @@
         input[type="text"]:focus {
             outline: none;
             border-color: #e30613;
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+        }
+
+        .search-add input[type="text"]:focus {
+            border-color: #e30613;
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
         }
 
         button {
@@ -335,6 +361,13 @@
             font-weight: 600;
             color: #212529;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bundle-name i {
+            flex-shrink: 0;
         }
 
         .bundle-price {
@@ -360,6 +393,14 @@
             color: #6c757d;
             font-size: 0.9em;
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .bundle-keywords i {
+            flex-shrink: 0;
         }
 
         .bundle-link {
@@ -367,7 +408,9 @@
             text-decoration: none;
             font-size: 0.9em;
             word-break: break-all;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             margin-bottom: 15px;
         }
 
@@ -378,6 +421,17 @@
         .bundle-actions {
             display: flex;
             gap: 10px;
+        }
+
+        .bundle-actions button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .bundle-actions button i {
+            font-size: 0.9em;
         }
 
         .btn-delete {
@@ -395,6 +449,17 @@
             background: #e30613;
             padding: 8px 16px;
             font-size: 12px;
+        }
+
+        .btn-view {
+            background: #0066cc;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-view:hover {
+            background: #0052a3;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
         }
 
         .btn-open:hover {
@@ -630,7 +695,7 @@
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             padding: 15px 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 0.95em;
             font-weight: 500;
             margin-bottom: 15px;
@@ -640,17 +705,26 @@
         }
 
         .nav-path .nav-step {
-            display: inline-block;
-            padding: 4px 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-            margin: 2px;
+            border-radius: 20px;
+            margin: 4px 2px;
+            font-size: 0.9em;
         }
 
-        .nav-path .nav-arrow {
-            color: #e30613;
-            font-weight: bold;
-            margin: 0 8px;
+        .nav-path .nav-step i {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .nav-path .nav-separator {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            margin: 0 4px;
+            font-size: 1.1em;
         }
 
         .navigator-card {
@@ -660,6 +734,153 @@
         .navigator-card:hover {
             border-color: #2c3e50;
             background: linear-gradient(135deg, #fff 0%, #ecf0f1 100%);
+        }
+
+        /* Important Links Section Styles */
+        .important-links-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+            border-left: 4px solid #e30613;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .important-links-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: rgba(227, 6, 19, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .important-links-card:hover {
+            box-shadow: 0 8px 24px rgba(227, 6, 19, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .important-links-card .link-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(227, 6, 19, 0.3);
+        }
+
+        .important-links-card .link-name {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .important-links-card .link-description {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .important-links-card .link-url {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #e30613;
+            font-size: 0.85em;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .important-links-card .link-url:hover {
+            text-decoration: underline;
+        }
+
+        /* Plan Summary Section Styles */
+        .plan-summary-card {
+            background: linear-gradient(135deg, #f0f7ff 0%, #d6e9ff 100%);
+            border-left: 4px solid #0066cc;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .plan-summary-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .plan-summary-card .plan-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .plan-summary-card .plan-name {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .plan-summary-card .plan-description {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .plan-summary-card .plan-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .plan-summary-card .plan-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 102, 204, 0.1);
+            color: #0066cc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .plan-summary-card .plan-highlight i {
+            font-size: 0.9em;
         }
 
         .tag-badge {
@@ -695,23 +916,67 @@
         .scenario-card {
             border-left: 4px solid transparent;
             transition: all 0.3s ease;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
         .scenario-card:has(.tag-inquiry) {
             border-left-color: #1976d2;
+            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
         }
 
         .scenario-card:has(.tag-request) {
             border-left-color: #388e3c;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
         }
 
         .scenario-card:has(.tag-complaint) {
             border-left-color: #d32f2f;
+            background: linear-gradient(135deg, #ffffff 0%, #fff8f8 100%);
         }
 
         .scenario-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .scenario-card .bundle-name {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scenario-card .bundle-name i {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .scenario-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .scenario-meta i {
+            font-size: 0.9em;
         }
 
         .scenario-description {
@@ -885,139 +1150,564 @@
         }
 
         .bundle-profile-content {
-            background: white;
-            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .bundle-profile-header {
-            background: linear-gradient(135deg, #e30613 0%, #c40510 100%);
+            background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
             color: white;
-            padding: 30px;
+            padding: 32px;
             position: sticky;
             top: 0;
             z-index: 10;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 4px 20px rgba(227, 6, 19, 0.3);
         }
 
         .bundle-profile-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 1.9em;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .bundle-profile-discount-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.25);
-            padding: 8px 16px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            border-radius: 25px;
             font-size: 1em;
             font-weight: bold;
-            margin-bottom: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .bundle-profile-original-price {
             font-size: 1.2em;
             text-decoration: line-through;
-            opacity: 0.8;
-            margin-bottom: 5px;
+            opacity: 0.75;
+            margin-bottom: 6px;
         }
 
         .bundle-profile-price {
-            font-size: 2.5em;
+            font-size: 2.6em;
             font-weight: 800;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .bundle-profile-duration {
             font-size: 1em;
             opacity: 0.9;
             font-style: italic;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .bundle-profile-subtitle {
-            font-size: 1.1em;
+            font-size: 1.15em;
             opacity: 0.95;
+            font-weight: 500;
         }
 
         .bundle-profile-body {
-            padding: 30px;
+            padding: 32px;
         }
 
         .profile-section {
-            margin-bottom: 30px;
+            margin-bottom: 28px;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .profile-section-title {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
+            color: #1a1a2e;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid #e30613;
-            padding-bottom: 10px;
+            gap: 12px;
+            border-bottom: 3px solid #e30613;
+            padding-bottom: 12px;
+        }
+
+        .profile-section-title i {
+            color: #e30613;
+            font-size: 1.1em;
         }
 
         .profile-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         .profile-info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 18px;
+            border-radius: 14px;
             border-left: 4px solid #e30613;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .profile-info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
         }
 
         .profile-info-label {
-            font-size: 0.85em;
+            font-size: 0.82em;
             color: #6c757d;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-info-label i {
+            color: #e30613;
         }
 
         .profile-info-value {
             font-size: 1.1em;
-            color: #212529;
+            color: #1a1a2e;
             font-weight: 600;
+            line-height: 1.5;
         }
 
         .profile-cpr-section {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+            border-radius: 16px;
+            padding: 24px;
             border: 2px solid #e30613;
+            box-shadow: 0 4px 15px rgba(227, 6, 19, 0.1);
         }
 
         .profile-actions {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 20px;
+            gap: 14px;
+            margin-top: 28px;
+            padding-top: 24px;
             border-top: 2px solid #e9ecef;
         }
 
         .btn-profile-close {
             flex: 1;
-            background: #6c757d;
-            padding: 15px;
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            padding: 16px;
             font-size: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-profile-close:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Notes Section Styles */
+        .notes-section {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid #f59e0b;
+            margin-top: 20px;
+        }
+
+        .notes-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .notes-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-title i {
+            color: #f59e0b;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 2px solid #fcd34d;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            background: white;
+            color: #1f2937;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .notes-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .notes-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-save-notes {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save-notes:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-save-notes:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .notes-saved-indicator {
+            font-size: 0.85em;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notes-saved-indicator.show {
+            opacity: 1;
+        }
+
+        /* Notes Grid Styles */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .note-card {
+            background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid #fcd34d;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .note-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.25);
+            border-color: #f59e0b;
+        }
+
+        .note-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-left: 10px;
+        }
+
+        .note-card-title {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .note-card-title i {
+            color: #f59e0b;
+        }
+
+        .note-card-content {
+            padding-left: 10px;
+            color: #78350f;
+            font-size: 0.95em;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .note-card-content.expanded {
+            max-height: none;
+        }
+
+        .note-card-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, #fef3c7);
+            pointer-events: none;
+        }
+
+        .note-card-content.expanded::after {
+            display: none;
+        }
+
+        .note-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 12px;
+            padding-left: 10px;
+            border-top: 1px dashed #fcd34d;
+            font-size: 0.85em;
+            color: #b45309;
+        }
+
+        .note-card-meta i {
+            color: #f59e0b;
+        }
+
+        .note-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-left: 10px;
+        }
+
+        .note-card-actions button {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-edit-note {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-edit-note:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete-note {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-delete-note:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-expand-note {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+
+        .btn-expand-note:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        }
+
+        /* Note Modal Styles */
+        .note-modal-content textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 2px solid #fcd34d;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fffbeb;
+            color: #78350f;
+            transition: all 0.3s ease;
+        }
+
+        .note-modal-content textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .empty-notes {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-notes i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #fcd34d;
+        }
+
+        .empty-notes h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+        .empty-notes p {
+            font-size: 1em;
+            color: #9ca3af;
         }
 
         .btn-profile-open {
             flex: 2;
-            background: #e30613;
-            padding: 15px;
+            background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
+            padding: 16px;
             font-size: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(227, 6, 19, 0.3);
+        }
+
+        .btn-profile-open:hover {
+            background: linear-gradient(135deg, #c40510 0%, #9a040d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(227, 6, 19, 0.4);
+        }
+
+        /* Scenario Edit Form Styles */
+        #scenarioEditMode input[type="text"],
+        #scenarioEditMode select,
+        #scenarioEditMode textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        #scenarioEditMode input[type="text"]:focus,
+        #scenarioEditMode select:focus,
+        #scenarioEditMode textarea:focus {
+            outline: none;
+            border-color: #e30613;
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+        }
+
+        #scenarioEditMode label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        #scenarioEditMode label i {
+            color: #e30613;
+        }
+
+        #scenarioEditMode textarea {
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.6;
+        }
+
+        #scenarioEditMode select {
+            cursor: pointer;
+            background: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            padding-right: 40px;
         }
 
         /* Mobile AppBar - Hidden on desktop */
@@ -1033,31 +1723,30 @@
             display: none;
         }
 
-        /* Mobile Responsiveness */
-        /* Mobile-First Responsive Design - App-like Experience */
+        /* Enhanced Mobile Responsiveness */
         @media (max-width: 768px) {
             body {
                 overflow-x: hidden;
+                background: #f5f7fa;
             }
 
             .container {
                 flex-direction: column;
-                height: 100dvh; /* Use dynamic viewport height for mobile */
+                height: 100dvh;
             }
 
             /* Mobile AppBar */
             .sidebar {
-                width: 100%;
-                height: auto;
+                width: 85%;
+                max-width: 300px;
+                height: 100vh;
                 position: fixed;
                 top: 0;
                 left: 0;
-                right: 0;
                 z-index: 100;
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                max-width: 280px;
-                height: 100vh;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
             }
 
             .sidebar.open {
@@ -1069,60 +1758,69 @@
                 display: flex !important;
                 align-items: center;
                 justify-content: space-between;
-                padding: 12px 16px;
-                background: #e30613;
+                padding: 0 16px;
+                background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
                 color: white;
                 position: fixed;
                 top: 0;
                 left: 0;
                 right: 0;
                 z-index: 99;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                height: 56px;
+                box-shadow: 0 2px 12px rgba(227, 6, 19, 0.3);
+                height: 60px;
             }
 
             .mobile-appbar-left {
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 14px;
             }
 
             .hamburger-btn {
-                background: transparent;
-                border: none;
-                color: white;
-                font-size: 24px;
-                cursor: pointer;
-                padding: 8px;
-                width: auto;
-                min-height: auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .mobile-appbar-title {
-                font-size: 18px;
-                font-weight: 600;
-            }
-
-            .refresh-btn {
-                background: transparent;
+                background: rgba(255, 255, 255, 0.15);
                 border: none;
                 color: white;
                 font-size: 20px;
                 cursor: pointer;
-                padding: 8px;
+                padding: 10px 12px;
                 width: auto;
                 min-height: auto;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: transform 0.3s ease;
+                border-radius: 10px;
+                transition: background 0.2s;
+            }
+
+            .hamburger-btn:active {
+                background: rgba(255, 255, 255, 0.25);
+            }
+
+            .mobile-appbar-title {
+                font-size: 17px;
+                font-weight: 600;
+                letter-spacing: -0.3px;
+            }
+
+            .refresh-btn {
+                background: rgba(255, 255, 255, 0.15);
+                border: none;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                padding: 10px 12px;
+                width: auto;
+                min-height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+                transition: all 0.3s ease;
             }
 
             .refresh-btn:active {
                 transform: rotate(180deg);
+                background: rgba(255, 255, 255, 0.25);
             }
 
             .refresh-btn.spinning {
@@ -1144,6 +1842,7 @@
                 bottom: 0;
                 background: rgba(0, 0, 0, 0.5);
                 z-index: 98;
+                backdrop-filter: blur(2px);
             }
 
             .sidebar-overlay.active {
@@ -1151,55 +1850,61 @@
             }
 
             .sidebar-header {
-                padding: 12px 16px;
+                padding: 16px 20px;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                gap: 10px;
+                gap: 8px;
             }
 
             .sidebar-header img {
-                width: 40px;
-                height: 28px;
+                height: 36px;
             }
 
             h1 {
                 font-size: 1em;
                 margin: 0;
+                font-weight: 600;
             }
 
             /* Navigation Menu in Sidebar */
             .nav-menu {
-                padding: 20px 0;
+                padding: 12px 0;
                 display: flex;
                 flex-direction: column;
                 max-height: none;
                 overflow-y: auto;
-                gap: 0;
+                gap: 2px;
                 background: #2c3e50;
             }
 
             .nav-item {
-                padding: 15px 25px;
+                padding: 14px 20px;
                 flex: none;
                 border-left: 4px solid transparent;
                 border-bottom: none;
-                font-size: 15px;
+                font-size: 14px;
                 white-space: nowrap;
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 14px;
                 justify-content: flex-start;
+                margin: 0 8px;
+                border-radius: 10px;
+                transition: all 0.2s;
             }
 
             .nav-item.active {
-                border-left-color: #e30613;
+                border-left-color: transparent;
                 border-bottom: none;
-                background: rgba(227, 6, 19, 0.2);
+                background: rgba(227, 6, 19, 0.25);
+                border-radius: 10px;
             }
 
             .nav-icon {
-                font-size: 18px;
+                font-size: 16px;
+                width: 24px;
+                text-align: center;
             }
 
             /* Show sidebar navigator in sidebar on mobile */
@@ -1209,48 +1914,61 @@
 
             .sidebar-footer {
                 display: block;
+                padding: 12px;
             }
 
-            /* Main content takes remaining space - App-like background */
+            .sidebar-footer .btn-header {
+                font-size: 13px;
+                padding: 12px 16px;
+                border-radius: 10px;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            /* Main content takes remaining space */
             .main-content {
                 flex: 1;
                 height: auto;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                background: #fafafa;
-                padding-top: 0; /* No padding, handled by tab-content */
+                background: #f5f7fa;
+                padding-top: 0;
             }
 
-            /* Hide content header on mobile - title not needed */
+            /* Hide content header on mobile */
             .content-header {
                 display: none;
             }
 
             :root {
-    --appbar-height: 56px;
-    --searchbar-height: 90px;
-    --content-margin: 24px;
-}
+                --appbar-height: 60px;
+                --searchbar-height: 80px;
+                --content-margin: 16px;
+            }
 
             .tab-content {
+                margin-top: 135px;
+                padding: 16px;
                 padding-top: calc(var(--appbar-height) + var(--searchbar-height) + var(--content-margin));
-            }  
-            
+            }
 
             /* Search bar - Fixed below appbar on mobile */
             .search-add {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
                 margin-bottom: 0;
                 padding: 12px 16px;
                 background: white;
                 position: fixed;
-                top: 56px; /* Below appbar */
+                top: 60px;
                 left: 0;
                 right: 0;
                 z-index: 50;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                border-bottom: 1px solid #f0f0f0;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                border-bottom: 1px solid #eee;
             }
 
             /* Hide refresh button in search-add */
@@ -1265,42 +1983,60 @@
 
             input[type="text"] {
                 width: 100%;
-                padding: 12px 16px;
+                padding: 14px 18px;
                 font-size: 15px;
-                border-radius: 10px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                border: 2px solid #e9ecef;
+            }
+
+            input[type="text"]:focus {
+                border-color: #e30613;
+                box-shadow: 0 2px 12px rgba(227, 6, 19, 0.15);
             }
 
             button {
                 width: 100%;
                 padding: 14px 20px;
                 font-size: 14px;
-                border-radius: 10px;
+                border-radius: 12px;
                 font-weight: 600;
             }
 
             /* Card Grid - Single column with margins */
             .bundle-grid {
-                display: block;
-                margin-top: 110px;
-                padding: 16px; /* Add padding on all sides */
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-top: 0;
+                padding: 0;
             }
 
             .bundle-card {
-                padding: 18px;
+                padding: 20px;
                 border-radius: 16px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                margin-bottom: 16px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+                margin-bottom: 0;
                 background: white;
-                display: block;
+                border: none;
+            }
+
+            .bundle-card:hover {
+                transform: none;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .bundle-card:active {
+                transform: scale(0.98);
             }
 
             .bundle-name {
-                font-size: 1.1em;
+                font-size: 1.05em;
+                font-weight: 700;
             }
 
             .bundle-price {
-                font-size: 1.6em;
+                font-size: 1.5em;
             }
 
             .bundle-subtitle {
@@ -1311,23 +2047,78 @@
                 font-size: 0.85em;
             }
 
-            /* Action buttons stack on mobile */
+            /* Action buttons */
             .bundle-actions {
                 flex-direction: row;
-                gap: 8px;
+                gap: 10px;
                 flex-wrap: wrap;
+                margin-top: 16px;
             }
 
             .bundle-actions button {
                 flex: 1;
-                min-width: calc(50% - 4px);
-                padding: 10px 12px;
+                min-width: calc(50% - 5px);
+                padding: 12px 14px;
                 font-size: 13px;
+                border-radius: 10px;
+            }
+
+            /* Important Links Card - Mobile */
+            .important-links-card {
+                padding: 20px;
+            }
+
+            .important-links-card .link-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2em;
+            }
+
+            /* Plan Summary Card - Mobile */
+            .plan-summary-card {
+                padding: 20px;
+            }
+
+            .plan-summary-card .plan-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2em;
+            }
+
+            .plan-summary-card .plan-highlights {
+                gap: 6px;
+            }
+
+            .plan-summary-card .plan-highlight {
+                font-size: 0.75em;
+                padding: 5px 10px;
+            }
+
+            /* Scenario Card - Mobile */
+            .scenario-card {
+                padding: 20px;
+            }
+
+            .scenario-card .scenario-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .scenario-card .bundle-name {
+                font-size: 1em;
+            }
+
+            .scenario-meta {
+                font-size: 0.8em;
+                padding: 5px 10px;
             }
 
             /* CPR Section - Mobile optimized */
             .cpr-section {
-                margin-top: 12px;
+                margin-top: 15px;
+                padding: 15px;
+                border-radius: 12px;
             }
 
             .cpr-item {
@@ -1339,35 +2130,41 @@
 
             .cpr-label {
                 min-width: auto;
-                font-size: 0.75em;
+                font-size: 0.8em;
                 font-weight: 600;
                 color: #666;
             }
 
             .cpr-value {
-                font-size: 0.85em;
+                font-size: 0.9em;
                 padding-left: 0;
             }
 
             .cpr-toggle {
-                padding: 10px 16px;
+                padding: 12px 16px;
                 font-size: 13px;
+                border-radius: 10px;
             }
 
-            /* Navigation path */
+            /* Navigation path - Mobile */
             .nav-path {
-                font-size: 0.8em;
-                padding: 10px 12px;
+                font-size: 0.85em;
+                padding: 14px 16px;
                 overflow-x: auto;
-                white-space: nowrap;
+                border-radius: 12px;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 6px;
             }
 
             .nav-path .nav-step {
-                font-size: 0.8em;
+                font-size: 0.85em;
+                padding: 5px 12px;
             }
 
-            .nav-path .nav-arrow {
-                margin: 0 4px;
+            .nav-path .nav-separator {
+                margin: 0 2px;
             }
 
             /* Modal - Full screen on mobile */
@@ -1384,15 +2181,19 @@
 
             .modal-header {
                 font-size: 1.2em;
-                padding: 18px 16px 16px;
+                padding: 20px 16px;
+                background: #f8f9fa;
+                border-bottom: 1px solid #eee;
             }
 
             .modal-body {
-                padding: 16px;
+                padding: 20px 16px;
             }
 
             .modal-actions {
                 padding: 16px;
+                background: white;
+                border-top: 1px solid #eee;
             }
 
             .modal-footer {
@@ -1404,7 +2205,7 @@
             }
 
             .form-group {
-                margin-bottom: 16px;
+                margin-bottom: 18px;
             }
 
             /* Details Modal - Full screen */
@@ -1415,7 +2216,7 @@
             }
 
             .details-header {
-                padding: 12px 16px;
+                padding: 14px 16px;
                 flex-wrap: nowrap;
                 gap: 12px;
             }
@@ -1430,9 +2231,10 @@
             }
 
             .btn-close-details {
-                padding: 8px 16px;
+                padding: 10px 16px;
                 font-size: 13px;
                 flex-shrink: 0;
+                border-radius: 10px;
             }
 
             /* Profile Modal - Full screen with smooth scroll */
@@ -1450,23 +2252,23 @@
             }
 
             .bundle-profile-header {
-                padding: 20px 16px;
+                padding: 24px 20px;
             }
 
             .bundle-profile-title {
-                font-size: 1.4em;
+                font-size: 1.3em;
             }
 
             .bundle-profile-price {
-                font-size: 2em;
+                font-size: 1.8em;
             }
 
             .bundle-profile-body {
-                padding: 16px;
+                padding: 20px;
             }
 
             .profile-section {
-                margin-bottom: 20px;
+                margin-bottom: 24px;
             }
 
             .profile-section-title {
@@ -1475,7 +2277,7 @@
 
             .profile-info-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: 10px;
+                gap: 12px;
             }
 
             /* Loading overlay */
@@ -1483,22 +2285,28 @@
                 padding: 20px;
             }
 
+            .loading-logo {
+                width: 80px;
+                height: auto;
+            }
+
             .progress-container {
                 max-width: 100%;
-                padding: 0 16px;
+                width: 280px;
             }
 
             /* Discount badge */
             .discount-badge {
-                top: 8px;
-                right: 8px;
-                padding: 4px 10px;
-                font-size: 0.75em;
+                top: 12px;
+                right: 12px;
+                padding: 5px 12px;
+                font-size: 0.8em;
+                border-radius: 16px;
             }
 
             /* Touch-friendly tap targets */
             button, .btn, .nav-item {
-                min-height: 44px; /* Apple's recommended touch target */
+                min-height: 48px;
                 cursor: pointer;
                 -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
             }
@@ -1507,31 +2315,46 @@
             .fab-button {
                 display: flex !important;
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 56px;
-                height: 56px;
+                bottom: 24px;
+                right: 24px;
+                width: 60px;
+                height: 60px;
                 border-radius: 50%;
-                background: #e30613;
+                background: linear-gradient(135deg, #e30613 0%, #b8050f 100%);
                 color: white;
                 border: none;
-                font-size: 24px;
-                box-shadow: 0 4px 16px rgba(227, 6, 19, 0.4);
+                font-size: 22px;
+                box-shadow: 0 6px 20px rgba(227, 6, 19, 0.4);
                 z-index: 90;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 transition: transform 0.2s, box-shadow 0.2s;
-                min-height: 56px;
+                min-height: 60px;
             }
 
             .fab-button:active {
-                transform: scale(0.9);
+                transform: scale(0.92);
+                box-shadow: 0 4px 12px rgba(227, 6, 19, 0.4);
             }
 
             /* Smooth scrolling for mobile */
             * {
                 -webkit-overflow-scrolling: touch;
+            }
+
+            /* Tag badges - Mobile */
+            .tag-badge {
+                padding: 5px 12px;
+                font-size: 0.8em;
+                border-radius: 12px;
+            }
+
+            /* SLA time badge */
+            .sla-time {
+                padding: 10px 16px;
+                font-size: 1.2em;
+                border-radius: 10px;
             }
         }
 
@@ -1756,15 +2579,11 @@
     <!-- Mobile AppBar -->
     <div class="mobile-appbar">
         <div class="mobile-appbar-left">
-            <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <div class="mobile-appbar-title">Bundles</div>
         </div>
         <button class="refresh-btn" onclick="refreshCurrentTab()" id="refreshBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <polyline points="1 20 1 14 7 14"></polyline>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
+            <i class="fas fa-sync-alt"></i>
         </button>
     </div>
 
@@ -1775,41 +2594,51 @@
         <!-- Sidebar Navigation -->
         <div class="sidebar" id="mobileSidebar">
             <div class="sidebar-header">
-                <img width="60px" height="40" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png"/>
-                <h1>Link Shortcuts Hub</h1>
+                <img src="https://www.eand.com/content/dam/eand/assets/img/etand-icons/logo-homepage.png" alt="E& Logo"/>
+                <h1>InfoHub Shortcuts</h1>
             </div>
             
             <div class="nav-menu">
                 <div class="nav-item active" onclick="switchTab('bundles')">
-                    <span class="nav-icon">📦</span>
+                    <span class="nav-icon"><i class="fas fa-box"></i></span>
                     <span>Bundles</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('addons')">
-                    <span class="nav-icon">🔌</span>
+                    <span class="nav-icon"><i class="fas fa-plug"></i></span>
                     <span>Addons</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('devicec')">
-                    <span class="nav-icon">📱</span>
+                    <span class="nav-icon"><i class="fas fa-mobile-alt"></i></span>
                     <span>Device Care</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('sla')">
-                    <span class="nav-icon">⏱️</span>
+                    <span class="nav-icon"><i class="fas fa-clock"></i></span>
                     <span>SLA</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('navigator')">
-                    <span class="nav-icon">🧭</span>
+                    <span class="nav-icon"><i class="fas fa-compass"></i></span>
                     <span>Navigator</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('scenarios')">
-                    <span class="nav-icon">📝</span>
+                    <span class="nav-icon"><i class="fas fa-clipboard-list"></i></span>
                     <span>Scenarios</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('important-links')">
+                    <span class="nav-icon"><i class="fas fa-link"></i></span>
+                    <span>Important Links</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('plan-summary')">
+                    <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                    <span>Plan Summary</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('notes')">
+                    <span class="nav-icon"><i class="fas fa-sticky-note"></i></span>
+                    <span>My Notes</span>
                 </div>
             </div>
 
             <div class="sidebar-footer">
-                <button class="btn-header" onclick="refreshBundles()">🔄 Refresh Bundles</button>
-                <button class="btn-header" onclick="downloadExamPDF()" style="background: #007bff; border-color: rgba(255, 255, 255, 0.3);">� Download Exam PDF</button>
-                <button class="btn-header" onclick="downloadExamLink()" style="background: #17a2b8; border-color: rgba(255, 255, 255, 0.3);">https://www.dropbox.com/scl/fi/xda8ys3uzhclwqn0f93lw/exam.pdf?rlkey=47aermrq9enfe8uoq8h7g73yo&st=8olknjmz&dl=0</button>
+                <button class="btn-header" onclick="refreshBundles()"><i class="fas fa-sync-alt"></i> Refresh Bundles</button>
             </div>
         </div>
 
@@ -1821,57 +2650,81 @@
 
             <div id="bundles" class="tab-content active">
                 <div class="search-add">
-                    <input type="text" id="searchBundles" placeholder="🔍 Search: international, roaming, 4GB, Freedom, price, contract..." onkeyup="filterBundles()">
-                    <button onclick="refreshBundles()" style="background: #28a745; margin-right: 10px;">🔄 Refresh from API</button>
-                    <button onclick="openAddModal('bundle')">+ Add Bundle</button>
+                    <input type="text" id="searchBundles" placeholder="Search: international, roaming, 4GB, Freedom, price, contract..." onkeyup="filterBundles()">
+                    <button onclick="refreshBundles()" style="background: #28a745; margin-right: 10px;"><i class="fas fa-sync-alt"></i> Refresh from API</button>
+                    <button onclick="openAddModal('bundle')"><i class="fas fa-plus"></i> Add Bundle</button>
                 </div>
                 <div id="bundlesList" class="bundle-grid"></div>
             </div>
 
             <div id="addons" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchAddons" placeholder="🔍 Search addons: data, minutes, roaming..." onkeyup="filterAddons()">
-                    <button onclick="openAddModal('addon')">+ Add Addon</button>
+                    <input type="text" id="searchAddons" placeholder="Search addons: data, minutes, roaming..." onkeyup="filterAddons()">
+                    <button onclick="openAddModal('addon')"><i class="fas fa-plus"></i> Add Addon</button>
                 </div>
                 <div id="addonsList" class="bundle-grid"></div>
             </div>
 
             <div id="devicec" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchDeviceC" placeholder="🔍 Search Device Care..." onkeyup="filterDeviceC()">
-                    <button onclick="openAddModal('devicec')">+ Add DeviceC</button>
+                    <input type="text" id="searchDeviceC" placeholder="Search Device Care..." onkeyup="filterDeviceC()">
+                    <button onclick="openAddModal('devicec')"><i class="fas fa-plus"></i> Add DeviceC</button>
                 </div>
                 <div id="devicecList" class="bundle-grid"></div>
             </div>
 
             <div id="sla" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchSLA" placeholder="🔍 Search SLA: hours, days, time..." onkeyup="filterSLA()">
-                    <button onclick="openAddModal('sla')">+ Add SLA</button>
+                    <input type="text" id="searchSLA" placeholder="Search SLA: hours, days, time..." onkeyup="filterSLA()">
+                    <button onclick="openAddModal('sla')"><i class="fas fa-plus"></i> Add SLA</button>
                 </div>
                 <div id="slaList" class="bundle-grid"></div>
             </div>
 
             <div id="navigator" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchNavigator" placeholder="🔍 Search paths: profile, balance, settings..." onkeyup="filterNavigator()">
-                    <button onclick="openAddModal('navigator')">+ Add Navigator</button>
+                    <input type="text" id="searchNavigator" placeholder="Search paths: profile, balance, settings..." onkeyup="filterNavigator()">
+                    <button onclick="openAddModal('navigator')"><i class="fas fa-plus"></i> Add Navigator</button>
                 </div>
                 <div id="navigatorList" class="bundle-grid"></div>
             </div>
 
             <div id="scenarios" class="tab-content">
                 <div class="search-add">
-                    <input type="text" id="searchScenarios" placeholder="🔍 Search scenarios: inquiry, complaint, issue, description..." onkeyup="filterScenarios()">
-                    <button onclick="openAddModal('scenario')">+ Add Scenario</button>
+                    <input type="text" id="searchScenarios" placeholder="Search scenarios: inquiry, complaint, issue, description..." onkeyup="filterScenarios()">
+                    <button onclick="openAddModal('scenario')"><i class="fas fa-plus"></i> Add Scenario</button>
                 </div>
                 <div id="scenariosList" class="bundle-grid"></div>
+            </div>
+
+            <div id="important-links" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchImportantLinks" placeholder="Search important links..." onkeyup="filterImportantLinks()">
+                    <button onclick="openAddModal('important-link')"><i class="fas fa-plus"></i> Add Link</button>
+                </div>
+                <div id="importantLinksList" class="bundle-grid"></div>
+            </div>
+
+            <div id="plan-summary" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchPlanSummary" placeholder="Search plan summaries..." onkeyup="filterPlanSummary()">
+                    <button onclick="openAddModal('plan-summary')"><i class="fas fa-plus"></i> Add Plan</button>
+                </div>
+                <div id="planSummaryList" class="bundle-grid"></div>
+            </div>
+
+            <div id="notes" class="tab-content">
+                <div class="search-add">
+                    <input type="text" id="searchNotes" placeholder="Search notes by title or content..." onkeyup="filterNotes()">
+                    <button onclick="openAddNoteModal()"><i class="fas fa-plus"></i> Add Note</button>
+                </div>
+                <div id="notesList" class="notes-grid"></div>
             </div>
         </div>
     </div>
 
     <!-- Floating Action Button (FAB) -->
-    <button class="fab-button" onclick="openAddModal('bundle')" title="Add Bundle">+</button>
+    <button class="fab-button" onclick="openAddModal('bundle')" title="Add Bundle"><i class="fas fa-plus"></i></button>
 
     <div id="addModal" class="modal">
         <div class="modal-content">
@@ -1919,7 +2772,7 @@
                 <!-- CPR Fields for Bundles -->
                 <div id="cprFields" style="display: none;">
                     <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #e30613;">
-                        <div style="font-weight: 600; color: #e30613; margin-bottom: 12px;">📋 CPR Information</div>
+                        <div style="font-weight: 600; color: #e30613; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> CPR Information</div>
                         
                         <div class="form-group">
                             <label>Duration</label>
@@ -1964,10 +2817,10 @@
             </div>
             <iframe id="detailsIframe" class="details-iframe" src="about:blank"></iframe>
             <div id="iframeError" class="iframe-error" style="display: none;">
-                <h3>⚠️ Cannot Display in Preview</h3>
+                <h3><i class="fas fa-exclamation-triangle"></i> Cannot Display in Preview</h3>
                 <p>This website doesn't allow embedding in an iframe for security reasons.</p>
                 <p><strong id="errorLinkText"></strong></p>
-                <button onclick="openLinkFromError()">🔗 Open in New Tab</button>
+                <button onclick="openLinkFromError()"><i class="fas fa-external-link-alt"></i> Open in New Tab</button>
             </div>
         </div>
     </div>
@@ -1975,12 +2828,38 @@
     <!-- Loading Overlay with Progress Bar -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
-            <img class="loading-logo" src="https://logos-world.net/wp-content/uploads/2023/04/Etisalat-Logo-500x281.png" alt="Loading...">
+            <img class="loading-logo" src="https://www.eand.com/content/dam/eand/assets/img/etand-icons/logo-homepage.png" alt="Loading...">
             <div class="progress-text" id="progressText">Loading bundles...</div>
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div class="progress-subtext" id="progressSubtext">Fetching plan data from API</div>
+        </div>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content note-modal-content">
+            <div class="modal-header" id="noteModalTitle">
+                <i class="fas fa-sticky-note" style="margin-right: 10px; color: #f59e0b;"></i>
+                Add New Note
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-heading" style="color: #f59e0b; margin-right: 8px;"></i>Title</label>
+                    <input type="text" id="noteTitle" placeholder="Enter note title...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-align-left" style="color: #f59e0b; margin-right: 8px;"></i>Content</label>
+                    <textarea id="noteContent" placeholder="Write your note here... (tips, reminders, important info, etc.)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeNoteModal()">Cancel</button>
+                <button onclick="saveNote()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <i class="fas fa-save"></i> Save Note
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2005,6 +2884,50 @@
             devicec: [],
             sla: [],
             navigator: [],
+            notes: [],
+            importantLinks: [
+                {
+                    id: 1,
+                    name: "E& Customer Portal",
+                    description: "Main customer portal for account management, bill payments, and service requests.",
+                    link: "https://www.etisalat.ae/en/consumer.html",
+                    icon: "fa-user-circle"
+                },
+                {
+                    id: 2,
+                    name: "Network Coverage Map",
+                    description: "Check 4G/5G network coverage in your area and across the UAE.",
+                    link: "https://www.etisalat.ae/en/consumer/coverage.html",
+                    icon: "fa-map-marked-alt"
+                },
+                {
+                    id: 3,
+                    name: "Business Solutions",
+                    description: "Enterprise solutions, cloud services, and business connectivity options.",
+                    link: "https://www.etisalat.ae/en/business.html",
+                    icon: "fa-briefcase"
+                }
+            ],
+            planSummary: [
+                {
+                    id: 1,
+                    name: "Freedom 150",
+                    description: "Entry-level postpaid plan with 40GB data, unlimited local calls, and flexible roaming options.",
+                    highlights: ["40GB Data", "Unlimited Calls", "5GB Roaming"]
+                },
+                {
+                    id: 2,
+                    name: "Freedom 225",
+                    description: "Mid-tier postpaid plan offering 80GB data with enhanced roaming benefits and entertainment perks.",
+                    highlights: ["80GB Data", "Unlimited Calls", "10GB Roaming", "OSN Streaming"]
+                },
+                {
+                    id: 3,
+                    name: "Freedom 375",
+                    description: "Premium postpaid plan with unlimited data, priority support, and comprehensive international benefits.",
+                    highlights: ["Unlimited Data", "Priority Support", "20GB Roaming", "Shahid VIP"]
+                }
+            ],
             scenarios: [
                 {
                     id: 1,
@@ -2384,6 +3307,9 @@
 
             console.log('🚀 Rendering UI...');
             renderAll();
+            
+            // Load notes separately (non-blocking)
+            loadNotes();
         }
 
         // OLD CODE BELOW - TO BE REMOVED
@@ -2528,28 +3454,6 @@
             }
         }
 
-        // Download local exam PDF file
-        function downloadExamPDF() {
-            const link = document.createElement('a');
-            link.href = 'exam.pdf';
-            link.download = 'exam.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            console.log('📄 Local exam PDF download initiated');
-        }
-
-        // Open exam file from Dropbox link
-        function downloadExamLink() {
-            const examUrl = 'https://www.dropbox.com/scl/fi/xda8ys3uzhclwqn0f93lw/exam.pdf?rlkey=47aermrq9enfe8uoq8h7g73yo&st=8olknjmz&dl=0';
-            
-            // Open in new tab
-            window.open(examUrl, '_blank');
-            
-            console.log('� Dropbox exam file download initiated');
-        }
-
         // OLD: Refresh bundles from API (force fetch)
         async function refreshBundles() {
             if (!confirm('🔄 Refresh bundles from API?\n\nThis will fetch the latest data from Etisalat and update the database.\n\nNote: This is the ONLY time data is fetched from the API.')) {
@@ -2666,7 +3570,10 @@
                 'devicec': 'Device Care',
                 'sla': 'SLA',
                 'navigator': 'Navigator',
-                'scenarios': 'Call Scenarios'
+                'scenarios': 'Call Scenarios',
+                'important-links': 'Important Links',
+                'plan-summary': 'Plan Summary',
+                'notes': 'My Notes'
             };
             document.getElementById('contentTitle').textContent = titles[tab] || tab;
             
@@ -2679,7 +3586,11 @@
             // Update FAB button for current tab
             const fabButton = document.querySelector('.fab-button');
             if (fabButton) {
-                fabButton.setAttribute('onclick', `openAddModal('${tab === 'bundles' ? 'bundle' : tab === 'scenarios' ? 'scenario' : tab}')`);
+                if (tab === 'notes') {
+                    fabButton.setAttribute('onclick', 'openAddNoteModal()');
+                } else {
+                    fabButton.setAttribute('onclick', `openAddModal('${tab === 'bundles' ? 'bundle' : tab === 'scenarios' ? 'scenario' : tab}')`);
+                }
             }
             
             // Close sidebar on mobile after selection
@@ -2688,6 +3599,8 @@
 
         function openAddModal(type) {
             currentType = type;
+            currentEditItem = null; // Reset editing state for new items
+            currentEditType = null;
             document.getElementById('addModal').classList.add('active');
             document.getElementById('itemName').value = '';
             document.getElementById('itemKeywords').value = '';
@@ -2712,58 +3625,52 @@
             const descriptionGroup = document.getElementById('descriptionGroup');
             const cprFields = document.getElementById('cprFields');
             
+            // Hide all optional fields first
+            linkGroup.style.display = 'none';
+            timeGroup.style.display = 'none';
+            pathGroup.style.display = 'none';
+            descriptionGroup.style.display = 'none';
+            document.getElementById('tagGroup').style.display = 'none';
+            cprFields.style.display = 'none';
+            
             if (type === 'sla') {
                 modalTitle.textContent = 'Add New SLA';
-                linkGroup.style.display = 'none';
                 timeGroup.style.display = 'block';
-                pathGroup.style.display = 'none';
-                descriptionGroup.style.display = 'none';
-                document.getElementById('tagGroup').style.display = 'none';
-                cprFields.style.display = 'none';
             } else if (type === 'navigator') {
                 modalTitle.textContent = 'Add New Navigation Guide';
-                linkGroup.style.display = 'none';
-                timeGroup.style.display = 'none';
                 pathGroup.style.display = 'block';
-                descriptionGroup.style.display = 'none';
-                document.getElementById('tagGroup').style.display = 'none';
-                cprFields.style.display = 'none';
             } else if (type === 'scenario') {
                 modalTitle.textContent = 'Add New Call Scenario';
-                linkGroup.style.display = 'none';
-                timeGroup.style.display = 'none';
-                pathGroup.style.display = 'none';
                 descriptionGroup.style.display = 'block';
                 document.getElementById('tagGroup').style.display = 'block';
-                cprFields.style.display = 'none';
                 document.getElementById('itemName').placeholder = 'Enter scenario title...';
-                document.getElementById('itemTag').value = 'inquiry'; // Default value
+                document.getElementById('itemTag').value = 'inquiry';
             } else if (type === 'bundle') {
                 modalTitle.textContent = 'Add New Bundle';
                 linkGroup.style.display = 'block';
-                timeGroup.style.display = 'none';
-                pathGroup.style.display = 'none';
-                descriptionGroup.style.display = 'none';
-                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'block';
             } else if (type === 'addon') {
                 modalTitle.textContent = 'Add New Addon';
                 linkGroup.style.display = 'block';
-                timeGroup.style.display = 'none';
-                pathGroup.style.display = 'none';
-                descriptionGroup.style.display = 'none';
-                document.getElementById('tagGroup').style.display = 'none';
                 cprFields.style.display = 'block';
+            } else if (type === 'important-link') {
+                modalTitle.textContent = 'Add New Important Link';
+                linkGroup.style.display = 'block';
+                descriptionGroup.style.display = 'block';
+                document.getElementById('itemName').placeholder = 'Enter link name...';
+                document.getElementById('itemDescription').placeholder = 'Describe what this link is for...';
+            } else if (type === 'plan-summary') {
+                modalTitle.textContent = 'Add New Plan Summary';
+                descriptionGroup.style.display = 'block';
+                document.getElementById('itemName').placeholder = 'Enter plan name...';
+                document.getElementById('itemDescription').placeholder = 'Describe the plan details, benefits, and features...';
+                document.getElementById('itemKeywords').placeholder = 'Enter highlights (comma separated): e.g., 40GB Data, Unlimited Calls, 5GB Roaming';
             } else {
                 const typeNames = {
                     'devicec': 'Device Care'
                 };
                 modalTitle.textContent = 'Add New ' + (typeNames[type] || 'Item');
                 linkGroup.style.display = 'block';
-                timeGroup.style.display = 'none';
-                pathGroup.style.display = 'none';
-                descriptionGroup.style.display = 'none';
-                cprFields.style.display = 'none';
             }
             
             document.getElementById('itemName').focus();
@@ -2771,9 +3678,17 @@
 
         function closeAddModal() {
             document.getElementById('addModal').classList.remove('active');
+            currentEditItem = null; // Reset editing state
+            currentEditType = null;
         }
 
         async function saveItem() {
+            // If editing, call updateItem instead
+            if (currentEditItem) {
+                await updateItem();
+                return;
+            }
+            
             const name = document.getElementById('itemName').value.trim();
             const keywords = document.getElementById('itemKeywords').value.trim();
             const useSupabase = typeof db !== 'undefined' && db && db.supabase;
@@ -2837,6 +3752,59 @@
                     item.id = Date.now();
                     item.timestamp = new Date().toISOString();
                 }
+            } else if (currentType === 'important-link') {
+                const link = document.getElementById('itemLink').value.trim();
+                const description = document.getElementById('itemDescription').value.trim();
+                
+                if (!name || !link) {
+                    alert('Please fill in name and link');
+                    return;
+                }
+                
+                item = {
+                    name,
+                    description,
+                    link,
+                    icon: 'fa-link'
+                };
+                
+                if (!useSupabase) {
+                    item.id = Date.now();
+                }
+                
+                // Save to local data only (not Supabase for now)
+                data.importantLinks.push(item);
+                saveData();
+                renderAll();
+                closeAddModal();
+                return;
+            } else if (currentType === 'plan-summary') {
+                const description = document.getElementById('itemDescription').value.trim();
+                
+                if (!name) {
+                    alert('Please fill in the plan name');
+                    return;
+                }
+                
+                // Parse keywords as highlights
+                const highlights = keywords ? keywords.split(',').map(h => h.trim()).filter(h => h) : [];
+                
+                item = {
+                    name,
+                    description,
+                    highlights
+                };
+                
+                if (!useSupabase) {
+                    item.id = Date.now();
+                }
+                
+                // Save to local data only (not Supabase for now)
+                data.planSummary.push(item);
+                saveData();
+                renderAll();
+                closeAddModal();
+                return;
             } else {
                 const link = document.getElementById('itemLink').value.trim();
                 
@@ -2940,6 +3908,21 @@
                 return;
             }
 
+            // Handle new types that are localStorage only
+            if (type === 'important-link') {
+                data.importantLinks = data.importantLinks.filter(item => item.id != id);
+                saveData();
+                renderAll();
+                return;
+            }
+            
+            if (type === 'plan-summary') {
+                data.planSummary = data.planSummary.filter(item => item.id != id);
+                saveData();
+                renderAll();
+                return;
+            }
+
             const useSupabase = typeof db !== 'undefined' && db && db.supabase;
             
             try {
@@ -2993,6 +3976,220 @@
             } catch (error) {
                 console.error('❌ Error deleting item:', error);
                 alert('Failed to delete item. Please try again.');
+            }
+        }
+
+        // Variable to track item being edited
+        let currentEditItem = null;
+        let currentEditType = null;
+
+        // Open modal for editing an existing item
+        function openEditModal(type, item) {
+            currentEditItem = item;
+            currentEditType = type;
+            
+            document.getElementById('addModal').classList.add('active');
+            
+            // Populate form fields
+            document.getElementById('itemName').value = item.name || item.title || '';
+            document.getElementById('itemKeywords').value = item.keywords || '';
+            document.getElementById('itemLink').value = item.link || '';
+            document.getElementById('itemTime').value = item.time || '';
+            document.getElementById('itemPath').value = item.path || '';
+            document.getElementById('itemDescription').value = item.description || '';
+            
+            // Handle scenario tag
+            if (type === 'scenario' && item.tag) {
+                document.getElementById('itemTag').value = item.tag;
+            }
+            
+            // Update modal title and show appropriate fields
+            const modalTitle = document.getElementById('modalTitle');
+            const linkGroup = document.getElementById('linkGroup');
+            const timeGroup = document.getElementById('timeGroup');
+            const pathGroup = document.getElementById('pathGroup');
+            const descriptionGroup = document.getElementById('descriptionGroup');
+            const cprFields = document.getElementById('cprFields');
+            
+            // Hide all optional fields first
+            linkGroup.style.display = 'none';
+            timeGroup.style.display = 'none';
+            pathGroup.style.display = 'none';
+            descriptionGroup.style.display = 'none';
+            document.getElementById('tagGroup').style.display = 'none';
+            cprFields.style.display = 'none';
+            
+            if (type === 'sla') {
+                modalTitle.textContent = '✏️ Edit SLA';
+                timeGroup.style.display = 'block';
+            } else if (type === 'navigator') {
+                modalTitle.textContent = '✏️ Edit Navigation Guide';
+                pathGroup.style.display = 'block';
+            } else if (type === 'scenario') {
+                modalTitle.textContent = '✏️ Edit Call Scenario';
+                descriptionGroup.style.display = 'block';
+                document.getElementById('tagGroup').style.display = 'block';
+                document.getElementById('itemName').placeholder = 'Enter scenario title...';
+            } else if (type === 'important-link') {
+                modalTitle.textContent = '✏️ Edit Important Link';
+                linkGroup.style.display = 'block';
+                descriptionGroup.style.display = 'block';
+                document.getElementById('itemName').placeholder = 'Enter link name...';
+                document.getElementById('itemDescription').placeholder = 'Describe what this link is for...';
+            } else if (type === 'plan-summary') {
+                modalTitle.textContent = '✏️ Edit Plan Summary';
+                descriptionGroup.style.display = 'block';
+                document.getElementById('itemName').placeholder = 'Enter plan name...';
+                document.getElementById('itemDescription').placeholder = 'Describe the plan details, benefits, and features...';
+                document.getElementById('itemKeywords').placeholder = 'Enter highlights (comma separated)';
+                // Convert highlights array back to comma-separated string
+                if (item.highlights && Array.isArray(item.highlights)) {
+                    document.getElementById('itemKeywords').value = item.highlights.join(', ');
+                }
+            } else if (type === 'devicec') {
+                modalTitle.textContent = '✏️ Edit Device Care';
+                linkGroup.style.display = 'block';
+            }
+            
+            document.getElementById('itemName').focus();
+        }
+
+        // Update existing item
+        async function updateItem() {
+            if (!currentEditItem || !currentEditType) return;
+            
+            const name = document.getElementById('itemName').value.trim();
+            const keywords = document.getElementById('itemKeywords').value.trim();
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+            
+            let updatedItem = {};
+            
+            if (currentEditType === 'sla') {
+                const time = document.getElementById('itemTime').value.trim();
+                if (!name || !time) {
+                    alert('Please fill in name and time duration');
+                    return;
+                }
+                updatedItem = { name, keywords, time };
+            } else if (currentEditType === 'navigator') {
+                const path = document.getElementById('itemPath').value.trim();
+                if (!name || !path) {
+                    alert('Please fill in name and navigation path');
+                    return;
+                }
+                updatedItem = { name, keywords, path };
+            } else if (currentEditType === 'scenario') {
+                const description = document.getElementById('itemDescription').value.trim();
+                const tag = document.getElementById('itemTag').value;
+                if (!name) {
+                    alert('Please fill in the scenario title');
+                    return;
+                }
+                updatedItem = { title: name, keywords, description, tag };
+            } else if (currentEditType === 'important-link') {
+                const link = document.getElementById('itemLink').value.trim();
+                const description = document.getElementById('itemDescription').value.trim();
+                if (!name || !link) {
+                    alert('Please fill in name and link');
+                    return;
+                }
+                updatedItem = { name, description, link, icon: currentEditItem.icon || 'fa-link' };
+                
+                // Update local data
+                const index = data.importantLinks.findIndex(item => item.id === currentEditItem.id);
+                if (index !== -1) {
+                    data.importantLinks[index] = { ...data.importantLinks[index], ...updatedItem };
+                }
+                saveData();
+                renderAll();
+                closeAddModal();
+                currentEditItem = null;
+                currentEditType = null;
+                alert('✅ Important Link updated successfully!');
+                return;
+            } else if (currentEditType === 'plan-summary') {
+                const description = document.getElementById('itemDescription').value.trim();
+                if (!name) {
+                    alert('Please fill in the plan name');
+                    return;
+                }
+                const highlights = keywords ? keywords.split(',').map(h => h.trim()).filter(h => h) : [];
+                updatedItem = { name, description, highlights };
+                
+                // Update local data
+                const index = data.planSummary.findIndex(item => item.id === currentEditItem.id);
+                if (index !== -1) {
+                    data.planSummary[index] = { ...data.planSummary[index], ...updatedItem };
+                }
+                saveData();
+                renderAll();
+                closeAddModal();
+                currentEditItem = null;
+                currentEditType = null;
+                alert('✅ Plan Summary updated successfully!');
+                return;
+            } else if (currentEditType === 'devicec') {
+                const link = document.getElementById('itemLink').value.trim();
+                if (!name || !link) {
+                    alert('Please fill in name and link');
+                    return;
+                }
+                updatedItem = { name, keywords, link };
+            }
+            
+            try {
+                if (useSupabase) {
+                    const tableMap = {
+                        'sla': 'slas',
+                        'navigator': 'navigators',
+                        'scenario': 'scenarios',
+                        'devicec': 'devicec'
+                    };
+                    
+                    const table = tableMap[currentEditType];
+                    if (table) {
+                        await db.update(table, currentEditItem.id, updatedItem);
+                        
+                        // Refresh data from Supabase
+                        if (currentEditType === 'sla') {
+                            data.sla = await db.getAll('slas');
+                        } else if (currentEditType === 'navigator') {
+                            data.navigator = await db.getAll('navigators');
+                        } else if (currentEditType === 'scenario') {
+                            data.scenarios = await db.getAll('scenarios');
+                        } else if (currentEditType === 'devicec') {
+                            data.devicec = await db.getAll('devicec');
+                        }
+                        
+                        console.log(`✅ ${currentEditType} updated in Supabase`);
+                    }
+                } else {
+                    // Fallback to localStorage
+                    let dataArray;
+                    if (currentEditType === 'sla') dataArray = data.sla;
+                    else if (currentEditType === 'navigator') dataArray = data.navigator;
+                    else if (currentEditType === 'scenario') dataArray = data.scenarios;
+                    else if (currentEditType === 'devicec') dataArray = data.devicec;
+                    
+                    if (dataArray) {
+                        const index = dataArray.findIndex(item => item.id === currentEditItem.id);
+                        if (index !== -1) {
+                            dataArray[index] = { ...dataArray[index], ...updatedItem };
+                        }
+                    }
+                    saveData();
+                    console.log(`💾 ${currentEditType} updated in localStorage`);
+                }
+                
+                renderAll();
+                closeAddModal();
+                currentEditItem = null;
+                currentEditType = null;
+                alert('✅ Item updated successfully!');
+                
+            } catch (error) {
+                console.error('❌ Error updating item:', error);
+                alert('⚠️ Failed to update item. Please try again.');
             }
         }
 
@@ -3080,30 +4277,30 @@
             
             let profileHTML = `
                 <div class="bundle-profile-header">
-                    <div class="bundle-profile-title">${escapeHtml(item.name)}</div>
+                    <div class="bundle-profile-title"><i class="fas fa-box-open" style="margin-right: 10px;"></i>${escapeHtml(item.name)}</div>
                     ${pricingHTML}
-                    <div class="bundle-profile-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes${item.roaming !== '0GB' ? ` • ${escapeHtml(item.roaming)} Roaming` : ''}</div>
+                    <div class="bundle-profile-subtitle"><i class="fas fa-chart-bar" style="margin-right: 8px; opacity: 0.8;"></i>${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes${item.roaming !== '0GB' ? ` • ${escapeHtml(item.roaming)} Roaming` : ''}</div>
                 </div>
                 
                 <div class="bundle-profile-body">
                     <!-- Key Benefits Section -->
                     <div class="profile-section">
-                        <div class="profile-section-title">📊 Key Benefits</div>
+                        <div class="profile-section-title"><i class="fas fa-star"></i> Key Benefits</div>
                         <div class="profile-info-grid">
                             <div class="profile-info-item">
-                                <div class="profile-info-label">Local Data</div>
+                                <div class="profile-info-label"><i class="fas fa-wifi"></i> Local Data</div>
                                 <div class="profile-info-value">${escapeHtml(item.data)}</div>
                             </div>
                             <div class="profile-info-item">
-                                <div class="profile-info-label">Minutes</div>
+                                <div class="profile-info-label"><i class="fas fa-phone-alt"></i> Minutes</div>
                                 <div class="profile-info-value">${escapeHtml(item.minutes)}</div>
                             </div>
                             <div class="profile-info-item">
-                                <div class="profile-info-label">Roaming Data</div>
+                                <div class="profile-info-label"><i class="fas fa-globe"></i> Roaming Data</div>
                                 <div class="profile-info-value">${escapeHtml(item.roaming)}</div>
                             </div>
                             <div class="profile-info-item">
-                                <div class="profile-info-label">Commitment</div>
+                                <div class="profile-info-label"><i class="fas fa-clock"></i> Commitment</div>
                                 <div class="profile-info-value">${escapeHtml(item.commitment)}</div>
                             </div>
                         </div>
@@ -3114,36 +4311,36 @@
             if (item.cpr) {
                 profileHTML += `
                     <div class="profile-section">
-                        <div class="profile-section-title">📋 Critical Product Requirements (CPR)</div>
+                        <div class="profile-section-title"><i class="fas fa-clipboard-list"></i> Critical Product Requirements (CPR)</div>
                         <div class="profile-cpr-section">
                             <div class="profile-info-grid">
                                 ${item.cpr.duration ? `<div class="profile-info-item">
-                                    <div class="profile-info-label">📅 Duration</div>
+                                    <div class="profile-info-label"><i class="fas fa-calendar-alt"></i> Duration</div>
                                     <div class="profile-info-value">${formatMultiline(item.cpr.duration)}</div>
                                 </div>` : ''}
                                 ${item.cpr.isContract ? `<div class="profile-info-item">
-                                    <div class="profile-info-label">📋 Contract Required</div>
+                                    <div class="profile-info-label"><i class="fas fa-file-contract"></i> Contract Required</div>
                                     <div class="profile-info-value">${formatMultiline(item.cpr.isContract)}</div>
                                 </div>` : ''}
                                 ${item.cpr.fees ? `<div class="profile-info-item">
-                                    <div class="profile-info-label">💰 Fees</div>
+                                    <div class="profile-info-label"><i class="fas fa-coins"></i> Fees</div>
                                     <div class="profile-info-value">${formatMultiline(item.cpr.fees)}</div>
                                 </div>` : ''}
                                 ${item.cpr.discounts ? `<div class="profile-info-item">
-                                    <div class="profile-info-label">🎁 Discounts</div>
+                                    <div class="profile-info-label"><i class="fas fa-gift"></i> Discounts</div>
                                     <div class="profile-info-value">${formatMultiline(item.cpr.discounts)}</div>
                                 </div>` : ''}
                             </div>
                             ${item.cpr.allowance ? `<div class="profile-info-item" style="margin-top: 15px;">
-                                <div class="profile-info-label">📊 Allowance Details</div>
+                                <div class="profile-info-label"><i class="fas fa-chart-pie"></i> Allowance Details</div>
                                 <div class="profile-info-value">${formatMultiline(item.cpr.allowance)}</div>
                             </div>` : ''}
                             ${item.cpr.restrictions ? `<div class="profile-info-item" style="margin-top: 15px;">
-                                <div class="profile-info-label">⚠️ Restrictions & Limitations</div>
+                                <div class="profile-info-label"><i class="fas fa-exclamation-triangle"></i> Restrictions & Limitations</div>
                                 <div class="profile-info-value">${formatMultiline(item.cpr.restrictions)}</div>
                             </div>` : ''}
                             ${item.cpr.exitCharge ? `<div class="profile-info-item" style="margin-top: 15px;">
-                                <div class="profile-info-label">🚪 Exit Charge</div>
+                                <div class="profile-info-label"><i class="fas fa-door-open"></i> Exit Charge</div>
                                 <div class="profile-info-value">${formatMultiline(item.cpr.exitCharge)}</div>
                             </div>` : ''}
                         </div>
@@ -3155,7 +4352,7 @@
             if (item.description) {
                 profileHTML += `
                     <div class="profile-section">
-                        <div class="profile-section-title">📝 Description</div>
+                        <div class="profile-section-title"><i class="fas fa-align-left"></i> Description</div>
                         <div class="profile-info-item">
                             <div class="profile-info-value">${item.description}</div>
                         </div>
@@ -3166,8 +4363,8 @@
             // Actions
             profileHTML += `
                     <div class="profile-actions">
-                        <button class="btn-profile-close" onclick="closeBundleProfile()">Close</button>
-                        <button class="btn-profile-open" onclick="openLink('${escapeHtml(item.link)}'); closeBundleProfile();">🔗 View Official Page</button>
+                        <button class="btn-profile-close" onclick="closeBundleProfile()"><i class="fas fa-times"></i> Close</button>
+                        <button class="btn-profile-open" onclick="openLink('${escapeHtml(item.link)}'); closeBundleProfile();"><i class="fas fa-external-link-alt"></i> View Official Page</button>
                     </div>
                 </div>
             `;
@@ -3180,9 +4377,15 @@
             document.getElementById('bundleProfileModal').classList.remove('active');
         }
 
+        // Store current editing scenario for reference
+        let currentEditingScenario = null;
+
         function showScenarioProfile(item) {
             const modal = document.getElementById('bundleProfileModal');
             const content = document.getElementById('bundleProfileContent');
+            
+            // Store current item for editing
+            currentEditingScenario = item;
             
             // Handle both created_at (Supabase) and timestamp (localStorage)
             const timestamp = item.created_at 
@@ -3205,34 +4408,48 @@
             
             const tag = item.tag || 'inquiry';
             const tagColors = {
-                'inquiry': { bg: '#e3f2fd', color: '#1976d2', emoji: '❓' },
-                'request': { bg: '#e8f5e9', color: '#388e3c', emoji: '📋' },
-                'complaint': { bg: '#ffebee', color: '#d32f2f', emoji: '⚠️' }
+                'inquiry': { bg: '#e3f2fd', color: '#1976d2', icon: 'fa-question-circle', gradient: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)' },
+                'request': { bg: '#e8f5e9', color: '#388e3c', icon: 'fa-clipboard-check', gradient: 'linear-gradient(135deg, #388e3c 0%, #2e7d32 100%)' },
+                'complaint': { bg: '#ffebee', color: '#d32f2f', icon: 'fa-exclamation-triangle', gradient: 'linear-gradient(135deg, #d32f2f 0%, #c62828 100%)' }
             };
             const tagStyle = tagColors[tag] || tagColors['inquiry'];
             
             let profileHTML = `
-                <div class="bundle-profile-header" style="background: linear-gradient(135deg, ${tagStyle.color} 0%, ${adjustBrightness(tagStyle.color, -20)} 100%);">
-                    <div class="bundle-profile-title">${tagStyle.emoji} ${escapeHtml(item.title)}</div>
-                    <div class="bundle-profile-discount-badge" style="background: ${tagStyle.bg}; color: ${tagStyle.color}; border-color: ${tagStyle.color};">
-                        ${tag.charAt(0).toUpperCase() + tag.slice(1)}
+                <div class="bundle-profile-header" style="background: ${tagStyle.gradient};">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 15px;">
+                        <div style="flex: 1;">
+                            <div class="bundle-profile-title" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas ${tagStyle.icon}" style="font-size: 1.3em;"></i>
+                                <span>${escapeHtml(item.title)}</span>
+                            </div>
+                            <div class="bundle-profile-discount-badge" style="background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.4); margin-top: 12px;">
+                                <i class="fas ${tagStyle.icon}" style="margin-right: 6px;"></i>
+                                ${tag.charAt(0).toUpperCase() + tag.slice(1)}
+                            </div>
+                        </div>
+                        <button onclick="toggleEditScenario()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); padding: 10px 18px; border-radius: 8px; cursor: pointer; color: white; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
                     </div>
-                    <div class="bundle-profile-duration">
-                        🕐 Created: ${timestamp}
+                    <div class="bundle-profile-duration" style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-clock"></i> Created: ${timestamp}
                     </div>
                 </div>
                 <div class="bundle-profile-body">
+                    
+                    <!-- View Mode -->
+                    <div id="scenarioViewMode">
             `;
             
             // Keywords Section
             if (item.keywords) {
                 profileHTML += `
                     <div class="profile-section">
-                        <div class="profile-section-title">🔍 Keywords</div>
-                        <div class="profile-info-item">
+                        <div class="profile-section-title"><i class="fas fa-tags"></i> Keywords</div>
+                        <div class="profile-info-item" style="border-left-color: ${tagStyle.color};">
                             <div class="profile-info-value" style="display: flex; flex-wrap: wrap; gap: 8px;">
                                 ${item.keywords.split(',').map(kw => 
-                                    `<span style="background: #f0f0f0; padding: 6px 12px; border-radius: 16px; font-size: 0.9em;">${escapeHtml(kw.trim())}</span>`
+                                    `<span style="background: ${tagStyle.bg}; color: ${tagStyle.color}; padding: 8px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-tag" style="font-size: 0.8em;"></i>${escapeHtml(kw.trim())}</span>`
                                 ).join('')}
                             </div>
                         </div>
@@ -3244,9 +4461,9 @@
             if (item.description && item.description.trim()) {
                 profileHTML += `
                     <div class="profile-section">
-                        <div class="profile-section-title">📝 Full Description</div>
-                        <div class="profile-info-item" style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid ${tagStyle.color};">
-                            <div class="profile-info-value" style="white-space: pre-wrap; line-height: 1.8; color: #2c3e50; font-size: 1.05em;">
+                        <div class="profile-section-title"><i class="fas fa-align-left"></i> Full Description</div>
+                        <div class="profile-info-item" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 24px; border-radius: 12px; border-left: 4px solid ${tagStyle.color}; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div class="profile-info-value" style="white-space: pre-wrap; line-height: 1.9; color: #2c3e50; font-size: 1.05em;">
                                 ${escapeHtml(item.description)}
                             </div>
                         </div>
@@ -3255,9 +4472,11 @@
             } else {
                 profileHTML += `
                     <div class="profile-section">
-                        <div class="profile-section-title">📝 Description</div>
+                        <div class="profile-section-title"><i class="fas fa-align-left"></i> Description</div>
                         <div class="profile-info-item">
-                            <div class="profile-info-value" style="color: #999; font-style: italic;">No description provided</div>
+                            <div class="profile-info-value" style="color: #999; font-style: italic; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-info-circle"></i> No description provided
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3266,34 +4485,152 @@
             // Metadata Section
             profileHTML += `
                 <div class="profile-section">
-                    <div class="profile-section-title">ℹ️ Scenario Information</div>
+                    <div class="profile-section-title"><i class="fas fa-info-circle"></i> Scenario Information</div>
                     <div class="profile-info-grid">
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">🏷️ Type</div>
-                            <div class="profile-info-value">${tag.charAt(0).toUpperCase() + tag.slice(1)}</div>
+                        <div class="profile-info-item" style="border-left-color: ${tagStyle.color};">
+                            <div class="profile-info-label"><i class="fas fa-tag"></i> Type</div>
+                            <div class="profile-info-value" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: ${tagStyle.bg}; color: ${tagStyle.color}; padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: 600;">
+                                    ${tag.charAt(0).toUpperCase() + tag.slice(1)}
+                                </span>
+                            </div>
                         </div>
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">🆔 ID</div>
-                            <div class="profile-info-value">#${item.id}</div>
+                        <div class="profile-info-item" style="border-left-color: ${tagStyle.color};">
+                            <div class="profile-info-label"><i class="fas fa-hashtag"></i> ID</div>
+                            <div class="profile-info-value" style="font-family: monospace; background: #f0f0f0; padding: 4px 10px; border-radius: 6px; display: inline-block;">#${item.id}</div>
                         </div>
-                        <div class="profile-info-item">
-                            <div class="profile-info-label">📅 Created</div>
+                        <div class="profile-info-item" style="border-left-color: ${tagStyle.color};">
+                            <div class="profile-info-label"><i class="fas fa-calendar-alt"></i> Created</div>
                             <div class="profile-info-value">${timestamp}</div>
                         </div>
                     </div>
                 </div>
+                    </div>
+                    
+                    <!-- Edit Mode (Hidden by default) -->
+                    <div id="scenarioEditMode" style="display: none;">
+                        <div class="profile-section">
+                            <div class="profile-section-title"><i class="fas fa-edit"></i> Edit Scenario</div>
+                            
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;"><i class="fas fa-heading"></i> Title</label>
+                                <input type="text" id="editScenarioTitle" value="${escapeHtml(item.title)}" style="width: 100%; padding: 14px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px; transition: border-color 0.3s;">
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;"><i class="fas fa-tags"></i> Keywords</label>
+                                <input type="text" id="editScenarioKeywords" value="${escapeHtml(item.keywords || '')}" placeholder="e.g., billing, payment, inquiry" style="width: 100%; padding: 14px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px;">
+                                <small style="color: #6c757d; font-size: 0.85em; display: block; margin-top: 6px;"><i class="fas fa-info-circle"></i> Separate keywords with commas</small>
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;"><i class="fas fa-tag"></i> Type</label>
+                                <select id="editScenarioTag" style="width: 100%; padding: 14px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px; background: white; cursor: pointer;">
+                                    <option value="inquiry" ${tag === 'inquiry' ? 'selected' : ''}>📋 Inquiry</option>
+                                    <option value="request" ${tag === 'request' ? 'selected' : ''}>✅ Request</option>
+                                    <option value="complaint" ${tag === 'complaint' ? 'selected' : ''}>⚠️ Complaint</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;"><i class="fas fa-align-left"></i> Description</label>
+                                <textarea id="editScenarioDescription" rows="8" placeholder="Enter detailed description of the scenario..." style="width: 100%; padding: 14px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px; resize: vertical; line-height: 1.6; font-family: inherit;">${escapeHtml(item.description || '')}</textarea>
+                            </div>
+                        </div>
+                    </div>
             `;
             
             // Actions
             profileHTML += `
-                    <div class="profile-actions">
-                        <button class="btn-profile-close" onclick="closeBundleProfile()">Close</button>
+                    <div class="profile-actions" id="scenarioViewActions">
+                        <button class="btn-profile-close" onclick="closeBundleProfile()" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                        <button class="btn-profile-open" onclick="toggleEditScenario()" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex: 2;">
+                            <i class="fas fa-edit"></i> Edit Scenario
+                        </button>
+                    </div>
+                    
+                    <div class="profile-actions" id="scenarioEditActions" style="display: none;">
+                        <button class="btn-profile-close" onclick="toggleEditScenario()" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="btn-profile-open" onclick="saveScenarioEdit()" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #28a745; flex: 2;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
                     </div>
                 </div>
             `;
             
             content.innerHTML = profileHTML;
             modal.classList.add('active');
+        }
+        
+        // Toggle between view and edit modes
+        function toggleEditScenario() {
+            const viewMode = document.getElementById('scenarioViewMode');
+            const editMode = document.getElementById('scenarioEditMode');
+            const viewActions = document.getElementById('scenarioViewActions');
+            const editActions = document.getElementById('scenarioEditActions');
+            
+            if (editMode.style.display === 'none') {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+                viewActions.style.display = 'none';
+                editActions.style.display = 'flex';
+            } else {
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+                viewActions.style.display = 'flex';
+                editActions.style.display = 'none';
+            }
+        }
+        
+        // Save scenario edits
+        async function saveScenarioEdit() {
+            if (!currentEditingScenario) return;
+            
+            const title = document.getElementById('editScenarioTitle').value.trim();
+            const keywords = document.getElementById('editScenarioKeywords').value.trim();
+            const tag = document.getElementById('editScenarioTag').value;
+            const description = document.getElementById('editScenarioDescription').value.trim();
+            
+            if (!title) {
+                alert('Please enter a title for the scenario.');
+                return;
+            }
+            
+            try {
+                const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+                
+                const updatedItem = {
+                    title: title,
+                    keywords: keywords,
+                    tag: tag,
+                    description: description
+                };
+                
+                if (useSupabase) {
+                    await db.update('scenarios', currentEditingScenario.id, updatedItem);
+                    console.log('✅ Scenario updated in Supabase');
+                }
+                
+                // Update local data
+                const index = data.scenarios.findIndex(s => s.id === currentEditingScenario.id);
+                if (index !== -1) {
+                    data.scenarios[index] = { ...data.scenarios[index], ...updatedItem };
+                }
+                
+                saveData();
+                renderAll();
+                closeBundleProfile();
+                
+                alert('✅ Scenario updated successfully!');
+                
+            } catch (error) {
+                console.error('Error updating scenario:', error);
+                alert('⚠️ Failed to update scenario. Please try again.');
+            }
         }
 
         // Helper function to adjust color brightness
@@ -3353,11 +4690,12 @@
             if (type === 'sla') {
                 container.innerHTML = items.map(item => `
                     <div class="bundle-card sla-card">
-                        <div class="bundle-name">${escapeHtml(item.name)}</div>
-                        <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
-                        <div class="sla-time">⏱️ ${escapeHtml(item.time || 'No time set')}</div>
+                        <div class="bundle-name"><i class="fas fa-clock" style="color: #e30613;"></i> ${escapeHtml(item.name)}</div>
+                        <div class="bundle-keywords"><i class="fas fa-tags" style="opacity: 0.6;"></i> ${escapeHtml(item.keywords || 'No keywords')}</div>
+                        <div class="sla-time"><i class="fas fa-hourglass-half"></i> ${escapeHtml(item.time || 'No time set')}</div>
                         <div class="bundle-actions">
-                            <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                            <button class="btn-view" onclick="openEditModal('sla', ${JSON.stringify(item).replace(/"/g, '&quot;')})" style="background: #17a2b8; flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `).join('');
@@ -3366,16 +4704,54 @@
                 container.innerHTML = items.map(item => {
                     const pathSteps = item.path ? item.path.split('->').map(step => step.trim()) : [];
                     const pathHTML = pathSteps.map((step, index) => {
-                        return `<span class="nav-step">${escapeHtml(step)}</span>${index < pathSteps.length - 1 ? '<span class="nav-arrow">→</span>' : ''}`;
+                        return `<span class="nav-step"><i class="fas fa-folder"></i> ${escapeHtml(step)}</span>${index < pathSteps.length - 1 ? '<span class="nav-separator">-</span>' : ''}`;
                     }).join('');
                     
                     return `
                         <div class="bundle-card navigator-card">
-                            <div class="bundle-name">🧭 ${escapeHtml(item.name)}</div>
-                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
+                            <div class="bundle-name"><i class="fas fa-compass" style="color: #2c3e50;"></i> ${escapeHtml(item.name)}</div>
+                            <div class="bundle-keywords"><i class="fas fa-tags" style="opacity: 0.6;"></i> ${escapeHtml(item.keywords || 'No keywords')}</div>
                             <div class="nav-path">${pathHTML || 'No path set'}</div>
                             <div class="bundle-actions">
-                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})" style="flex: 1;">Delete</button>
+                                <button class="btn-view" onclick="openEditModal('navigator', ${JSON.stringify(item).replace(/"/g, '&quot;')})" style="background: #17a2b8; flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else if (type === 'important-link') {
+                // Important Links section
+                container.innerHTML = items.map(item => `
+                    <div class="bundle-card important-links-card">
+                        <div class="link-icon"><i class="fas ${item.icon || 'fa-link'}"></i></div>
+                        <div class="link-name">${escapeHtml(item.name)}</div>
+                        <div class="link-description">${escapeHtml(item.description || 'No description')}</div>
+                        <a href="${escapeHtml(item.link)}" target="_blank" class="link-url">
+                            <i class="fas fa-external-link-alt"></i> Open Link
+                        </a>
+                        <div class="bundle-actions" style="margin-top: 15px;">
+                            <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')" style="flex: 1;"><i class="fas fa-external-link-alt"></i> Open</button>
+                            <button class="btn-view" onclick="openEditModal('important-link', ${JSON.stringify(item).replace(/"/g, '&quot;')})" style="background: #17a2b8;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            } else if (type === 'plan-summary') {
+                // Plan Summary section
+                container.innerHTML = items.map(item => {
+                    const highlightsHTML = item.highlights ? item.highlights.map(h => 
+                        `<span class="plan-highlight"><i class="fas fa-check"></i> ${escapeHtml(h)}</span>`
+                    ).join('') : '';
+                    
+                    return `
+                        <div class="bundle-card plan-summary-card">
+                            <div class="plan-icon"><i class="fas fa-file-invoice"></i></div>
+                            <div class="plan-name">${escapeHtml(item.name)}</div>
+                            <div class="plan-description">${escapeHtml(item.description || 'No description')}</div>
+                            ${highlightsHTML ? `<div class="plan-highlights">${highlightsHTML}</div>` : ''}
+                            <div class="bundle-actions" style="margin-top: 15px;">
+                                <button class="btn-view" onclick="openEditModal('plan-summary', ${JSON.stringify(item).replace(/"/g, '&quot;')})" style="background: #17a2b8; flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     `;
@@ -3390,6 +4766,14 @@
                     const hasDescription = item.description && item.description.trim();
                     const tag = item.tag || 'inquiry';
                     
+                    // Tag icons and colors
+                    const tagConfig = {
+                        'inquiry': { icon: 'fa-question-circle', color: '#1976d2', bg: '#e3f2fd' },
+                        'request': { icon: 'fa-clipboard-check', color: '#388e3c', bg: '#e8f5e9' },
+                        'complaint': { icon: 'fa-exclamation-triangle', color: '#d32f2f', bg: '#ffebee' }
+                    };
+                    const tagStyle = tagConfig[tag] || tagConfig['inquiry'];
+                    
                     // Truncate description for preview
                     const descriptionPreview = hasDescription && item.description.length > 120 
                         ? item.description.substring(0, 120) + '...' 
@@ -3397,18 +4781,21 @@
                     
                     return `
                         <div class="bundle-card scenario-card">
-                            <div class="bundle-name">📝 ${escapeHtml(item.title)}</div>
-                            <span class="tag-badge tag-${tag}">${tag.charAt(0).toUpperCase() + tag.slice(1)}</span>
-                            <div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>
-                            <div class="sla-time">🕐 ${timestamp}</div>
+                            <div class="scenario-header">
+                                <div class="bundle-name"><i class="fas ${tagStyle.icon}" style="color: ${tagStyle.color};"></i> ${escapeHtml(item.title)}</div>
+                                <span class="tag-badge tag-${tag}"><i class="fas ${tagStyle.icon}"></i> ${tag.charAt(0).toUpperCase() + tag.slice(1)}</span>
+                            </div>
+                            <div class="bundle-keywords"><i class="fas fa-tags" style="opacity: 0.6;"></i> ${escapeHtml(item.keywords || 'No keywords')}</div>
+                            <div class="scenario-meta"><i class="fas fa-clock"></i> ${timestamp}</div>
                             ${hasDescription ? `
-                                <div class="scenario-description" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; color: #495057; font-size: 0.9em; line-height: 1.5;">
+                                <div class="scenario-description" style="margin-top: 12px; padding: 14px 16px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; color: #495057; font-size: 0.9em; line-height: 1.7; border-left: 3px solid ${tagStyle.color};">
                                     ${escapeHtml(descriptionPreview)}
                                 </div>
-                            ` : '<div style="font-size: 0.9em; color: #999; margin-top: 5px;">No description</div>'}
-                            <div class="bundle-actions" style="margin-top: 10px;">
-                                <button class="btn-view" onclick="showScenarioProfile(${JSON.stringify(item).replace(/"/g, '&quot;')})">👁️ View Details</button>
-                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})">Delete</button>
+                            ` : '<div style="font-size: 0.9em; color: #999; margin-top: 8px; display: flex; align-items: center; gap: 6px;"><i class="fas fa-info-circle"></i> No description</div>'}
+                            <div class="bundle-actions" style="margin-top: 15px;">
+                                <button class="btn-view" onclick="showScenarioProfile(${JSON.stringify(item).replace(/"/g, '&quot;')})" style="flex: 2;"><i class="fas fa-eye"></i> View</button>
+                                <button class="btn-open" onclick="showScenarioProfile(${JSON.stringify(item).replace(/"/g, '&quot;')}); setTimeout(toggleEditScenario, 100);" style="background: #17a2b8;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-delete" onclick="deleteItem('${type}', ${item.id})"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     `;
@@ -3435,13 +4822,13 @@
                                 <div class="bundle-price" style="color: #e30613;">AED ${item.cpr.discountedPrice}<small>/month</small></div>
                                 ${item.cpr.discountDuration ? `<div class="discount-duration" style="font-size: 0.85em; color: #666; font-style: italic; margin-top: 5px;">${escapeHtml(item.cpr.discountDuration)}</div>` : ''}
                                 <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
-                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
+                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords"><i class="fas fa-globe"></i> ${escapeHtml(item.roaming)} Roaming</div>` : ''}
                             `;
                         } else {
                             planDetailsHTML = `
                                 <div class="bundle-price">AED ${item.price}<small>/month</small></div>
                                 <div class="bundle-subtitle">${escapeHtml(item.data)} Data • ${escapeHtml(item.minutes)} Minutes</div>
-                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords">🌍 ${escapeHtml(item.roaming)} Roaming</div>` : ''}
+                                ${item.roaming !== '0GB' ? `<div class="bundle-keywords"><i class="fas fa-globe"></i> ${escapeHtml(item.roaming)} Roaming</div>` : ''}
                             `;
                         }
                     }
@@ -3450,40 +4837,40 @@
                     if ((type === 'bundle' || type === 'addon') && item.cpr) {
                             cprHTML = `
                                 <div class="cpr-section">
-                                    <div class="cpr-title">📋 Plan Details (CPR)</div>
+                                    <div class="cpr-title"><i class="fas fa-clipboard-list"></i> Plan Details (CPR)</div>
                                     <div class="cpr-content" id="cpr-${item.id}">
                                         <div class="cpr-grid">
                                             ${item.cpr.duration ? `<div class="cpr-item">
-                                                <span class="cpr-label">📅 Duration:</span>
+                                                <span class="cpr-label"><i class="fas fa-calendar-alt"></i> Duration:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.duration)}</span>
                                             </div>` : ''}
                                             ${item.cpr.isContract ? `<div class="cpr-item">
-                                                <span class="cpr-label">� Contract:</span>
+                                                <span class="cpr-label"><i class="fas fa-file-contract"></i> Contract:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.isContract)}</span>
                                             </div>` : ''}
                                             ${item.cpr.fees ? `<div class="cpr-item">
-                                                <span class="cpr-label">💰 Fees:</span>
+                                                <span class="cpr-label"><i class="fas fa-dollar-sign"></i> Fees:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.fees)}</span>
                                             </div>` : ''}
                                             ${item.cpr.discounts ? `<div class="cpr-item">
-                                                <span class="cpr-label">🎁 Discounts:</span>
+                                                <span class="cpr-label"><i class="fas fa-gift"></i> Discounts:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.discounts)}</span>
                                             </div>` : ''}
                                             ${item.cpr.allowance ? `<div class="cpr-item">
-                                                <span class="cpr-label">📊 Allowance:</span>
+                                                <span class="cpr-label"><i class="fas fa-chart-bar"></i> Allowance:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.allowance)}</span>
                                             </div>` : ''}
                                             ${item.cpr.restrictions ? `<div class="cpr-item">
-                                                <span class="cpr-label">⚠️ Restrictions:</span>
+                                                <span class="cpr-label"><i class="fas fa-exclamation-triangle"></i> Restrictions:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.restrictions)}</span>
                                             </div>` : ''}
                                             ${item.cpr.exitCharge ? `<div class="cpr-item">
-                                                <span class="cpr-label">🚪 Exit Charge:</span>
+                                                <span class="cpr-label"><i class="fas fa-sign-out-alt"></i> Exit Charge:</span>
                                                 <span class="cpr-value">${formatMultiline(item.cpr.exitCharge)}</span>
                                             </div>` : ''}
                                         </div>
                                     </div>
-                                    <button class="cpr-toggle" onclick="toggleCPR('${item.id}')">Show CPR Details</button>
+                                    <button class="cpr-toggle" onclick="toggleCPR('${item.id}')"><i class="fas fa-chevron-down"></i> Show CPR Details</button>
                                 </div>
                             `;
                     }
@@ -3507,16 +4894,22 @@
                     return `
                         <div class="bundle-card ${item.category ? 'plan-card' : ''}">
                             ${discountBadgeHTML}
-                            <div class="bundle-name">${escapeHtml(item.name)}</div>
+                            <div class="bundle-name"><i class="fas ${type === 'devicec' ? 'fa-mobile-screen' : 'fa-box'}" style="color: #e30613;"></i> ${escapeHtml(item.name)}</div>
                             ${pricingHTML}
                             ${planDetailsHTML}
-                            ${!planDetailsHTML ? `<div class="bundle-keywords">${escapeHtml(item.keywords || 'No keywords')}</div>` : ''}
-                            ${!planDetailsHTML ? `<a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank">${escapeHtml(item.link)}</a>` : ''}
+                            ${!planDetailsHTML ? `<div class="bundle-keywords"><i class="fas fa-tags" style="opacity: 0.6;"></i> ${escapeHtml(item.keywords || 'No keywords')}</div>` : ''}
+                            ${!planDetailsHTML ? `<a href="${escapeHtml(item.link)}" class="bundle-link" target="_blank"><i class="fas fa-link"></i> ${escapeHtml(item.link)}</a>` : ''}
                             ${cprHTML}
                             <div class="bundle-actions">
-                                <button class="btn-view" onclick='showBundleProfile(${JSON.stringify(item).replace(/'/g, "&#39;")})'>View Profile</button>
-                                <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')">Open Link</button>
-                                ${item.source === 'api' ? '<button class="btn-delete" style="background: #6c757d;" disabled title="API plans cannot be deleted">API Plan</button>' : `<button class="btn-delete" onclick="deleteItem('${type}', '${item.id}')">Delete</button>`}
+                                ${type === 'devicec' ? `
+                                    <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')"><i class="fas fa-external-link-alt"></i> Open</button>
+                                    <button class="btn-view" onclick="openEditModal('devicec', ${JSON.stringify(item).replace(/"/g, '&quot;')})" style="background: #17a2b8;"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn-delete" onclick="deleteItem('${type}', '${item.id}')"><i class="fas fa-trash"></i></button>
+                                ` : `
+                                    <button class="btn-view" onclick='showBundleProfile(${JSON.stringify(item).replace(/'/g, "&#39;")})'><i class="fas fa-eye"></i> View Profile</button>
+                                    <button class="btn-open" onclick="openLink('${escapeHtml(item.link)}')"><i class="fas fa-external-link-alt"></i> Open Link</button>
+                                    ${item.source === 'api' ? '<button class="btn-delete" style="background: #6c757d;" disabled title="API plans cannot be deleted"><i class="fas fa-cloud"></i> API Plan</button>' : `<button class="btn-delete" onclick="deleteItem('${type}', '${item.id}')"><i class="fas fa-trash"></i> Delete</button>`}
+                                `}
                             </div>
                         </div>
                     `;
@@ -3712,7 +5105,356 @@
             filterSLA();
             filterNavigator();
             filterScenarios();
+            filterImportantLinks();
+            filterPlanSummary();
         }
+
+        // Filter Important Links
+        function filterImportantLinks() {
+            const searchEl = document.getElementById('searchImportantLinks');
+            const search = searchEl ? searchEl.value.toLowerCase().trim() : '';
+            
+            if (!search) {
+                renderItems(data.importantLinks || [], 'importantLinksList', 'important-link');
+                return;
+            }
+            
+            const filtered = (data.importantLinks || []).filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.description,
+                    item.link
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
+            renderItems(filtered, 'importantLinksList', 'important-link');
+        }
+
+        // Filter Plan Summary
+        function filterPlanSummary() {
+            const searchEl = document.getElementById('searchPlanSummary');
+            const search = searchEl ? searchEl.value.toLowerCase().trim() : '';
+            
+            if (!search) {
+                renderItems(data.planSummary || [], 'planSummaryList', 'plan-summary');
+                return;
+            }
+            
+            const filtered = (data.planSummary || []).filter(item => {
+                const searchableText = [
+                    item.name,
+                    item.description,
+                    ...(item.highlights || [])
+                ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+                
+                return searchableText.includes(search);
+            });
+            
+            renderItems(filtered, 'planSummaryList', 'plan-summary');
+        }
+
+        // ==================== NOTES SECTION ====================
+        
+        let currentEditingNote = null;
+        
+        // Load notes from Supabase or localStorage
+        async function loadNotes() {
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+            
+            try {
+                if (useSupabase) {
+                    const { data: notesData, error } = await db.supabase
+                        .from('notes')
+                        .select('*')
+                        .order('updated_at', { ascending: false });
+                    
+                    if (!error && notesData) {
+                        data.notes = notesData;
+                        console.log('✅ Notes loaded from Supabase:', notesData.length);
+                    }
+                } else {
+                    // Load from localStorage
+                    const saved = localStorage.getItem('infohub_notes');
+                    if (saved) {
+                        data.notes = JSON.parse(saved);
+                    }
+                }
+            } catch (err) {
+                console.log('Loading notes from localStorage');
+                const saved = localStorage.getItem('infohub_notes');
+                if (saved) {
+                    data.notes = JSON.parse(saved);
+                }
+            }
+            
+            renderNotes();
+        }
+        
+        // Render notes
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            if (!container) return;
+            
+            const notes = data.notes || [];
+            
+            if (notes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-notes">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>No Notes Yet</h3>
+                        <p>Click "Add Note" to create your first note!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notes.map(note => {
+                const updatedAt = note.updated_at 
+                    ? new Date(note.updated_at).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                    : 'Just now';
+                
+                const contentPreview = note.content && note.content.length > 200;
+                
+                return `
+                    <div class="note-card" data-note-id="${note.id}">
+                        <div class="note-card-header">
+                            <div class="note-card-title">
+                                <i class="fas fa-sticky-note"></i>
+                                ${escapeHtml(note.title || 'Untitled Note')}
+                            </div>
+                        </div>
+                        <div class="note-card-content ${contentPreview ? '' : 'expanded'}" id="noteContent-${note.id}">
+                            ${escapeHtml(note.content || 'No content')}
+                        </div>
+                        <div class="note-card-meta">
+                            <span><i class="fas fa-clock"></i> ${updatedAt}</span>
+                        </div>
+                        <div class="note-card-actions">
+                            ${contentPreview ? `
+                                <button class="btn-expand-note" onclick="toggleNoteExpand(${note.id})">
+                                    <i class="fas fa-expand-alt"></i> Expand
+                                </button>
+                            ` : ''}
+                            <button class="btn-edit-note" onclick="editNote(${note.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-delete-note" onclick="deleteNote(${note.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Toggle note expand
+        function toggleNoteExpand(noteId) {
+            const content = document.getElementById(`noteContent-${noteId}`);
+            if (content) {
+                content.classList.toggle('expanded');
+                const btn = content.closest('.note-card').querySelector('.btn-expand-note');
+                if (btn) {
+                    const isExpanded = content.classList.contains('expanded');
+                    btn.innerHTML = isExpanded 
+                        ? '<i class="fas fa-compress-alt"></i> Collapse'
+                        : '<i class="fas fa-expand-alt"></i> Expand';
+                }
+            }
+        }
+        
+        // Filter notes
+        function filterNotes() {
+            const searchEl = document.getElementById('searchNotes');
+            const search = searchEl ? searchEl.value.toLowerCase().trim() : '';
+            
+            if (!search) {
+                renderNotes();
+                return;
+            }
+            
+            const filteredNotes = (data.notes || []).filter(note => {
+                const searchableText = [note.title, note.content]
+                    .filter(Boolean)
+                    .join(' ')
+                    .toLowerCase();
+                return searchableText.includes(search);
+            });
+            
+            // Temporarily replace data.notes for rendering
+            const originalNotes = data.notes;
+            data.notes = filteredNotes;
+            renderNotes();
+            data.notes = originalNotes;
+        }
+        
+        // Open Add Note Modal
+        function openAddNoteModal() {
+            currentEditingNote = null;
+            document.getElementById('noteModalTitle').innerHTML = '<i class="fas fa-sticky-note" style="margin-right: 10px; color: #f59e0b;"></i>Add New Note';
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+            document.getElementById('noteModal').classList.add('active');
+            document.getElementById('noteTitle').focus();
+        }
+        
+        // Close Note Modal
+        function closeNoteModal() {
+            document.getElementById('noteModal').classList.remove('active');
+            currentEditingNote = null;
+        }
+        
+        // Edit Note
+        function editNote(noteId) {
+            const note = (data.notes || []).find(n => n.id === noteId);
+            if (!note) return;
+            
+            currentEditingNote = note;
+            document.getElementById('noteModalTitle').innerHTML = '<i class="fas fa-edit" style="margin-right: 10px; color: #f59e0b;"></i>Edit Note';
+            document.getElementById('noteTitle').value = note.title || '';
+            document.getElementById('noteContent').value = note.content || '';
+            document.getElementById('noteModal').classList.add('active');
+            document.getElementById('noteTitle').focus();
+        }
+        
+        // Save Note
+        async function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            
+            if (!title) {
+                alert('Please enter a note title');
+                return;
+            }
+            
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+            const now = new Date().toISOString();
+            
+            try {
+                if (currentEditingNote) {
+                    // Update existing note
+                    if (useSupabase) {
+                        const { error } = await db.supabase
+                            .from('notes')
+                            .update({ title, content, updated_at: now })
+                            .eq('id', currentEditingNote.id);
+                        
+                        if (error) throw error;
+                    }
+                    
+                    // Update local data
+                    const index = data.notes.findIndex(n => n.id === currentEditingNote.id);
+                    if (index !== -1) {
+                        data.notes[index] = { ...data.notes[index], title, content, updated_at: now };
+                    }
+                    
+                    console.log('✅ Note updated');
+                } else {
+                    // Create new note
+                    const newNote = {
+                        id: useSupabase ? undefined : Date.now(),
+                        title,
+                        content,
+                        created_at: now,
+                        updated_at: now
+                    };
+                    
+                    if (useSupabase) {
+                        const { data: insertedNote, error } = await db.supabase
+                            .from('notes')
+                            .insert([{ title, content, created_at: now, updated_at: now }])
+                            .select()
+                            .single();
+                        
+                        if (error) throw error;
+                        newNote.id = insertedNote.id;
+                    }
+                    
+                    data.notes = data.notes || [];
+                    data.notes.unshift(newNote);
+                    
+                    console.log('✅ Note created');
+                }
+                
+                // Save to localStorage as backup
+                localStorage.setItem('infohub_notes', JSON.stringify(data.notes));
+                
+                renderNotes();
+                closeNoteModal();
+                
+            } catch (err) {
+                console.error('Error saving note:', err);
+                
+                // Fallback to localStorage
+                if (currentEditingNote) {
+                    const index = data.notes.findIndex(n => n.id === currentEditingNote.id);
+                    if (index !== -1) {
+                        data.notes[index] = { ...data.notes[index], title, content, updated_at: now };
+                    }
+                } else {
+                    data.notes = data.notes || [];
+                    data.notes.unshift({
+                        id: Date.now(),
+                        title,
+                        content,
+                        created_at: now,
+                        updated_at: now
+                    });
+                }
+                
+                localStorage.setItem('infohub_notes', JSON.stringify(data.notes));
+                renderNotes();
+                closeNoteModal();
+            }
+        }
+        
+        // Delete Note
+        async function deleteNote(noteId) {
+            if (!confirm('Are you sure you want to delete this note?')) return;
+            
+            const useSupabase = typeof db !== 'undefined' && db && db.supabase;
+            
+            try {
+                if (useSupabase) {
+                    const { error } = await db.supabase
+                        .from('notes')
+                        .delete()
+                        .eq('id', noteId);
+                    
+                    if (error) throw error;
+                }
+                
+                // Remove from local data
+                data.notes = (data.notes || []).filter(n => n.id !== noteId);
+                localStorage.setItem('infohub_notes', JSON.stringify(data.notes));
+                
+                renderNotes();
+                console.log('✅ Note deleted');
+                
+            } catch (err) {
+                console.error('Error deleting note:', err);
+                
+                // Fallback to localStorage
+                data.notes = (data.notes || []).filter(n => n.id !== noteId);
+                localStorage.setItem('infohub_notes', JSON.stringify(data.notes));
+                renderNotes();
+            }
+        }
+
+        // ==================== END NOTES SECTION ====================
 
         // Render Navigator in Sidebar
         function renderNavigatorSidebar() {
